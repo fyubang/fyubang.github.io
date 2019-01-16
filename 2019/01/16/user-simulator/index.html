@@ -79,21 +79,21 @@
 
 
 
-<meta name="description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用；  每个不同的任务都需要各自领域的标注数据；  收集人人对话或者人机对话需要领域知识。   但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（ag">
+<meta name="description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
 <meta property="og:type" content="article">
 <meta property="og:title" content="A User Simulator for Task-Completion Dialogues [2016, by X. Li]">
 <meta property="og:url" content="http://fyubang.com/2019/01/16/user-simulator/index.html">
 <meta property="og:site_name" content="瓦小砾">
-<meta property="og:description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用；  每个不同的任务都需要各自领域的标注数据；  收集人人对话或者人机对话需要领域知识。   但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（ag">
+<meta property="og:description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/1.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/2.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/3.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/2.png">
-<meta property="og:updated_time" content="2019-01-16T10:09:32.239Z">
+<meta property="og:updated_time" content="2019-01-16T11:47:45.333Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="A User Simulator for Task-Completion Dialogues [2016, by X. Li]">
-<meta name="twitter:description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用；  每个不同的任务都需要各自领域的标注数据；  收集人人对话或者人机对话需要领域知识。   但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（ag">
+<meta name="twitter:description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
 <meta name="twitter:image" content="http://fyubang.com/2019/01/16/user-simulator/1.png">
 
 
@@ -337,12 +337,9 @@
         <h2 id="基本框架（包含对话系统）："><a href="#基本框架（包含对话系统）：" class="headerlink" title="基本框架（包含对话系统）："></a>基本框架（包含对话系统）：</h2><img src="/2019/01/16/user-simulator/1.png">
 <h2 id="Abstract："><a href="#Abstract：" class="headerlink" title="Abstract："></a>Abstract：</h2><p>做任务型bot的时候，强化学习（RL）很强，但是有一些困难：</p>
 <ol>
-<li><p>需要和环境互动，已有的完整对话训练数据没用；</p>
-</li>
-<li><p>每个不同的任务都需要各自领域的标注数据；</p>
-</li>
-<li><p>收集人人对话或者人机对话需要领域知识。</p>
-</li>
+<li>需要和环境互动，已有的完整对话训练数据没用；</li>
+<li>每个不同的任务都需要各自领域的标注数据；</li>
+<li>收集人人对话或者人机对话需要领域知识。</li>
 </ol>
 <p>但是啊：</p>
 <p>====&gt;建造数据库又贵又花时间</p>
@@ -408,28 +405,21 @@
 </ol>
 <p>又可以分成：</p>
 <ol>
-<li><p>必须有的slots（required slots）</p>
-</li>
-<li><p>选择有的slots（optional slots，i.e., ticket就是request slots 里的必须项）。</p>
-</li>
+<li>必须有的slots（required slots）</li>
+<li>选择有的slots（optional slots，i.e., ticket就是request slots 里的必须项）。</li>
 </ol>
 <p>Goal是在labeled dataset里生成的，两个机制：</p>
 <ol>
-<li><p>在第一个用户轮提取所有的slots。对于所有的slots，在所有的用户轮里提取第一次出现的。</p>
-</li>
-<li><p>每次跑对话的时候，就先sample一个user goal。</p>
-</li>
+<li>在第一个用户轮提取所有的slots。对于所有的slots，在所有的用户轮里提取第一次出现的。</li>
+<li>每次跑对话的时候，就先sample一个user goal。</li>
 </ol>
 <h3 id="User-Action"><a href="#User-Action" class="headerlink" title="User Action"></a>User Action</h3><p>第一轮的action sampling：要加一些限制（比如通常是request turn，至少一个inform slot，movie_name必须在，等等）。</p>
 <p>如果不用NLG，NLU的话，还要加入噪声来模拟NLG和NLU过程产生的噪音，去训练DM部分。</p>
 <h3 id="Dialogue-Status"><a href="#Dialogue-Status" class="headerlink" title="Dialogue Status"></a>Dialogue Status</h3><p>三个对化状态：</p>
 <ol>
-<li><p>no_outcome_yet</p>
-</li>
-<li><p>success</p>
-</li>
-<li><p>failure</p>
-</li>
+<li>no_outcome_yet</li>
+<li>success</li>
+<li>failure</li>
 </ol>
 <p>具体情况具体讨论。</p>
 <h3 id="NLU"><a href="#NLU" class="headerlink" title="NLU"></a>NLU</h3><p>IOB-format slots tags + Intent tags</p>
