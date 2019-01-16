@@ -90,7 +90,7 @@
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/2.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/3.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/2.png">
-<meta property="og:updated_time" content="2019-01-16T10:07:33.518Z">
+<meta property="og:updated_time" content="2019-01-16T10:09:32.239Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="A User Simulator for Task-Completion Dialogues [2016, by X. Li]">
 <meta name="twitter:description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用；  每个不同的任务都需要各自领域的标注数据；  收集人人对话或者人机对话需要领域知识。   但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（ag">
@@ -349,13 +349,13 @@
 <p>====&gt;只好模拟</p>
 <p>====&gt;user simulator诞生</p>
 <p>====&gt;Bot（agent）先用simulator去训练，搞定了simulator就可以上线，持续online learning</p>
-<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction:"></a>1 Introduction:</h2><p>对话系统一般如 Figure 1. 所示。Dialongue Policy (DP)是一个任务型bot的核心。</p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction:"></a>Introduction:</h2><p>对话系统一般如 Figure 1. 所示。Dialongue Policy (DP)是一个任务型bot的核心。</p>
 <p>一般来说传统的Dialogue Policy（DP）使用规则编程的，但有缺点：</p>
 <ol>
 <li>对于复杂系统，难以设计</li>
 <li>最优的policy也会变化，不好维护。<br>因此，一般用<mark>强化学习</mark>训练DP。</li>
 </ol>
-<h3 id="1-1-为啥要user-simulator"><a href="#1-1-为啥要user-simulator" class="headerlink" title="1.1 为啥要user simulator ?"></a>1.1 为啥要user simulator ?</h3><ol>
+<h3 id="为啥要user-simulator"><a href="#为啥要user-simulator" class="headerlink" title="为啥要user simulator ?"></a>为啥要user simulator ?</h3><ol>
 <li><p>Supervised Learning（SL）监督学习在任务型的bot里不行：</p>
 <ol>
 <li>需要专家来标注大量数据；</li>
@@ -369,7 +369,7 @@
 <p>但是不幸的是：RL需要从环境来的很多sample，所以和真实用户从零开始训练不实际。</p>
 <p>====&gt; 所以需要User Simulators！</p>
 <p>一般的操作是：<mark>先在simulator上训练出一个比较好的效果，再部署到真实场景中，持续online learning。</mark></p>
-<h3 id="1-2-Related-Work"><a href="#1-2-Related-Work" class="headerlink" title="1.2 Related Work"></a>1.2 Related Work</h3><p>很难判断user simulator好不好，没有Metric来判定，so没有标准方法，放手乱做。user simulation主要有这么几个类型：</p>
+<h3 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h3><p>很难判断user simulator好不好，没有Metric来判定，so没有标准方法，放手乱做。user simulation主要有这么几个类型：</p>
 <p>从粒度上分：</p>
 <ol>
 <li>在对话行为（dialogue-act）上进行操作的；</li>
@@ -393,7 +393,7 @@
 <li>在dialog-act level，用了agenda-based (rule)的方法；</li>
 <li>在nlg部分，用了seq2seq (model)的方法。</li>
 </ol>
-<h2 id="2-Task-completion的对话系统（Dialogue-system）"><a href="#2-Task-completion的对话系统（Dialogue-system）" class="headerlink" title="2. Task-completion的对话系统（Dialogue system）"></a>2. Task-completion的对话系统（Dialogue system）</h2><p>任务型对话系统(以订票bot为例)，通过nl交互，去获取客户期望的信息，最终实现订票。以：</p>
+<h2 id="Task-completion的对话系统（Dialogue-system）"><a href="#Task-completion的对话系统（Dialogue-system）" class="headerlink" title="Task-completion的对话系统（Dialogue system）"></a>Task-completion的对话系统（Dialogue system）</h2><p>任务型对话系统(以订票bot为例)，通过nl交互，去获取客户期望的信息，最终实现订票。以：</p>
 <ol>
 <li>是否订票成功</li>
 <li>是否电影满足要求</li>
@@ -401,7 +401,7 @@
 <p>为标准，输出一个二进制结果，success or failure，评估系统。</p>
 <p>数据：用Amazon Mechanical Turk（众包平台）收集的数据，内部标注，11个intent（i.e., inform，request，confirm-question，confirm-answer，etc），29个slot（i.e., movie-name，start-time，theater，numberofpeople，etc）。</p>
 <p>一共标注了280个对话，对话平均11轮。</p>
-<h2 id="3-User-Simulator"><a href="#3-User-Simulator" class="headerlink" title="3. User Simulator"></a>3. User Simulator</h2><h3 id="3-1-User-Goal"><a href="#3-1-User-Goal" class="headerlink" title="3.1 User Goal"></a>3.1 User Goal</h3><p>TC Bot的user simulator第一步是生成user goal。agent不知道user goal，但是要帮助user来完成他的goal。user goal的定义分两个部分：</p>
+<h2 id="User-Simulator"><a href="#User-Simulator" class="headerlink" title="User Simulator"></a>User Simulator</h2><h3 id="User-Goal"><a href="#User-Goal" class="headerlink" title="User Goal"></a>User Goal</h3><p>TC Bot的user simulator第一步是生成user goal。agent不知道user goal，但是要帮助user来完成他的goal。user goal的定义分两个部分：</p>
 <ol>
 <li>inform_slots: 包含了constraints（C）</li>
 <li>request_slots: unk（R）</li>
@@ -420,9 +420,9 @@
 <li><p>每次跑对话的时候，就先sample一个user goal。</p>
 </li>
 </ol>
-<h3 id="3-2-User-Action"><a href="#3-2-User-Action" class="headerlink" title="3.2 User Action"></a>3.2 User Action</h3><p>第一轮的action sampling：要加一些限制（比如通常是request turn，至少一个inform slot，movie_name必须在，等等）。</p>
+<h3 id="User-Action"><a href="#User-Action" class="headerlink" title="User Action"></a>User Action</h3><p>第一轮的action sampling：要加一些限制（比如通常是request turn，至少一个inform slot，movie_name必须在，等等）。</p>
 <p>如果不用NLG，NLU的话，还要加入噪声来模拟NLG和NLU过程产生的噪音，去训练DM部分。</p>
-<h3 id="3-3-Dialogue-Status"><a href="#3-3-Dialogue-Status" class="headerlink" title="3.3 Dialogue Status"></a>3.3 Dialogue Status</h3><p>三个对化状态：</p>
+<h3 id="Dialogue-Status"><a href="#Dialogue-Status" class="headerlink" title="Dialogue Status"></a>Dialogue Status</h3><p>三个对化状态：</p>
 <ol>
 <li><p>no_outcome_yet</p>
 </li>
@@ -432,11 +432,11 @@
 </li>
 </ol>
 <p>具体情况具体讨论。</p>
-<h3 id="3-4-NLU"><a href="#3-4-NLU" class="headerlink" title="3.4 NLU"></a>3.4 NLU</h3><p>IOB-format slots tags + Intent tags</p>
+<h3 id="NLU"><a href="#NLU" class="headerlink" title="NLU"></a>NLU</h3><p>IOB-format slots tags + Intent tags</p>
 <p>最后的hidden layer判断 intent。</p>
-<h3 id="3-5-NLG"><a href="#3-5-NLG" class="headerlink" title="3.5 NLG"></a>3.5 NLG</h3><p>基于Template的NLG：dialog-act 被found在模板中的，套模板句型。<br>基于Model的NLG：没发现的，用model生成。（这一点感觉很扯，都没见过，咋生成，数据量肯定不够啊。）</p>
-<h2 id="4-Usages"><a href="#4-Usages" class="headerlink" title="4. Usages"></a>4. Usages</h2><p>Task-completing Dialogue Setting：任务型Bot（订票），衡量 agent的Metrics为：1. success rate；2. average reward；3. average turns。<br>KB-InfoBot（简单点，agent和user都只有request和inform）：问答Bot（电影信息）</p>
-<h2 id="5-Discussion"><a href="#5-Discussion" class="headerlink" title="5. Discussion"></a>5. Discussion</h2><p>Rule-based的 user simulation 很safe，但是很耗时，因为要手动制定各种规则。两个优化方向：</p>
+<h3 id="NLG"><a href="#NLG" class="headerlink" title="NLG"></a>NLG</h3><p>基于Template的NLG：dialog-act 被found在模板中的，套模板句型。<br>基于Model的NLG：没发现的，用model生成。（这一点感觉很扯，都没见过，咋生成，数据量肯定不够啊。）</p>
+<h2 id="Usages"><a href="#Usages" class="headerlink" title="Usages"></a>Usages</h2><p>Task-completing Dialogue Setting：任务型Bot（订票），衡量 agent的Metrics为：1. success rate；2. average reward；3. average turns。<br>KB-InfoBot（简单点，agent和user都只有request和inform）：问答Bot（电影信息）</p>
+<h2 id="Discussion"><a href="#Discussion" class="headerlink" title="Discussion"></a>Discussion</h2><p>Rule-based的 user simulation 很safe，但是很耗时，因为要手动制定各种规则。两个优化方向：</p>
 <p>包含user goal的改变（已做）<br>实现Model-based 的simulator，优点是泛化性能好，缺点是1. 需要大量数据， 2. 万一有漏洞，RL agent 会抓住这个漏洞，假假的成功，你以为success了，其实都是RL agent抓住了loophole给你的假象。</p>
 <h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>（根据《Agenda-Based User Simulation for bootstrapping a POMDP Dialogue System》by J. Schatzmann）</p>
 <ol>
@@ -596,7 +596,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本框架（包含对话系统）："><span class="nav-number">1.</span> <span class="nav-text">基本框架（包含对话系统）：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract："><span class="nav-number">2.</span> <span class="nav-text">Abstract：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">3.</span> <span class="nav-text">1 Introduction:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-为啥要user-simulator"><span class="nav-number">3.1.</span> <span class="nav-text">1.1 为啥要user simulator ?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Related-Work"><span class="nav-number">3.2.</span> <span class="nav-text">1.2 Related Work</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Task-completion的对话系统（Dialogue-system）"><span class="nav-number">4.</span> <span class="nav-text">2. Task-completion的对话系统（Dialogue system）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-User-Simulator"><span class="nav-number">5.</span> <span class="nav-text">3. User Simulator</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-User-Goal"><span class="nav-number">5.1.</span> <span class="nav-text">3.1 User Goal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-User-Action"><span class="nav-number">5.2.</span> <span class="nav-text">3.2 User Action</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Dialogue-Status"><span class="nav-number">5.3.</span> <span class="nav-text">3.3 Dialogue Status</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-NLU"><span class="nav-number">5.4.</span> <span class="nav-text">3.4 NLU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-NLG"><span class="nav-number">5.5.</span> <span class="nav-text">3.5 NLG</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Usages"><span class="nav-number">6.</span> <span class="nav-text">4. Usages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Discussion"><span class="nav-number">7.</span> <span class="nav-text">5. Discussion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结："><span class="nav-number">8.</span> <span class="nav-text">总结：</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本框架（包含对话系统）："><span class="nav-number">1.</span> <span class="nav-text">基本框架（包含对话系统）：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract："><span class="nav-number">2.</span> <span class="nav-text">Abstract：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为啥要user-simulator"><span class="nav-number">3.1.</span> <span class="nav-text">为啥要user simulator ?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Related-Work"><span class="nav-number">3.2.</span> <span class="nav-text">Related Work</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Task-completion的对话系统（Dialogue-system）"><span class="nav-number">4.</span> <span class="nav-text">Task-completion的对话系统（Dialogue system）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#User-Simulator"><span class="nav-number">5.</span> <span class="nav-text">User Simulator</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#User-Goal"><span class="nav-number">5.1.</span> <span class="nav-text">User Goal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#User-Action"><span class="nav-number">5.2.</span> <span class="nav-text">User Action</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dialogue-Status"><span class="nav-number">5.3.</span> <span class="nav-text">Dialogue Status</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NLU"><span class="nav-number">5.4.</span> <span class="nav-text">NLU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NLG"><span class="nav-number">5.5.</span> <span class="nav-text">NLG</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Usages"><span class="nav-number">6.</span> <span class="nav-text">Usages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Discussion"><span class="nav-number">7.</span> <span class="nav-text">Discussion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结："><span class="nav-number">8.</span> <span class="nav-text">总结：</span></a></li></ol></div>
             
 
           </div>
