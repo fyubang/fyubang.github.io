@@ -81,7 +81,7 @@
 
 <meta name="description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
 <meta property="og:type" content="article">
-<meta property="og:title" content="A User Simulator for Task-Completion Dialogues [2016, by X. Li]">
+<meta property="og:title" content="【论文笔记】A User Simulator for Task-Completion Dialogues">
 <meta property="og:url" content="http://fyubang.com/2019/01/16/user-simulator/index.html">
 <meta property="og:site_name" content="瓦小砾">
 <meta property="og:description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
@@ -90,9 +90,9 @@
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/2.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/3.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/2.png">
-<meta property="og:updated_time" content="2019-01-16T11:47:45.333Z">
+<meta property="og:updated_time" content="2019-01-16T11:52:31.306Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="A User Simulator for Task-Completion Dialogues [2016, by X. Li]">
+<meta name="twitter:title" content="【论文笔记】A User Simulator for Task-Completion Dialogues">
 <meta name="twitter:description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
 <meta name="twitter:image" content="http://fyubang.com/2019/01/16/user-simulator/1.png">
 
@@ -130,7 +130,7 @@
 
 
 
-  <title>A User Simulator for Task-Completion Dialogues [2016, by X. Li] | 瓦小砾</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>【论文笔记】A User Simulator for Task-Completion Dialogues | 瓦小砾</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -284,7 +284,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">A User Simulator for Task-Completion Dialogues [2016, by X. Li]</h1>
+          <h1 class="post-title" itemprop="name headline">【论文笔记】A User Simulator for Task-Completion Dialogues</h1>
         
 
         <div class="post-meta">
@@ -350,7 +350,7 @@
 <p>一般来说传统的Dialogue Policy（DP）使用规则编程的，但有缺点：</p>
 <ol>
 <li>对于复杂系统，难以设计</li>
-<li>最优的policy也会变化，不好维护。<br>因此，一般用<mark>强化学习</mark>训练DP。</li>
+<li>最优的policy也会变化，不好维护。<br>因此，一般用强化学习训练DP。</li>
 </ol>
 <h3 id="为啥要user-simulator"><a href="#为啥要user-simulator" class="headerlink" title="为啥要user simulator ?"></a>为啥要user simulator ?</h3><ol>
 <li><p>Supervised Learning（SL）监督学习在任务型的bot里不行：</p>
@@ -365,7 +365,7 @@
 </ol>
 <p>但是不幸的是：RL需要从环境来的很多sample，所以和真实用户从零开始训练不实际。</p>
 <p>====&gt; 所以需要User Simulators！</p>
-<p>一般的操作是：<mark>先在simulator上训练出一个比较好的效果，再部署到真实场景中，持续online learning。</mark></p>
+<p>一般的操作是：先在simulator上训练出一个比较好的效果，再部署到真实场景中，持续online learning。</p>
 <h3 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h3><p>很难判断user simulator好不好，没有Metric来判定，so没有标准方法，放手乱做。user simulation主要有这么几个类型：</p>
 <p>从粒度上分：</p>
 <ol>
@@ -384,7 +384,7 @@
 <li>把user goal 放到user state modeling中</li>
 </ol>
 <p>seq2seq端到端解决闲聊可以，任务型不太行。</p>
-<p>本文用的叫 <mark>agenda-based user simulation</mark> 的架构，类似栈的结构通过进栈出栈来 model 状态转移和用户行为生成。很方便，显性encode了对话历史和用户目标（user goal）。</p>
+<p>本文用的叫 agenda-based user simulation 的架构，类似栈的结构通过进栈出栈来 model 状态转移和用户行为生成。很方便，显性encode了对话历史和用户目标（user goal）。</p>
 <p>总结：文章 <strong>结合了rule-based和model-based</strong> 的方法:</p>
 <ol>
 <li>在dialog-act level，用了agenda-based (rule)的方法；</li>
