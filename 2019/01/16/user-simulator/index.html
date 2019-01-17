@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="chatbot,simulator,reinforcement learning,">
+  <meta name="keywords" content="Reinforcement Learning,User Simulator,Chatbot,">
 
 
 
@@ -80,7 +80,7 @@
 
 
 <meta name="description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
-<meta name="keywords" content="chatbot,simulator,reinforcement learning">
+<meta name="keywords" content="Reinforcement Learning,User Simulator,Chatbot">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【论文笔记】A User Simulator for Task-Completion Dialogues">
 <meta property="og:url" content="http://fyubang.com/2019/01/16/user-simulator/index.html">
@@ -91,7 +91,7 @@
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/2.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/3.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/4.png">
-<meta property="og:updated_time" content="2019-01-17T07:32:36.486Z">
+<meta property="og:updated_time" content="2019-01-17T08:41:50.584Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【论文笔记】A User Simulator for Task-Completion Dialogues">
 <meta name="twitter:description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
@@ -352,8 +352,19 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/bot/" itemprop="url" rel="index">
-                    <span itemprop="name">bot</span>
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/Bot/" itemprop="url" rel="index">
+                    <span itemprop="name">Bot</span>
                   </a>
                 </span>
 
@@ -403,8 +414,8 @@
 <p>====&gt;Bot（agent）先用simulator去训练，搞定了simulator就可以上线，持续online learning</p>
 <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction:"></a>Introduction:</h2><p>对话系统一般如 Figure 1. 所示。Dialongue Policy (DP)是一个任务型bot的核心。</p>
 <p>一般来说传统的Dialogue Policy（DP）使用规则编程的，但有缺点：</p>
+<p>对于复杂系统，难以设计</p>
 <ol>
-<li>对于复杂系统，难以设计</li>
 <li>最优的policy也会变化，不好维护。<br>因此，一般用强化学习训练DP。</li>
 </ol>
 <h3 id="为啥要user-simulator"><a href="#为啥要user-simulator" class="headerlink" title="为啥要user simulator ?"></a>为啥要user simulator ?</h3><ol>
@@ -485,7 +496,7 @@
 <p>包含user goal的改变（已做）<br>实现Model-based 的simulator，优点是泛化性能好，缺点是1. 需要大量数据， 2. 万一有漏洞，RL agent 会抓住这个漏洞，假假的成功，你以为success了，其实都是RL agent抓住了loophole给你的假象。</p>
 <h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>（根据《Agenda-Based User Simulation for bootstrapping a POMDP Dialogue System》by J. Schatzmann）</p>
 <ol>
-<li>语义层的 User Simulation<br>人机对话可以看成是状态转移（state transition）和对话行为（Dialog）的序列：用户根据状态 S (或加上机器人的 $a_m$，第一轮可能没有$a_m$)，采取行动 $a_u$, 把状态转移到$S’$。收到agent行动 $a_m$，再根据 $S’$ ，再把状态转移到 $S’’$。<br>这个user行为可以被分解为三个模型：$P(a_u|S)$ 行为选择，$P(S’|a_u, S)$ 状态转移-用户行为，$P(S’’|a_m,S’)$ 状态转移-系统行为。</li>
+<li>语义层的 User Simulation<br>人机对话可以看成是状态转移（state transition）和对话行为（Dialog）的序列：用户根据状态 S (或加上机器人的 $a_m$，第一轮可能没有$a_m$)，采取行动 $a_u$, 把状态转移到$S’$。收到agent行动 $a_m$，再根据 $S’$ ，再把状态转移到 $S’’$。<br>这个user行为可以被分解为三个模型：$P(a_u|S)$ 行为选择，$P(S’|a_u, S)$ 状态转移（用户行为），$P(S’’|a_m,S’)$ 状态转移（系统行为）。</li>
 <li>基于Goal和Agent的状态表示<br>用户状态（User State）由用户目标（Goal）及议程（Agenda）构成。</li>
 </ol>
 <img src="/2019/01/16/user-simulator/2.png">
@@ -512,11 +523,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/chatbot/" rel="tag"># chatbot</a>
+            <a href="/tags/Reinforcement-Learning/" rel="tag"># Reinforcement Learning</a>
           
-            <a href="/tags/simulator/" rel="tag"># simulator</a>
+            <a href="/tags/User-Simulator/" rel="tag"># User Simulator</a>
           
-            <a href="/tags/reinforcement-learning/" rel="tag"># reinforcement learning</a>
+            <a href="/tags/Chatbot/" rel="tag"># Chatbot</a>
           
         </div>
       
@@ -625,7 +636,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -636,7 +647,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
