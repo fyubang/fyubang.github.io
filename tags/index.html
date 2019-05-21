@@ -298,10 +298,10 @@
         
           <div class="tag-cloud">
             <div class="tag-cloud-title">
-                6 tags in total
+                9 tags in total
             </div>
             <div class="tag-cloud-tags">
-              <a href="/tags/Attention/" style="font-size: 12px; color: #ccc">Attention</a> <a href="/tags/Chatbot/" style="font-size: 12px; color: #ccc">Chatbot</a> <a href="/tags/NLP/" style="font-size: 12px; color: #ccc">NLP</a> <a href="/tags/Reinforcement-Learning/" style="font-size: 12px; color: #ccc">Reinforcement Learning</a> <a href="/tags/Transformer/" style="font-size: 12px; color: #ccc">Transformer</a> <a href="/tags/User-Simulator/" style="font-size: 12px; color: #ccc">User Simulator</a>
+              <a href="/tags/Attention/" style="font-size: 12px; color: #ccc">Attention</a> <a href="/tags/Chatbot/" style="font-size: 12px; color: #ccc">Chatbot</a> <a href="/tags/NLP/" style="font-size: 12px; color: #ccc">NLP</a> <a href="/tags/Reinforcement-Learning/" style="font-size: 12px; color: #ccc">Reinforcement Learning</a> <a href="/tags/Transformer/" style="font-size: 12px; color: #ccc">Transformer</a> <a href="/tags/User-Simulator/" style="font-size: 12px; color: #ccc">User Simulator</a> <a href="/tags/三元组/" style="font-size: 12px; color: #ccc">三元组</a> <a href="/tags/信息抽取/" style="font-size: 12px; color: #ccc">信息抽取</a> <a href="/tags/比赛/" style="font-size: 12px; color: #ccc">比赛</a>
             </div>
           </div>
         
@@ -321,6 +321,9 @@
 
 
           
+
+  
+    <div id="gitalk-container"></div>
 
   
 
@@ -361,7 +364,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -372,7 +375,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -383,7 +386,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -582,6 +585,32 @@
 
 
 
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0efa076437b16d55154d',
+          clientSecret: 'b6441808c991871623e6e8666300230ab321a6c1',
+          repo: 'gitalk',
+          owner: 'fyubang',
+          admin: ['fyubang'],
+          id: location.pathname,
+          labels: ['Gitalk'],
+          perPage: 15,
+          pagerDirection: 'last',
+          createIssueManually: true,
+          distractionFreeMode: false
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+.gt-container a{border-bottom: none;}
 
 
   
