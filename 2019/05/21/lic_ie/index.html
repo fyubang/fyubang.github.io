@@ -82,15 +82,16 @@
 <meta name="description" content="瓦砾最近参加了百度的信息抽取比赛，收获颇多，所以借由这个契机，在这给大家分享一下有监督信息抽取的一些方案。 信息抽取指的是从自然语言文本中抽取出结构化的信息知识，以便于存储、管理及使用，一般用三元组的方式来表示这种结构化的知识。由于一段文本往往包含了多个三元组，所以信息抽取任务可以理解成从一段自然文本输出一个有向图（节点为实体，边为关系）的过程。 信息抽取是构建知识图谱的基础，同时也能服务于检索，">
 <meta name="keywords" content="比赛,信息抽取,三元组">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【比赛】有监督的三元组抽取">
+<meta property="og:title" content="【比赛】百度2019信息抽取比赛（有监督的三元组抽取）">
 <meta property="og:url" content="http://fyubang.com/2019/05/21/lic_ie/index.html">
-<meta property="og:site_name" content="瓦小砾">
+<meta property="og:site_name" content="瓦特兰蒂斯">
 <meta property="og:description" content="瓦砾最近参加了百度的信息抽取比赛，收获颇多，所以借由这个契机，在这给大家分享一下有监督信息抽取的一些方案。 信息抽取指的是从自然语言文本中抽取出结构化的信息知识，以便于存储、管理及使用，一般用三元组的方式来表示这种结构化的知识。由于一段文本往往包含了多个三元组，所以信息抽取任务可以理解成从一段自然文本输出一个有向图（节点为实体，边为关系）的过程。 信息抽取是构建知识图谱的基础，同时也能服务于检索，">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/05/21/lic_ie/schema.png">
-<meta property="og:updated_time" content="2019-05-21T09:04:33.936Z">
+<meta property="og:image" content="http://fyubang.com/2019/05/21/lic_ie/infobox.png">
+<meta property="og:updated_time" content="2019-05-23T05:12:45.217Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【比赛】有监督的三元组抽取">
+<meta name="twitter:title" content="【比赛】百度2019信息抽取比赛（有监督的三元组抽取）">
 <meta name="twitter:description" content="瓦砾最近参加了百度的信息抽取比赛，收获颇多，所以借由这个契机，在这给大家分享一下有监督信息抽取的一些方案。 信息抽取指的是从自然语言文本中抽取出结构化的信息知识，以便于存储、管理及使用，一般用三元组的方式来表示这种结构化的知识。由于一段文本往往包含了多个三元组，所以信息抽取任务可以理解成从一段自然文本输出一个有向图（节点为实体，边为关系）的过程。 信息抽取是构建知识图谱的基础，同时也能服务于检索，">
 <meta name="twitter:image" content="http://fyubang.com/2019/05/21/lic_ie/schema.png">
 
@@ -128,7 +129,7 @@
 
 
 
-  <title>【比赛】有监督的三元组抽取 | 瓦小砾</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>【比赛】百度2019信息抽取比赛（有监督的三元组抽取） | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -158,7 +159,7 @@
     <div class="custom-logo-site-title">
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">瓦小砾</span>
+        <span class="site-title">瓦特兰蒂斯</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -300,13 +301,13 @@
     <link itemprop="mainEntityOfPage" href="http://fyubang.com/2019/05/21/lic_ie/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="瓦小砾">
+      <meta itemprop="name" content="AKA瓦砾">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
     <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="瓦小砾">
+      <meta itemprop="name" content="瓦特兰蒂斯">
     </span>
 
     
@@ -314,7 +315,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">【比赛】有监督的三元组抽取</h1>
+          <h1 class="post-title" itemprop="name headline">【比赛】百度2019信息抽取比赛（有监督的三元组抽取）</h1>
         
 
         <div class="post-meta">
@@ -420,15 +421,44 @@
 </blockquote>
 <p>举例：</p>
 <p>输入：《鬼影实录2》是托德·威廉姆斯执导，布赖恩·波兰德主演的恐怖片。</p>
-<p>输出：(‘鬼影实录2’, ‘主演’, ‘布赖恩·波兰德’) (‘鬼影实录2’, ‘导演’, ‘托德·威廉姆斯’)</p>
+<p>输出：（’鬼影实录2’, ‘主演’, ‘布赖恩·波兰德’） （’鬼影实录2’, ‘导演’, ‘托德·威廉姆斯’）</p>
 <h2 id="数据集介绍"><a href="#数据集介绍" class="headerlink" title="数据集介绍"></a>数据集介绍</h2><img src="/2019/05/21/lic_ie/schema.png">
-<h2 id="任务分析"><a href="#任务分析" class="headerlink" title="任务分析"></a>任务分析</h2><h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>监督的深度学习方法可以分为两类：</p>
+<p>50个schema的形式如图，需要注意的是，50个schema中有一个【成立日期】关系存在【机构】和【企业】两个主语类型，后期官方合并了这两个，所以其实是49个schema。</p>
+<h2 id="任务分析"><a href="#任务分析" class="headerlink" title="任务分析"></a>任务分析</h2><p>与一般的单句单三元组不同，该数据集每个样本有近一半是多三元组的。另外，这次的数据集主要来源于百度百科的infobox，所以本数据集的最大的特点是单核心词，多属性宾语。依旧举个栗子：</p>
+<p>输入文本：</p>
+<blockquote>
+<p>周杰伦（Jay Chou），1979年1月18日出生于<a href="https://baike.baidu.com/item/%E5%8F%B0%E6%B9%BE%E7%9C%81/761219" target="_blank" rel="noopener">台湾省</a>新北市，毕业于<a href="https://baike.baidu.com/item/%E6%B7%A1%E6%B1%9F%E4%B8%AD%E5%AD%A6/5340877" target="_blank" rel="noopener">淡江中学</a>，中国台湾流行乐男歌手、音乐人、演员、导演、编剧等。</p>
+</blockquote>
+<p>Infobox如下：</p>
+<img src="/2019/05/21/lic_ie/infobox.png">
+<p>输出为三元组即为：</p>
+<p>（周杰伦，出生日期，1979年1月18日）</p>
+<p>（周杰伦，出生地，台湾省新北市）</p>
+<p>（周杰伦，毕业院校，淡江中学）</p>
+<p>数据集中90%的数据都是一对一，或是这种一对多的形式。剩下的10%的数据相对就比较复杂了，可以理解成是一个有向图，其中，节点为文本中的实体，边为50个schema中的关系。</p>
+<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><p>监督的深度学习方法可以分为两类：</p>
 <ul>
 <li>Pipeline：把实体识别和关系分类作为两个完全独立的过程，不会相互影响，关系的识别依赖于实体识别的效果。</li>
 <li>Joint Model：实体识别和关系分类的过程融合在一个模型里。</li>
 </ul>
-<h3 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h3><p>一开始坐这个比赛的时候</p>
-<h3 id="Joint-Model"><a href="#Joint-Model" class="headerlink" title="Joint Model"></a>Joint Model</h3>
+<h3 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h3><p>刚接触这个比赛的时候，第一直觉是分成实体识别（NER）和关系抽取（RE）两个任务做。看了一些论文和综述，确实最早都是这么做的，但很奇怪的是，之前的研究似乎都想当然地当成了两个独立的问题做，在已知NER结果的情况下做RE，而且大多并没有考虑多三元组的情况，所以对我们的这个任务帮助不大。这里不花太多的篇幅介绍。</p>
+<p>NER的做法相对简单成熟，这里不赘述，重点讲一下RE的问题定义。</p>
+<p>一般的做法是：假设主语宾语及其对应的类型已经找到，和句子一起输入到模型中，输出这两个输入实体之间的关系，实际上是做了个多标签分类（考虑到两个实体可能有多种关系），另外加一个【Nan】表示无关系。</p>
+<p>这种Pipeline的方案显然有两个问题：</p>
+<ol>
+<li>分步来做，会不可避免的引起 Error Propagation。</li>
+<li>NER抽取出多个结果时，如何组合这些结果成对输入的问题：假设抽到了n个实体，主语宾语允许重叠的话，理论上需要尝试 $n^2​$ 个组合，不仅inference的时候会造成极大的计算成本，而且也会影响结果表现。</li>
+<li>考虑到上面inference时候需要遍历组合，如何构建Nan的负样本，也是个头疼的问题。</li>
+</ol>
+<p>最后，抱着不见黄河心不死的心态，我们团队还是实现了一版Pipeline的方案，最后的结果大概线上0.82左右，不算太差。但是，由于提升过于麻烦，加上衔接两个step的代码过于繁琐，最后还是弃了这个坑Orz。</p>
+<h3 id="Joint-Model"><a href="#Joint-Model" class="headerlink" title="Joint Model"></a>Joint Model</h3><p>下面讲一下三元组抽取的 Joint Model 解决方案综述。</p>
+<ol>
+<li>NovelTagging</li>
+<li>CopyRE</li>
+<li>Multihead</li>
+<li>sujianlin</li>
+</ol>
+
       
     </div>
     
@@ -471,6 +501,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/23/mt-dnn/" rel="prev" title="【论文笔记】MT-DNN">
+                【论文笔记】MT-DNN <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -539,7 +573,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
-              <p class="site-author-name" itemprop="name">瓦小砾</p>
+              <p class="site-author-name" itemprop="name">AKA瓦砾</p>
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
@@ -550,7 +584,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -561,7 +595,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -572,7 +606,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -629,7 +663,7 @@
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">瓦小砾</span>
+  <span class="author" itemprop="copyrightHolder">AKA瓦砾</span>
 
   
 </div>
