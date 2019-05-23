@@ -95,7 +95,7 @@
 <meta property="og:image" content="http://fyubang.com/2019/05/23/mt-dnn/result1.png">
 <meta property="og:image" content="http://fyubang.com/2019/05/23/mt-dnn/result2.png">
 <meta property="og:image" content="http://fyubang.com/2019/05/23/mt-dnn/result3.png">
-<meta property="og:updated_time" content="2019-05-23T16:53:53.892Z">
+<meta property="og:updated_time" content="2019-05-23T16:55:20.314Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【论文笔记】MT-DNN">
 <meta name="twitter:description" content="瓦砾想写这篇蛮久的，但由于之前一直忙着搞别的事情（好吧就是懒），一直拖着。刚好最近有用这个方面的需求，就又读了一遍论文和github上的一些实现。 其实作者（Xiaodong Liu）早在15年就写过一篇Multi-task相关的论文，只不过当时还没有bert这样优秀的预训练表达层，在bert横扫各大榜单之后，作者将之前多任务的概念和bert相结合，duang~就出了这一篇在GLUE、SNLI和S">
@@ -481,10 +481,10 @@
 <h3 id="GLUE结果"><a href="#GLUE结果" class="headerlink" title="GLUE结果"></a>GLUE结果</h3><p><img src="result1.png" title="神秘的结果"></p>
 <p>从Table 2 可以看出来，MT-DNN在每一项都超过了bert，而且数据越少的任务，提升越明显，对于QQP和MNLI来说，提升就没那么明显了。</p>
 <p>Table 3中的ST-DNN名字很玄乎，其实与bert不同的就是用了文中的复杂了一点的输出模块和loss的设计，比如SAN，learning2rank这些，单独训练各个任务。可见都是有一定程度的提升。所以MT-DNN相对于bert的提升其实来自于 multi task 和 special output module 两个部分。</p>
-<h3 id="SNLI-和-SciTail-结果"><a href="#SNLI-和-SciTail-结果" class="headerlink" title="SNLI 和 SciTail 结果"></a>SNLI 和 SciTail 结果</h3><p><img src="result2.png" width="40%" title="神秘的结果"></p>
+<h3 id="SNLI-和-SciTail-结果"><a href="#SNLI-和-SciTail-结果" class="headerlink" title="SNLI 和 SciTail 结果"></a>SNLI 和 SciTail 结果</h3><p><img src="result2.png" width="50%" title="神秘的结果"></p>
 <p>在得到mult-task训练后的ckpt后，用这个weights去fine tune新的任务，结果和GLUE的保持一致，都有提升，且小数据集任务的提升更明显。</p>
 <h3 id="Domain-适应性结果"><a href="#Domain-适应性结果" class="headerlink" title="Domain 适应性结果"></a>Domain 适应性结果</h3><p>这个结果比较有趣，笔者认为也是比较重要的点，MT-DNN得到的weights相对于bert的weights能在很少的数据下达到不错的效果，且数据越少，相对bert的提升就越大。(甚至23个训练样本就能达到82.1%的准确率，amazing啊。)</p>
-<p><img src="result3.png" width="30%" title="神秘的结果"></p>
+<p><img src="result3.png" width="50%" title="神秘的结果"></p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>打个总结：</p>
 <ol>
 <li><p>MT-DNN的优点：</p>
