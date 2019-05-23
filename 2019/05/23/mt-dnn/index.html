@@ -89,7 +89,7 @@
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/05/23/mt-dnn/model.png">
 <meta property="og:image" content="http://fyubang.com/2019/05/23/mt-dnn/pseudocode.png">
-<meta property="og:updated_time" content="2019-05-23T12:05:40.263Z">
+<meta property="og:updated_time" content="2019-05-23T12:18:04.930Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【论文笔记】MT-DNN">
 <meta name="twitter:description" content="瓦砾想写这篇蛮久的，但由于之前一直忙着搞别的事情（好吧就是懒），一直拖着。刚好最近有用这个方面的需求，就又读了一遍论文和github上的一些实现。 其实作者（Xiaodong Liu）早在15年就写过一篇Multi-task相关的论文，只不过当时还没有bert这样优秀的预训练表达层，在bert横扫各大榜单之后，作者将之前多任务的概念和bert相结合，duang~就出了这一篇在GLUE、SNLI和S">
@@ -430,7 +430,7 @@
 <img src="/2019/05/23/mt-dnn/model.png">
 <p>底层share了bert的表达层，输出层为每个任务设计了各自的输入形式和loss计算方式。</p>
 <h2 id="loss-计算"><a href="#loss-计算" class="headerlink" title="loss 计算"></a>loss 计算</h2><h2 id="训练过程"><a href="#训练过程" class="headerlink" title="训练过程"></a>训练过程</h2><p><img src="pseudocode.png" width="40%" title="神秘的伪代码"></p>
-
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><h3 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h3><h3 id="实现细节"><a href="#实现细节" class="headerlink" title="实现细节"></a>实现细节</h3><h3 id="GLUE结果"><a href="#GLUE结果" class="headerlink" title="GLUE结果"></a>GLUE结果</h3><h3 id="SNLI-和-SciTail-结果"><a href="#SNLI-和-SciTail-结果" class="headerlink" title="SNLI 和 SciTail 结果"></a>SNLI 和 SciTail 结果</h3><h3 id="Domain-适应性结果"><a href="#Domain-适应性结果" class="headerlink" title="Domain 适应性结果"></a>Domain 适应性结果</h3><h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2>
       
     </div>
     
@@ -607,7 +607,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Intuition"><span class="nav-number">1.</span> <span class="nav-text">Intuition</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Motivation"><span class="nav-number">2.</span> <span class="nav-text">Motivation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#几种任务"><span class="nav-number">3.</span> <span class="nav-text">几种任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Model"><span class="nav-number">4.</span> <span class="nav-text">Model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#loss-计算"><span class="nav-number">5.</span> <span class="nav-text">loss 计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练过程"><span class="nav-number">6.</span> <span class="nav-text">训练过程</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Intuition"><span class="nav-number">1.</span> <span class="nav-text">Intuition</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Motivation"><span class="nav-number">2.</span> <span class="nav-text">Motivation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#几种任务"><span class="nav-number">3.</span> <span class="nav-text">几种任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Model"><span class="nav-number">4.</span> <span class="nav-text">Model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#loss-计算"><span class="nav-number">5.</span> <span class="nav-text">loss 计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练过程"><span class="nav-number">6.</span> <span class="nav-text">训练过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验"><span class="nav-number">7.</span> <span class="nav-text">实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据"><span class="nav-number">7.1.</span> <span class="nav-text">数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现细节"><span class="nav-number">7.2.</span> <span class="nav-text">实现细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GLUE结果"><span class="nav-number">7.3.</span> <span class="nav-text">GLUE结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SNLI-和-SciTail-结果"><span class="nav-number">7.4.</span> <span class="nav-text">SNLI 和 SciTail 结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Domain-适应性结果"><span class="nav-number">7.5.</span> <span class="nav-text">Domain 适应性结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">8.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
             
 
           </div>

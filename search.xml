@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[【论文笔记】MT-DNN]]></title>
     <url>%2F2019%2F05%2F23%2Fmt-dnn%2F</url>
-    <content type="text"><![CDATA[瓦砾想写这篇蛮久的，但由于之前一直忙着搞别的事情（好吧就是懒），一直拖着。刚好最近有用这个方面的需求，就又读了一遍论文和github上的一些实现。 其实作者（Xiaodong Liu）早在15年就写过一篇Multi-task相关的论文，只不过当时还没有bert这样优秀的预训练表达层，在bert横扫各大榜单之后，作者将之前多任务的概念和bert相结合，duang~就出了这一篇在GLUE、SNLI和SciTail创下新的SOTA的论文。 Intuition会滑雪的人，学滑冰要容易的多。（笔者试过，反过来不大成立，手动狗头） Motivation 监督学习需要大量监督数据，但正常情况下咱都是没有的。MTL（multi-task learning）可以提高low-resource任务的表现。 MTL能起到正则的作用，减轻模型对特定任务的过拟合。 bert之类的预训练模型充分利用了无监督数据。MTL作为补充，进一步利用了out-domain的监督数据。 几种任务 单句分类（Single-Sentence Classification）：CoLA，SST-2 句子相似度（Text Similarity）：STS-B 对句分类（Pairwise Text Classification）：RTE，MNLI（entail，contradict，neural）；QQP，MRPC（是否语义相同） 相关性排序（Relevance Ranking）：QNLI Model模型很简单，看一下这个图： 底层share了bert的表达层，输出层为每个任务设计了各自的输入形式和loss计算方式。 loss 计算训练过程]]></content>
+    <content type="text"><![CDATA[瓦砾想写这篇蛮久的，但由于之前一直忙着搞别的事情（好吧就是懒），一直拖着。刚好最近有用这个方面的需求，就又读了一遍论文和github上的一些实现。 其实作者（Xiaodong Liu）早在15年就写过一篇Multi-task相关的论文，只不过当时还没有bert这样优秀的预训练表达层，在bert横扫各大榜单之后，作者将之前多任务的概念和bert相结合，duang~就出了这一篇在GLUE、SNLI和SciTail创下新的SOTA的论文。 Intuition会滑雪的人，学滑冰要容易的多。（笔者试过，反过来不大成立，手动狗头） Motivation 监督学习需要大量监督数据，但正常情况下咱都是没有的。MTL（multi-task learning）可以提高low-resource任务的表现。 MTL能起到正则的作用，减轻模型对特定任务的过拟合。 bert之类的预训练模型充分利用了无监督数据。MTL作为补充，进一步利用了out-domain的监督数据。 几种任务 单句分类（Single-Sentence Classification）：CoLA，SST-2 句子相似度（Text Similarity）：STS-B 对句分类（Pairwise Text Classification）：RTE，MNLI（entail，contradict，neural）；QQP，MRPC（是否语义相同） 相关性排序（Relevance Ranking）：QNLI Model模型很简单，看一下这个图： 底层share了bert的表达层，输出层为每个任务设计了各自的输入形式和loss计算方式。 loss 计算训练过程 实验数据实现细节GLUE结果SNLI 和 SciTail 结果Domain 适应性结果Conclusion]]></content>
       <categories>
         <category>NLP</category>
         <category>论文笔记</category>
@@ -61,8 +61,8 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[序]]></title>
+    <title><![CDATA[前言]]></title>
     <url>%2F2019%2F01%2F11%2Ffirst-post%2F</url>
-    <content type="text"><![CDATA[欢迎来到瓦砾的窝。不定期更新NLP的干货，刚开始写博客，请大家多多指教。给大家看一张俺和媳妇的美照：]]></content>
+    <content type="text"><![CDATA[欢迎来到瓦特兰蒂斯。笔者是一个相信亚特兰蒂斯和外星文明存在的不正常人类—aka瓦砾。 不定期更新NLP的干货，刚开始写博客，希望自己能坚持下去，请大家多多指教。 给大家看一张俺和媳妇的美照：]]></content>
   </entry>
 </search>
