@@ -82,15 +82,15 @@
 <meta name="description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
 <meta name="keywords" content="torch,ema">
 <meta property="og:type" content="article">
-<meta property="og:title" content="EMA的Pytorch实现">
+<meta property="og:title" content="【优化技巧】指数移动平均（EMA）的原理及PyTorch实现">
 <meta property="og:url" content="http://fyubang.com/2019/06/01/ema/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
 <meta property="og:description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/06/01/ema/bias.png">
-<meta property="og:updated_time" content="2019-06-11T07:37:45.535Z">
+<meta property="og:updated_time" content="2019-06-11T07:40:59.197Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="EMA的Pytorch实现">
+<meta name="twitter:title" content="【优化技巧】指数移动平均（EMA）的原理及PyTorch实现">
 <meta name="twitter:description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
 <meta name="twitter:image" content="http://fyubang.com/2019/06/01/ema/bias.png">
 
@@ -128,7 +128,7 @@
 
 
 
-  <title>EMA的Pytorch实现 | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>【优化技巧】指数移动平均（EMA）的原理及PyTorch实现 | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -314,7 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">EMA的Pytorch实现</h1>
+          <h1 class="post-title" itemprop="name headline">【优化技巧】指数移动平均（EMA）的原理及PyTorch实现</h1>
         
 
         <div class="post-meta">
@@ -415,7 +415,7 @@
 <h2 id="EMA的偏差修正"><a href="#EMA的偏差修正" class="headerlink" title="EMA的偏差修正"></a>EMA的偏差修正</h2><p>实际使用中，由于$v_0=0$，如果步数较少，ema的计算结果会有一定偏差。</p>
 <p><img src="bias.png" width="50%"></p>
 <p>理想的平均是绿色的，因为初始值为0，所以得到的是紫色的。</p>
-<p>因此可以加一个偏差修正（bias correction）。<br>$$<br>v_t = \frac{v_t}{1-\beta^t}<br>$$<br>显然，当t很大是，修正近似于1。</p>
+<p>因此可以加一个偏差修正（bias correction）。<br>$$<br>v_t = \frac{v_t}{1-\beta^t}<br>$$<br>显然，当t很大时，修正近似于1。</p>
 <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
 <li><a href="https://blog.csdn.net/mikelkl/article/details/85227053" target="_blank" rel="noopener">机器学习模型性能提升技巧：指数加权平均（EMA）</a></li>
 <li><a href="http://www.ashukumar27.io/exponentially-weighted-average/" target="_blank" rel="noopener">Exponential Weighted Average for Deep Neutal Networks</a></li>
