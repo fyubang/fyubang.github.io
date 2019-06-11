@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="torch,ema,">
 
 
 
@@ -79,17 +79,20 @@
 
 
 
-<meta name="description" content="欢迎来到瓦特兰蒂斯。笔者是一个相信亚特兰蒂斯曾经存在的五岁抬头团—aka瓦砾。 瓦砾这个名字来自皮克斯的电影WALL-E，另一方面的意思是希望自己能像瓦砾一样，放低自己，好好学习，天天向上。 喜欢游泳，健身，吉他，奶茶，嘻哈。 曾经住过盐城，上海，南京，新竹，巴黎，现居深圳，一个空气中都透露着代码的气息的城市，喜欢吃辣，梦想是造出贾维斯那样的人工智能（大误：其实是开一家民宿和一家奶茶店）。 相信那">
-<meta property="og:type" content="website">
-<meta property="og:title" content="About Me">
-<meta property="og:url" content="http://fyubang.com/about/index.html">
+<meta name="description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
+<meta name="keywords" content="torch,ema">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EMA的Pytorch实现">
+<meta property="og:url" content="http://fyubang.com/2019/06/01/ema/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
-<meta property="og:description" content="欢迎来到瓦特兰蒂斯。笔者是一个相信亚特兰蒂斯曾经存在的五岁抬头团—aka瓦砾。 瓦砾这个名字来自皮克斯的电影WALL-E，另一方面的意思是希望自己能像瓦砾一样，放低自己，好好学习，天天向上。 喜欢游泳，健身，吉他，奶茶，嘻哈。 曾经住过盐城，上海，南京，新竹，巴黎，现居深圳，一个空气中都透露着代码的气息的城市，喜欢吃辣，梦想是造出贾维斯那样的人工智能（大误：其实是开一家民宿和一家奶茶店）。 相信那">
+<meta property="og:description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-05-23T12:32:30.141Z">
+<meta property="og:image" content="http://fyubang.com/2019/06/01/ema/bias.png">
+<meta property="og:updated_time" content="2019-06-11T07:37:45.535Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="About Me">
-<meta name="twitter:description" content="欢迎来到瓦特兰蒂斯。笔者是一个相信亚特兰蒂斯曾经存在的五岁抬头团—aka瓦砾。 瓦砾这个名字来自皮克斯的电影WALL-E，另一方面的意思是希望自己能像瓦砾一样，放低自己，好好学习，天天向上。 喜欢游泳，健身，吉他，奶茶，嘻哈。 曾经住过盐城，上海，南京，新竹，巴黎，现居深圳，一个空气中都透露着代码的气息的城市，喜欢吃辣，梦想是造出贾维斯那样的人工智能（大误：其实是开一家民宿和一家奶茶店）。 相信那">
+<meta name="twitter:title" content="EMA的Pytorch实现">
+<meta name="twitter:description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
+<meta name="twitter:image" content="http://fyubang.com/2019/06/01/ema/bias.png">
 
 
 
@@ -119,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://fyubang.com/about/">
+  <link rel="canonical" href="http://fyubang.com/2019/06/01/ema/">
 
 
 
 
 
-  <title>About Me | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>EMA的Pytorch实现 | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -282,39 +285,201 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fyubang.com/2019/06/01/ema/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AKA瓦砾">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="瓦特兰蒂斯">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-	<h1 class="post-title" itemprop="name headline">About Me</h1>
-
-
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <p>欢迎来到瓦特兰蒂斯。笔者是一个相信亚特兰蒂斯曾经存在的五岁抬头团—aka瓦砾。</p>
-<p>瓦砾这个名字来自皮克斯的电影WALL-E，另一方面的意思是希望自己能像瓦砾一样，放低自己，好好学习，天天向上。</p>
-<p>喜欢游泳，健身，吉他，奶茶，嘻哈。</p>
-<p>曾经住过盐城，上海，南京，新竹，巴黎，现居深圳，一个空气中都透露着代码的气息的城市，喜欢吃辣，梦想是造出贾维斯那样的人工智能（大误：其实是开一家民宿和一家奶茶店）。</p>
-<p>相信那句“NLP是人工智能皇冠上的明珠”，希望自己也能在大大的洪流中，贡献自己的一点力量。当然也想认识更多的朋友👬。</p>
-<p>不定期更新一些NLP知识的总结。</p>
-
+          <h1 class="post-title" itemprop="name headline">EMA的Pytorch实现</h1>
         
-      </div>
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-01T17:34:33+08:00">
+                2019-06-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Trick/" itemprop="url" rel="index">
+                    <span itemprop="name">Trick</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Trick/代码实现/" itemprop="url" rel="index">
+                    <span itemprop="name">代码实现</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <p>在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。</p>
+<p>今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。</p>
+<h2 id="EMA的定义"><a href="#EMA的定义" class="headerlink" title="EMA的定义"></a>EMA的定义</h2><p>指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。</p>
+<p>假设我们有n个数据：$[\theta_1, \theta_2, …, \theta_n]$</p>
+<ul>
+<li>普通的平均数：$\overline{v}=\frac{1}{n}\sum_{i=1}^n \theta_i$</li>
+<li>EMA：$v_t = \beta\cdot v_{t-1} + (1-\beta)\cdot \theta_t$，其中，$ v_t$表示前$t$条的平均值 ($v_0=0$)，$\beta$ 是加权权重值 (一般设为0.9-0.999)。</li>
+</ul>
+<p>Andrew Ng在<a href="http://mooc.study.163.com/learn/2001281003?tid=2001391036#/learn/content?type=detail&amp;id=2001702121&amp;cid=2001694301" target="_blank" rel="noopener">Course 2 Improving Deep Neural Networks</a>中讲到，EMA可以<strong>近似</strong>看成过去$1/(1-\beta)​$个时刻$v​$值的平均。</p>
+<p>普通的过去$n$时刻的平均是这样的：<br>$$<br>v_t =\frac{(n-1)\cdot v_{t-1}+\theta_t}{n}<br>$$<br>类比EMA，可以发现当$\beta=\frac{n-1}{n}$时，两式形式上相等。需要注意的是，两个平均并不是严格相等的，这里只是为了帮助理解。</p>
+<p>实际上，EMA计算时，过去$1/(1-\beta)​$个时刻之前的平均会decay到 $\frac{1}{e}​$ ，证明如下。</p>
+<p>如果将这里的$v_t$展开，可以得到：<br>$$<br>v_t = \alpha^n v_{t-n} + (1-\alpha)(\alpha^{n-1}\theta_{t-n+1}+ … +\alpha^0\theta_t)<br>$$<br>其中，$n=\frac{1}{1-\alpha}$，代入可以得到$\alpha^n=\alpha^{\frac{1}{1-\alpha}}\approx \frac{1}{e}$。</p>
+<h2 id="在深度学习的优化中的EMA"><a href="#在深度学习的优化中的EMA" class="headerlink" title="在深度学习的优化中的EMA"></a>在深度学习的优化中的EMA</h2><p>上面讲的是广义的ema定义和计算方法，特别的，在深度学习的优化过程中，$\theta_t$ 是t时刻的模型权重weights，$v_t$是t时刻的影子权重（shadow weights）。在梯度下降的过程中，会一直维护着这个影子权重，但是这个影子权重并不会参与训练。基本的假设是，模型权重在最后的n步内，会在实际的最优点处抖动，所以我们取最后n步的平均，能使得模型更加的鲁棒。</p>
+<h2 id="PyTorch实现"><a href="#PyTorch实现" class="headerlink" title="PyTorch实现"></a>PyTorch实现</h2><p>瓦砾看了网上的一些实现，使用起来都不是特别方便，所以自己写了一个。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EMA</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, model, decay)</span>:</span></span><br><span class="line">        self.model = model</span><br><span class="line">        self.decay = decay</span><br><span class="line">        self.shadow = &#123;&#125;</span><br><span class="line">        self.backup = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">register</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> name, param <span class="keyword">in</span> self.model.named_parameters():</span><br><span class="line">            <span class="keyword">if</span> param.requires_grad:</span><br><span class="line">                self.shadow[name] = param.data.clone()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">update</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> name, param <span class="keyword">in</span> self.model.named_parameters():</span><br><span class="line">            <span class="keyword">if</span> param.requires_grad:</span><br><span class="line">                <span class="keyword">assert</span> name <span class="keyword">in</span> self.shadow</span><br><span class="line">                new_average = (<span class="number">1.0</span> - self.decay) * param.data + self.decay * self.shadow[name]</span><br><span class="line">                self.shadow[name] = new_average.clone()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">apply_shadow</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> name, param <span class="keyword">in</span> self.model.named_parameters():</span><br><span class="line">            <span class="keyword">if</span> param.requires_grad:</span><br><span class="line">                <span class="keyword">assert</span> name <span class="keyword">in</span> self.shadow</span><br><span class="line">                self.backup[name] = param.data</span><br><span class="line">                param.data = self.shadow[name]</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">restore</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> name, param <span class="keyword">in</span> self.model.named_parameters():</span><br><span class="line">            <span class="keyword">if</span> param.requires_grad:</span><br><span class="line">                <span class="keyword">assert</span> name <span class="keyword">in</span> self.backup</span><br><span class="line">                param.data = self.backup[name]</span><br><span class="line">        self.backup = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化</span></span><br><span class="line">ema = EMA(model, <span class="number">0.999</span>)</span><br><span class="line">ema.register()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练过程中，更新完参数后，同步update shadow weights</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train</span><span class="params">()</span>:</span></span><br><span class="line">    optimizer.step()</span><br><span class="line">    ema.update()</span><br><span class="line"></span><br><span class="line"><span class="comment"># eval前，apply shadow weights；eval之后，恢复原来模型的参数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">evaluate</span><span class="params">()</span>:</span></span><br><span class="line">    ema.apply_shadow()</span><br><span class="line">    <span class="comment"># evaluate</span></span><br><span class="line">    ema.restore()</span><br></pre></td></tr></table></figure>
+<h2 id="EMA的偏差修正"><a href="#EMA的偏差修正" class="headerlink" title="EMA的偏差修正"></a>EMA的偏差修正</h2><p>实际使用中，由于$v_0=0$，如果步数较少，ema的计算结果会有一定偏差。</p>
+<p><img src="bias.png" width="50%"></p>
+<p>理想的平均是绿色的，因为初始值为0，所以得到的是紫色的。</p>
+<p>因此可以加一个偏差修正（bias correction）。<br>$$<br>v_t = \frac{v_t}{1-\beta^t}<br>$$<br>显然，当t很大是，修正近似于1。</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a href="https://blog.csdn.net/mikelkl/article/details/85227053" target="_blank" rel="noopener">机器学习模型性能提升技巧：指数加权平均（EMA）</a></li>
+<li><a href="http://www.ashukumar27.io/exponentially-weighted-average/" target="_blank" rel="noopener">Exponential Weighted Average for Deep Neutal Networks</a></li>
+</ol>
+
       
     </div>
     
     
     
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/torch/" rel="tag"># torch</a>
+          
+            <a href="/tags/ema/" rel="tag"># ema</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/23/mt-dnn/" rel="next" title="【论文笔记】MT-DNN">
+                <i class="fa fa-chevron-left"></i> 【论文笔记】MT-DNN
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -350,8 +515,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -411,6 +585,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#EMA的定义"><span class="nav-number">1.</span> <span class="nav-text">EMA的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在深度学习的优化中的EMA"><span class="nav-number">2.</span> <span class="nav-text">在深度学习的优化中的EMA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PyTorch实现"><span class="nav-number">3.</span> <span class="nav-text">PyTorch实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EMA的偏差修正"><span class="nav-number">4.</span> <span class="nav-text">EMA的偏差修正</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">5.</span> <span class="nav-text">References</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
