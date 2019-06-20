@@ -87,10 +87,12 @@
 <meta property="og:site_name" content="瓦特兰蒂斯">
 <meta property="og:description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-06-12T03:48:12.642Z">
+<meta property="og:image" content="http://fyubang.com/2019/06/01/ema/bias.png">
+<meta property="og:updated_time" content="2019-06-20T01:34:01.352Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【优化技巧】指数移动平均（EMA）的原理及PyTorch实现">
 <meta name="twitter:description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
+<meta name="twitter:image" content="http://fyubang.com/2019/06/01/ema/bias.png">
 
 
 
@@ -408,7 +410,7 @@
 <p>实际上，EMA计算时，过去$1/(1-\alpha)$个时刻之前的平均会decay到 $\frac{1}{e}$ ，证明如下。</p>
 <p>如果将这里的$v_t$展开，可以得到：<br>$$<br>v_t = \alpha^n v_{t-n} + (1-\alpha)(\alpha^{n-1}\theta_{t-n+1}+ … +\alpha^0\theta_t)<br>$$<br>其中，$n=\frac{1}{1-\alpha}$，代入可以得到$\alpha^n=\alpha^{\frac{1}{1-\alpha}}\approx \frac{1}{e}$。</p>
 <h2 id="EMA的偏差修正"><a href="#EMA的偏差修正" class="headerlink" title="EMA的偏差修正"></a>EMA的偏差修正</h2><p>实际使用中，如果令$v_0=0$，步数较少的情况下，ema的计算结果会有一定偏差。</p>
-<p><img src="" width="50%"></p>
+<p><img src="bias.png" width="50%"></p>
 <p>理想的平均是绿色的，因为初始值为0，所以得到的是紫色的。</p>
 <p>因此可以加一个偏差修正（bias correction）。<br>$$<br>v_t = \frac{v_t}{1-\alpha^t}<br>$$<br>显然，当t很大时，修正近似于1。</p>
 <h2 id="在深度学习的优化中的EMA"><a href="#在深度学习的优化中的EMA" class="headerlink" title="在深度学习的优化中的EMA"></a>在深度学习的优化中的EMA</h2><p>上面讲的是广义的ema定义和计算方法，特别的，在深度学习的优化过程中，$\theta_t$ 是t时刻的模型权重weights，$v_t$是t时刻的影子权重（shadow weights）。在梯度下降的过程中，会一直维护着这个影子权重，但是这个影子权重并不会参与训练。基本的假设是，模型权重在最后的n步内，会在实际的最优点处抖动，所以我们取最后n步的平均，能使得模型更加的鲁棒。</p>
