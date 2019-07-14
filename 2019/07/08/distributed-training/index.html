@@ -82,7 +82,7 @@
 <meta name="description" content="瓦砾由于最近bert-large用的比较多，踩了很多分布式训练的坑，加上在TensorFlow和PyTorch之间更换，算是熟悉了一下各类框架的分布式训练接口，由于集中在一起讲可能比较乱，笔者准备分三到四篇来讲一下深度学习的分布式训练。这一篇先讲一下“分布式训练的类型与算法”。 分布式训练的需求和重要性不需要多说，随着GPT、BERT、xlnet这些预训练模型的出现，普通的16G的显存已经不足以支">
 <meta name="keywords" content="分布式训练,多卡训练,horovod">
 <meta property="og:type" content="article">
-<meta property="og:title" content="分布式训练的正确打开方式（一）">
+<meta property="og:title" content="【分布式训练】分布式训练的正确打开方式（一）：理论基础">
 <meta property="og:url" content="http://fyubang.com/2019/07/08/distributed-training/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
 <meta property="og:description" content="瓦砾由于最近bert-large用的比较多，踩了很多分布式训练的坑，加上在TensorFlow和PyTorch之间更换，算是熟悉了一下各类框架的分布式训练接口，由于集中在一起讲可能比较乱，笔者准备分三到四篇来讲一下深度学习的分布式训练。这一篇先讲一下“分布式训练的类型与算法”。 分布式训练的需求和重要性不需要多说，随着GPT、BERT、xlnet这些预训练模型的出现，普通的16G的显存已经不足以支">
@@ -92,9 +92,9 @@
 <meta property="og:image" content="http://fyubang.com/2019/07/08/distributed-training/asyn_dp.jpg">
 <meta property="og:image" content="http://fyubang.com/2019/07/08/distributed-training/ps.png">
 <meta property="og:image" content="http://fyubang.com/2019/07/08/distributed-training/ringallreduce.png">
-<meta property="og:updated_time" content="2019-07-08T13:52:16.746Z">
+<meta property="og:updated_time" content="2019-07-13T09:42:24.543Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="分布式训练的正确打开方式（一）">
+<meta name="twitter:title" content="【分布式训练】分布式训练的正确打开方式（一）：理论基础">
 <meta name="twitter:description" content="瓦砾由于最近bert-large用的比较多，踩了很多分布式训练的坑，加上在TensorFlow和PyTorch之间更换，算是熟悉了一下各类框架的分布式训练接口，由于集中在一起讲可能比较乱，笔者准备分三到四篇来讲一下深度学习的分布式训练。这一篇先讲一下“分布式训练的类型与算法”。 分布式训练的需求和重要性不需要多说，随着GPT、BERT、xlnet这些预训练模型的出现，普通的16G的显存已经不足以支">
 <meta name="twitter:image" content="http://fyubang.com/2019/07/08/distributed-training/para.png">
 
@@ -132,7 +132,7 @@
 
 
 
-  <title>分布式训练的正确打开方式（一） | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>【分布式训练】分布式训练的正确打开方式（一）：理论基础 | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -318,7 +318,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">分布式训练的正确打开方式（一）</h1>
+          <h1 class="post-title" itemprop="name headline">【分布式训练】分布式训练的正确打开方式（一）：理论基础</h1>
         
 
         <div class="post-meta">
@@ -340,6 +340,39 @@
             
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/训练方法/" itemprop="url" rel="index">
+                    <span itemprop="name">训练方法</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/训练方法/分布式训练/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式训练</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -473,6 +506,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/07/14/distributed-training2/" rel="prev" title="【分布式训练】分布式训练的正确打开方式（二）：TensorFlow">
+                【分布式训练】分布式训练的正确打开方式（二）：TensorFlow <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -551,7 +588,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -562,7 +599,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -573,7 +610,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
