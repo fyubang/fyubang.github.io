@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天讲一个强大的第三方插件：Horovod。 Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，兼容TensorFlow、Keras和PyTorch机器学习框架。使用Ring-AllReduce算法，对比Paramet">
+<meta name="description" content="讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天瓦砾讲一个强大的第三方插件：Horovod。 Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，有以下几个特点：  兼容TensorFlow、Keras和PyTorch机器学习框架。 使用Ring-AllReduc">
 <meta name="keywords" content="分布式训练,多卡训练,Horovod">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【分布式训练】单机多卡的正确打开方式（四）：Horovod">
 <meta property="og:url" content="http://fyubang.com/2019/07/26/distributed-training4/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
-<meta property="og:description" content="讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天讲一个强大的第三方插件：Horovod。 Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，兼容TensorFlow、Keras和PyTorch机器学习框架。使用Ring-AllReduce算法，对比Paramet">
+<meta property="og:description" content="讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天瓦砾讲一个强大的第三方插件：Horovod。 Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，有以下几个特点：  兼容TensorFlow、Keras和PyTorch机器学习框架。 使用Ring-AllReduc">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-07-26T07:43:40.549Z">
+<meta property="og:updated_time" content="2019-07-26T07:45:56.686Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【分布式训练】单机多卡的正确打开方式（四）：Horovod">
-<meta name="twitter:description" content="讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天讲一个强大的第三方插件：Horovod。 Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，兼容TensorFlow、Keras和PyTorch机器学习框架。使用Ring-AllReduce算法，对比Paramet">
+<meta name="twitter:description" content="讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天瓦砾讲一个强大的第三方插件：Horovod。 Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，有以下几个特点：  兼容TensorFlow、Keras和PyTorch机器学习框架。 使用Ring-AllReduc">
 
 
 
@@ -400,8 +400,13 @@
       
 
       
-        <p>讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天讲一个强大的第三方插件：Horovod。</p>
-<p>Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，兼容TensorFlow、Keras和PyTorch机器学习框架。使用Ring-AllReduce算法，对比Parameter Server算法，有着无需等待，负载均衡的优点。实现简单，五分钟包教包会。</p>
+        <p>讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天瓦砾讲一个强大的第三方插件：Horovod。</p>
+<p>Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，有以下几个特点：</p>
+<ol>
+<li>兼容TensorFlow、Keras和PyTorch机器学习框架。</li>
+<li>使用Ring-AllReduce算法，对比Parameter Server算法，有着无需等待，负载均衡的优点。</li>
+<li>实现简单，五分钟包教包会。（划重点）</li>
+</ol>
 <p>Uber官方在git上给了很详细的例子： <a href="https://github.com/horovod/horovod/tree/master/examples" target="_blank" rel="noopener">https://github.com/horovod/horovod/tree/master/examples</a>，所以这里只简单讲一下大概的使用方法：</p>
 <h2 id="TensorFlow"><a href="#TensorFlow" class="headerlink" title="TensorFlow"></a>TensorFlow</h2><p>以TF的Custom Training Loop API为例：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">import</span> horovod.tensorflow <span class="keyword">as</span> hvd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 初始化horovod</span></span><br><span class="line">hvd.init()</span><br><span class="line"><span class="comment"># 2. 给当前进程分配对应的gpu，local_rank()返回的是当前是第几个进程</span></span><br><span class="line">config = tf.ConfigProto()</span><br><span class="line">config.gpu_options.visible_device_list = str(hvd.local_rank())</span><br><span class="line"><span class="comment"># 3. Scale学习率，封装优化器</span></span><br><span class="line">opt = tf.train.AdagradOptimizer(<span class="number">0.01</span> * hvd.size())</span><br><span class="line">opt = hvd.DistributedOptimizer(opt)</span><br><span class="line"><span class="comment"># 4. 定义初始化的时候广播参数的hook，这个是为了在一开始的时候同步各个gpu之间的参数</span></span><br><span class="line">hooks = [hvd.BroadcastGlobalVariablesHook(<span class="number">0</span>)]</span><br><span class="line"><span class="comment"># 搭建model，定义loss</span></span><br><span class="line">loss = ...</span><br><span class="line">train_op = opt.minimize(loss)</span><br><span class="line"><span class="comment"># 5. 只保存一份ckpt就行</span></span><br><span class="line">checkpoint_dir = <span class="string">'/tmp/train_logs'</span> <span class="keyword">if</span> hvd.rank() == <span class="number">0</span> <span class="keyword">else</span> <span class="keyword">None</span></span><br><span class="line"><span class="comment"># 7. 用MonitoredTrainingSession实现初始化，读写ckpt</span></span><br><span class="line"><span class="keyword">with</span> tf.train.MonitoredTrainingSession(checkpoint_dir=checkpoint_dir,</span><br><span class="line">                                       config=config,</span><br><span class="line">                                       hooks=hooks) <span class="keyword">as</span> mon_sess:</span><br><span class="line">  <span class="keyword">while</span> <span class="keyword">not</span> mon_sess.should_stop():</span><br><span class="line">    <span class="comment"># Perform synchronous training.</span></span><br><span class="line">    mon_sess.run(train_op)</span><br></pre></td></tr></table></figure></p>
 <p>具体的代码看<code>tensorflow_mnist.py</code>：<a href="https://github.com/horovod/horovod/blob/master/examples/tensorflow_mnist.py" target="_blank" rel="noopener">https://github.com/horovod/horovod/blob/master/examples/tensorflow_mnist.py</a></p>
