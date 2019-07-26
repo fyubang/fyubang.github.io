@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="瓦砾上一篇讲了单机多卡分布式训练的一些入门介绍，后面几篇准备给大家讲讲TensorFlow、PyTorch框架下要怎么实现多卡训练。 这一篇就介绍一下TensorFlow上的分布式训练，尽管从传统的Custom Training Loops到Estimator再到Keras，TF的API换来换去让人猝不及防，但是由于种种原因，TensorFlow还是业务上最成熟的框架，所以Let’s还是do it">
+<meta name="description" content="瓦砾上一篇讲了单机多卡分布式训练的一些入门介绍，后面几篇准备给大家讲讲TensorFlow、PyTorch框架下要怎么实现多卡训练。 这一篇就介绍一下TensorFlow上的分布式训练，尽管从传统的Custom Training Loops到Estimator再到Keras，TF的API换来换去让人猝不及防、又爱又恨，但是由于种种原因，TensorFlow还是业务上最成熟的框架，所以Let’s还是">
 <meta name="keywords" content="分布式训练,多卡训练,TensorFlow">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【分布式训练】单机多卡的正确打开方式（二）：TensorFlow">
 <meta property="og:url" content="http://fyubang.com/2019/07/14/distributed-training2/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
-<meta property="og:description" content="瓦砾上一篇讲了单机多卡分布式训练的一些入门介绍，后面几篇准备给大家讲讲TensorFlow、PyTorch框架下要怎么实现多卡训练。 这一篇就介绍一下TensorFlow上的分布式训练，尽管从传统的Custom Training Loops到Estimator再到Keras，TF的API换来换去让人猝不及防，但是由于种种原因，TensorFlow还是业务上最成熟的框架，所以Let’s还是do it">
+<meta property="og:description" content="瓦砾上一篇讲了单机多卡分布式训练的一些入门介绍，后面几篇准备给大家讲讲TensorFlow、PyTorch框架下要怎么实现多卡训练。 这一篇就介绍一下TensorFlow上的分布式训练，尽管从传统的Custom Training Loops到Estimator再到Keras，TF的API换来换去让人猝不及防、又爱又恨，但是由于种种原因，TensorFlow还是业务上最成熟的框架，所以Let’s还是">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-07-23T02:50:28.758Z">
+<meta property="og:updated_time" content="2019-07-26T07:05:10.332Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【分布式训练】单机多卡的正确打开方式（二）：TensorFlow">
-<meta name="twitter:description" content="瓦砾上一篇讲了单机多卡分布式训练的一些入门介绍，后面几篇准备给大家讲讲TensorFlow、PyTorch框架下要怎么实现多卡训练。 这一篇就介绍一下TensorFlow上的分布式训练，尽管从传统的Custom Training Loops到Estimator再到Keras，TF的API换来换去让人猝不及防，但是由于种种原因，TensorFlow还是业务上最成熟的框架，所以Let’s还是do it">
+<meta name="twitter:description" content="瓦砾上一篇讲了单机多卡分布式训练的一些入门介绍，后面几篇准备给大家讲讲TensorFlow、PyTorch框架下要怎么实现多卡训练。 这一篇就介绍一下TensorFlow上的分布式训练，尽管从传统的Custom Training Loops到Estimator再到Keras，TF的API换来换去让人猝不及防、又爱又恨，但是由于种种原因，TensorFlow还是业务上最成熟的框架，所以Let’s还是">
 
 
 
@@ -401,7 +401,7 @@
 
       
         <p>瓦砾上一篇讲了单机多卡分布式训练的一些入门介绍，后面几篇准备给大家讲讲TensorFlow、PyTorch框架下要怎么实现多卡训练。</p>
-<p>这一篇就介绍一下TensorFlow上的分布式训练，尽管从传统的Custom Training Loops到Estimator再到Keras，TF的API换来换去让人猝不及防，但是由于种种原因，TensorFlow还是业务上最成熟的框架，所以Let’s还是do it。（没看过上一篇的读者建议先看一下原理部分：<a href="http://fyubang.com/2019/07/08/distributed-training/">分布式训练的正确打开方式（一）：理论基础</a>，因为算法的理论理解对于后面API的理解还是很重要的。）</p>
+<p>这一篇就介绍一下TensorFlow上的分布式训练，尽管从传统的Custom Training Loops到Estimator再到Keras，TF的API换来换去让人猝不及防、又爱又恨，但是由于种种原因，TensorFlow还是业务上最成熟的框架，所以Let’s还是do it。（没看过上一篇的读者建议先看一下原理部分：<a href="http://fyubang.com/2019/07/08/distributed-training/">分布式训练的正确打开方式（一）：理论基础</a>，因为算法的理论理解对于后面API的理解还是很重要的。）</p>
 <p>这篇博客主要介绍TensorFlow在1.13版本里发布的<code>tf.distribute</code> API，集成了之前<code>tf.contrib.distribute</code>的很多功能，并且大大的简化了使用。官方很良心的放了Google Colab，想要一步步执行看结果的读者可以移步<a href="https://www.tensorflow.org/guide/distribute_strategy" target="_blank" rel="noopener">官方教学</a>。</p>
 <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p><code>tf.distribute</code>的核心API是<code>tf.distribute.Strategy</code>，可以简简单单几行代码就实现单机多卡，多机多卡等情况的分布式训练。主要有这几个优势：</p>
 <ul>
@@ -568,7 +568,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -590,7 +590,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

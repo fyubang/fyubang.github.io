@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="分布式训练,多卡训练,Horovod,">
 
 
 
@@ -79,13 +79,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="瓦特兰蒂斯">
-<meta property="og:url" content="http://fyubang.com/archives/2019/07/index.html">
+<meta name="description" content="讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天讲一个强大的第三方插件：Horovod。 Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，兼容TensorFlow、Keras和PyTorch机器学习框架。使用Ring-AllReduce算法，对比Paramet">
+<meta name="keywords" content="分布式训练,多卡训练,Horovod">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【分布式训练】单机多卡的正确打开方式（四）：Horovod">
+<meta property="og:url" content="http://fyubang.com/2019/07/26/distributed-training4/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
+<meta property="og:description" content="讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天讲一个强大的第三方插件：Horovod。 Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，兼容TensorFlow、Keras和PyTorch机器学习框架。使用Ring-AllReduce算法，对比Paramet">
 <meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-07-26T07:43:40.549Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="瓦特兰蒂斯">
+<meta name="twitter:title" content="【分布式训练】单机多卡的正确打开方式（四）：Horovod">
+<meta name="twitter:description" content="讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天讲一个强大的第三方插件：Horovod。 Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，兼容TensorFlow、Keras和PyTorch机器学习框架。使用Ring-AllReduce算法，对比Paramet">
 
 
 
@@ -115,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://fyubang.com/archives/2019/07/">
+  <link rel="canonical" href="http://fyubang.com/2019/07/26/distributed-training4/">
 
 
 
 
 
-  <title>Archive | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>【分布式训练】单机多卡的正确打开方式（四）：Horovod | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -140,7 +145,7 @@
     
   
 
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-archive">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -276,177 +281,224 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fyubang.com/2019/07/26/distributed-training4/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AKA瓦砾">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="瓦特兰蒂斯">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">【分布式训练】单机多卡的正确打开方式（四）：Horovod</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-26T15:20:43+08:00">
+                2019-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        
-        Um..! 9 posts in total. Keep on posting.
-      </span>
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/训练方法/" itemprop="url" rel="index">
+                    <span itemprop="name">训练方法</span>
+                  </a>
+                </span>
 
-      
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/训练方法/分布式训练/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式训练</span>
+                  </a>
+                </span>
 
-        
-        
-        
-
-        
+                
+                
+              
+            </span>
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2019">2019</h1>
-          </div>
-        
-        
 
-        
+          
+            
+          
 
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/07/26/distributed-training4/" itemprop="url">
-              
-                <span itemprop="name">【分布式训练】单机多卡的正确打开方式（四）：Horovod</span>
-              
-            </a>
-        
-      </h2>
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-07-26T15:20:43+08:00" content="2019-07-26">
-          07-26
-        </time>
-      </div>
+          
 
-    </header>
-  </article>
+          
 
+        </div>
+      </header>
+    
 
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/07/23/distributed-training3/" itemprop="url">
-              
-                <span itemprop="name">【分布式训练】单机多卡的正确打开方式（三）：PyTorch</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-07-23T10:56:53+08:00" content="2019-07-23">
-          07-23
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/07/14/distributed-training2/" itemprop="url">
-              
-                <span itemprop="name">【分布式训练】单机多卡的正确打开方式（二）：TensorFlow</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-07-14T19:54:19+08:00" content="2019-07-14">
-          07-14
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <p>讲完了单机多卡的分布式训练的理论、TensorFlow和PyTorch分别的实现后，今天讲一个强大的第三方插件：Horovod。</p>
+<p>Horovod是Uber开源的跨平台的分布式训练工具，名字来自于俄国传统民间舞蹈，舞者手牵手围成一个圈跳舞，与Horovod设备之间的通信模式很像，兼容TensorFlow、Keras和PyTorch机器学习框架。使用Ring-AllReduce算法，对比Parameter Server算法，有着无需等待，负载均衡的优点。实现简单，五分钟包教包会。</p>
+<p>Uber官方在git上给了很详细的例子： <a href="https://github.com/horovod/horovod/tree/master/examples" target="_blank" rel="noopener">https://github.com/horovod/horovod/tree/master/examples</a>，所以这里只简单讲一下大概的使用方法：</p>
+<h2 id="TensorFlow"><a href="#TensorFlow" class="headerlink" title="TensorFlow"></a>TensorFlow</h2><p>以TF的Custom Training Loop API为例：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">import</span> horovod.tensorflow <span class="keyword">as</span> hvd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 初始化horovod</span></span><br><span class="line">hvd.init()</span><br><span class="line"><span class="comment"># 2. 给当前进程分配对应的gpu，local_rank()返回的是当前是第几个进程</span></span><br><span class="line">config = tf.ConfigProto()</span><br><span class="line">config.gpu_options.visible_device_list = str(hvd.local_rank())</span><br><span class="line"><span class="comment"># 3. Scale学习率，封装优化器</span></span><br><span class="line">opt = tf.train.AdagradOptimizer(<span class="number">0.01</span> * hvd.size())</span><br><span class="line">opt = hvd.DistributedOptimizer(opt)</span><br><span class="line"><span class="comment"># 4. 定义初始化的时候广播参数的hook，这个是为了在一开始的时候同步各个gpu之间的参数</span></span><br><span class="line">hooks = [hvd.BroadcastGlobalVariablesHook(<span class="number">0</span>)]</span><br><span class="line"><span class="comment"># 搭建model，定义loss</span></span><br><span class="line">loss = ...</span><br><span class="line">train_op = opt.minimize(loss)</span><br><span class="line"><span class="comment"># 5. 只保存一份ckpt就行</span></span><br><span class="line">checkpoint_dir = <span class="string">'/tmp/train_logs'</span> <span class="keyword">if</span> hvd.rank() == <span class="number">0</span> <span class="keyword">else</span> <span class="keyword">None</span></span><br><span class="line"><span class="comment"># 7. 用MonitoredTrainingSession实现初始化，读写ckpt</span></span><br><span class="line"><span class="keyword">with</span> tf.train.MonitoredTrainingSession(checkpoint_dir=checkpoint_dir,</span><br><span class="line">                                       config=config,</span><br><span class="line">                                       hooks=hooks) <span class="keyword">as</span> mon_sess:</span><br><span class="line">  <span class="keyword">while</span> <span class="keyword">not</span> mon_sess.should_stop():</span><br><span class="line">    <span class="comment"># Perform synchronous training.</span></span><br><span class="line">    mon_sess.run(train_op)</span><br></pre></td></tr></table></figure></p>
+<p>具体的代码看<code>tensorflow_mnist.py</code>：<a href="https://github.com/horovod/horovod/blob/master/examples/tensorflow_mnist.py" target="_blank" rel="noopener">https://github.com/horovod/horovod/blob/master/examples/tensorflow_mnist.py</a></p>
+<p>单机双卡训练输入以下命令：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CUDA_VISIBLE_DEVICES=6,7 horovodrun -np 2 -H localhost:2 python tensorflow_mnist.py</span><br></pre></td></tr></table></figure></p>
+<p>这里 <code>-np</code>指的是进程的数量。</p>
+<p>执行之后可以看到如下的结果，因为多线程，每个step都打印了两遍。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[1,0]&lt;stderr&gt;:INFO:tensorflow:loss = 0.13126025, step = 300 (0.191 sec)</span><br><span class="line">[1,1]&lt;stderr&gt;:INFO:tensorflow:loss = 0.01396352, step = 310 (0.177 sec)</span><br><span class="line">[1,0]&lt;stderr&gt;:INFO:tensorflow:loss = 0.063738815, step = 310 (0.182 sec)</span><br><span class="line">[1,1]&lt;stderr&gt;:INFO:tensorflow:loss = 0.044452004, step = 320 (0.215 sec)</span><br><span class="line">[1,0]&lt;stderr&gt;:INFO:tensorflow:loss = 0.028987963, step = 320 (0.212 sec)</span><br><span class="line">[1,0]&lt;stderr&gt;:INFO:tensorflow:loss = 0.09094897, step = 330 (0.206 sec)</span><br><span class="line">[1,1]&lt;stderr&gt;:INFO:tensorflow:loss = 0.11366991, step = 330 (0.210 sec)</span><br><span class="line">[1,0]&lt;stderr&gt;:INFO:tensorflow:loss = 0.08559138, step = 340 (0.200 sec)</span><br><span class="line">[1,1]&lt;stderr&gt;:INFO:tensorflow:loss = 0.037002128, step = 340 (0.201 sec)</span><br><span class="line">[1,0]&lt;stderr&gt;:INFO:tensorflow:loss = 0.15422738, step = 350 (0.181 sec)</span><br><span class="line">[1,1]&lt;stderr&gt;:INFO:tensorflow:loss = 0.06424393, step = 350 (0.179 sec)</span><br></pre></td></tr></table></figure>
+<h2 id="PyTorch"><a href="#PyTorch" class="headerlink" title="PyTorch"></a>PyTorch</h2><p>Torch下也是类似的套路，但是由于PyTorch本身单机多卡训练已经够简单了，API也稳定，所以笔者一般做的时候就是直接用Torch自己的<code>DP</code>和<code>DDP</code>了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> horovod.torch <span class="keyword">as</span> hvd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 初始化horovod</span></span><br><span class="line">hvd.init()</span><br><span class="line"><span class="comment"># 2. 给当前进程分配对应的gpu，local_rank()返回的是当前是第几个进程</span></span><br><span class="line">torch.cuda.set_device(hvd.local_rank())</span><br><span class="line"><span class="comment"># Define dataset...</span></span><br><span class="line">train_dataset = ...</span><br><span class="line"><span class="comment"># 3. 用DistributedSampler给各个worker分数据</span></span><br><span class="line">train_sampler = torch.utils.data.distributed.DistributedSampler(</span><br><span class="line">    train_dataset, num_replicas=hvd.size(), rank=hvd.rank())</span><br><span class="line">train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=..., sampler=train_sampler)</span><br><span class="line"><span class="comment"># Build model...</span></span><br><span class="line">model = ...</span><br><span class="line">model.cuda()</span><br><span class="line"><span class="comment"># 4. 封装优化器</span></span><br><span class="line">optimizer = optim.SGD(model.parameters())</span><br><span class="line">optimizer = hvd.DistributedOptimizer(optimizer, named_parameters=model.named_parameters())</span><br><span class="line"><span class="comment"># 5. 初始化的时候广播参数，这个是为了在一开始的时候同步各个gpu之间的参数</span></span><br><span class="line">hvd.broadcast_parameters(model.state_dict(), root_rank=<span class="number">0</span>)</span><br><span class="line"><span class="comment"># 训练</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> range(<span class="number">100</span>):</span><br><span class="line">   <span class="keyword">for</span> batch_idx, (data, target) <span class="keyword">in</span> enumerate(train_loader):</span><br><span class="line">       optimizer.zero_grad()</span><br><span class="line">       output = model(data)</span><br><span class="line">       loss = F.nll_loss(output, target)</span><br><span class="line">       loss.backward()</span><br><span class="line">       optimizer.step()</span><br><span class="line">       <span class="keyword">if</span> batch_idx % args.log_interval == <span class="number">0</span>:</span><br><span class="line">           print(<span class="string">'Train Epoch: &#123;&#125; [&#123;&#125;/&#123;&#125;]\tLoss: &#123;&#125;'</span>.format(</span><br><span class="line">               epoch, batch_idx * len(data), len(train_sampler), loss.item()))</span><br></pre></td></tr></table></figure>
+<h2 id="速度"><a href="#速度" class="headerlink" title="速度"></a>速度</h2><p>瓦砾还没有来得及做一个全面的Horovod、<code>tf.distribute</code>和 Torch的单机多卡训练速度的横向对比，不过大家可以参考这两篇：</p>
+<ol>
+<li><a href="https://arxiv.org/pdf/1802.05799.pdf" target="_blank" rel="noopener">Horovod: fast and easy distributed deep learning in TensorFlow</a></li>
+<li><a href="https://www.logicalclocks.com/goodbye-horovod-hello-tensorflow-collectiveallreduce/" target="_blank" rel="noopener">Goodbye Horovod, Hello CollectiveAllReduce</a></li>
+</ol>
+<p>总体而言，用了All-Reduce算法的API，速度应该都差不多，如果你是土豪，拥有NVLINK（卡间通信极快）的话，那忘了我说的这几篇“废话”吧朋友。Orz。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>终于结束了单机多卡系列的最后一章，由于博客本身的限制，给的例子整体还是比较简单，以入门为主，大家具体使用的时候肯定还是会遇到一些坑，这里瓦砾把踩过的一些坑和解决办法列举在这，以避免大家以后重复踩坑：</p>
+<ul>
+<li>tf.contrib.distributed.MirroredStrategy 需要optimizer支持merge_call（bert实现的optimizer是直接修改apply_gradient的，所以会报错），这个时候就需要正确地修改optimizer里的_apply_dense、_apply_sparse(参考<a href="https://github.com/tensorflow/tensorflow/issues/23986" target="_blank" rel="noopener">Issue 23986</a> 和 <a href="https://github.com/JayYip/bert-multitask-learning/blob/master/bert_multitask_learning/optimizer.py" target="_blank" rel="noopener">JayYip</a>)。或者用horovod，就可以避免这个问题。</li>
+<li>Effective batch size，不同的多卡工具对输入的batch size的操作不一样，要确定最后进模型的effective batch size才有意义。一般来说，多进程的batch size指的是每张卡的batch size。</li>
+<li>Learning rate scale，学习率要根据<a href="https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/distribute/README.md" target="_blank" rel="noopener">effective batch size</a>调整。</li>
+<li>All-Reduce由于是多进程的，数据流各自独立，为了防止同一个step多gpu的batch重叠，最好的的办法是在每个进程里根据local_rank设置shard的数据，保证各个gpu采样的数据不重叠。</li>
+<li>为了使用horovod，新建docker container时，要加–privileged，否则会<a href="https://github.com/horovod/horovod/issues/653" target="_blank" rel="noopener">疯狂报warning</a>，虽然没影响，但是看着难受。</li>
+<li>Pytorch的DP多卡要注意最后一个batch的batch size不能小于gpu的数量，否则会报错，最保险的做法是drop_last，扔掉最后的batch。</li>
+<li>并不是所有情况下All-Reduce都比PS好，比如当卡间通信用的是NVLink的时候，在gpu数量不多的情况下，数据传输的时间不是瓶颈，All-Reduce的提升就几乎没有了。</li>
+<li>DP和DDP有一个<a href="https://discuss.pytorch.org/t/training-performance-degrades-with-distributeddataparallel/47152" target="_blank" rel="noopener">区别</a>在于BatchNorm。</li>
+<li>DDP封装model后不能再改动model。</li>
+<li>待补充。。。</li>
+</ul>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a href="https://github.com/horovod/horovod/tree/master/examples" target="_blank" rel="noopener">Horovod的官方给的一些例子</a>。</li>
+<li><a href="https://lambdalabs.com/blog/bert-multi-gpu-implementation-using-tensorflow-and-horovod-with-code/" target="_blank" rel="noopener">Uber：如何用Horovod实现bert的单机多卡训练</a></li>
+<li><a href="https://www.logicalclocks.com/goodbye-horovod-hello-tensorflow-collectiveallreduce/" target="_blank" rel="noopener">Goodbye Horovod, Hello CollectiveAllReduce</a></li>
+<li><a href="https://arxiv.org/pdf/1802.05799.pdf" target="_blank" rel="noopener">Horovod: fast and easy distributed deep learning in TensorFlow</a></li>
+</ol>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/07/08/distributed-training/" itemprop="url">
-              
-                <span itemprop="name">【分布式训练】单机多卡的正确打开方式（一）：理论基础</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-07-08T21:52:16+08:00" content="2019-07-08">
-          07-08
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/分布式训练/" rel="tag"># 分布式训练</a>
+          
+            <a href="/tags/多卡训练/" rel="tag"># 多卡训练</a>
+          
+            <a href="/tags/Horovod/" rel="tag"># Horovod</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/23/distributed-training3/" rel="next" title="【分布式训练】单机多卡的正确打开方式（三）：PyTorch">
+                <i class="fa fa-chevron-left"></i> 【分布式训练】单机多卡的正确打开方式（三）：PyTorch
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -454,6 +506,13 @@
 
 
           
+
+  
+    <div id="gitalk-container"></div>
+
+  
+
+
 
         </div>
         
@@ -474,8 +533,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -535,6 +603,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#TensorFlow"><span class="nav-number">1.</span> <span class="nav-text">TensorFlow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PyTorch"><span class="nav-number">2.</span> <span class="nav-text">PyTorch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#速度"><span class="nav-number">3.</span> <span class="nav-text">速度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -688,6 +772,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
@@ -728,6 +816,28 @@
 
 
 
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0efa076437b16d55154d',
+          clientSecret: 'b6441808c991871623e6e8666300230ab321a6c1',
+          repo: 'gitalk',
+          owner: 'fyubang',
+          admin: ['fyubang'],
+          id: location.pathname,
+          labels: ['Gitalk'],
+          perPage: 15,
+          pagerDirection: 'last',
+          createIssueManually: true,
+          distractionFreeMode: false
+        })
+        gitalk.render('gitalk-container')           
+       </script>
 
 
 
