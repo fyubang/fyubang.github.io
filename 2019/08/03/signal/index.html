@@ -87,13 +87,13 @@
 <meta property="og:site_name" content="瓦特兰蒂斯">
 <meta property="og:description" content="不知道大家有没有这样的疑惑，在BERT横空出世之后，NLP算法工程师的工作开始变得越来越无聊了，想要用Train-from-Scratch的模型战胜芝麻街家族，几乎已无可能，往往绞尽脑汁可能还不如BERT加一个输出层Fine-Tune。那么，既然迁移学习的大势无法阻挡，作为算法工程师的我们如何能在BERT后时代里找到新的乐趣呢？ 瓦砾最近读到了一篇不错的博客：https://dawn.cs.sta">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://fyubang.com/Users/Nicolas/blog/source/_drafts/3items.png">
-<meta property="og:image" content="http://fyubang.com/Users/Nicolas/blog/source/_drafts/rte.png">
-<meta property="og:updated_time" content="2019-08-03T00:49:32.138Z">
+<meta property="og:image" content="http://fyubang.com/2019/08/03/signal/3items.png">
+<meta property="og:image" content="http://fyubang.com/2019/08/03/signal/rte.png">
+<meta property="og:updated_time" content="2019-08-03T00:51:06.202Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【论文笔记】寻找让机器心动的“信号”">
 <meta name="twitter:description" content="不知道大家有没有这样的疑惑，在BERT横空出世之后，NLP算法工程师的工作开始变得越来越无聊了，想要用Train-from-Scratch的模型战胜芝麻街家族，几乎已无可能，往往绞尽脑汁可能还不如BERT加一个输出层Fine-Tune。那么，既然迁移学习的大势无法阻挡，作为算法工程师的我们如何能在BERT后时代里找到新的乐趣呢？ 瓦砾最近读到了一篇不错的博客：https://dawn.cs.sta">
-<meta name="twitter:image" content="http://fyubang.com/Users/Nicolas/blog/source/_drafts/3items.png">
+<meta name="twitter:image" content="http://fyubang.com/2019/08/03/signal/3items.png">
 
 
 
@@ -424,12 +424,12 @@
 <li>数据</li>
 </ol>
 <p>其中，由于Google，Huggingface等大佬的开源贡献，想构建SOTA模型几乎只需要<code>pip install xxx</code>便唾手可得；加上各种云服务的诞生，算力也并不是很大的问题；然而，NLP领域中，高质量的监督数据，仍然是处于一种 low-resource 的状态，这也成为了大多数应用场景的瓶颈，所以，NLPer们开始寻找一些迂回的方式“围魏救赵”，给他们的模型注入一些间接的监督信号。</p>
-<p><img src="/Users/Nicolas/blog/source/_drafts/3items.png" width="80%" title="机器学习三要素"></p>
+<p><img src="3items.png" width="80%" title="机器学习三要素"></p>
 <p>因此，我们想要搭建一套以监督信号为王的框架，使其能更好地利用如今潜在的一些监督信号，包括：传统的监督、迁移学习、多任务学习、弱监督等。我们称之为Massive Multi-Task Learning (MMTL)。我们以RTE（Recognizing Textual Entailment）任务为例，展示了如何通过逐渐增加“信号”，一步步地提高模型的表现。</p>
 <blockquote>
 <p>RTE是一个经典的NLI任务，一共有2.5k个训练数据，任务的目标是判断第二个句子是否由第一个句子推断而来，数据量不大很符合我们实际的应用场景。</p>
 </blockquote>
-<p><img src="/Users/Nicolas/blog/source/_drafts/rte.png" width="70%" title="RTE数据集示例"></p>
+<p><img src="rte.png" width="70%" title="RTE数据集示例"></p>
 <p>瓦砾在这用<strong>高考</strong>举例，带着读者walk through一遍给模型寻找信号的过程！</p>
 <h2 id="做俩例题：传统的监督"><a href="#做俩例题：传统的监督" class="headerlink" title="做俩例题：传统的监督"></a>做俩例题：传统的监督</h2><p>传统监督信号当然不能落下，这就好像高考前得做些例题，刷点“五三”一样。“老师，我还能刷两本黄冈！”</p>
 <p>使用标准的Bi-LSTM训练，在该任务上能获得57.4的准确率，只比随机高了一点，即使我们加上ElMo embedding和注意力机制，也只能将分数提高到58.9。很不幸，无论我们的模型结构有多么的fancy，从2.5k监督信号中，That’s all we can learn。</p>
