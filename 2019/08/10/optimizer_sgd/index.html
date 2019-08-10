@@ -89,7 +89,7 @@
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/08/10/optimizer_sgd/momentum.png">
 <meta property="og:image" content="http://fyubang.com/2019/08/10/optimizer_sgd/nesterov_update_vector.png">
-<meta property="og:updated_time" content="2019-08-10T08:25:57.671Z">
+<meta property="og:updated_time" content="2019-08-10T08:30:42.190Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【优化器】优化器算法及PyTorch实现系列（一）：永不磨灭的SGD">
 <meta name="twitter:description" content="瓦砾准备写一个关于优化器算法的系列，主要面向总是把优化器当做黑盒使用的，或是对优化器算法有些遗忘的读者。希望大家在看完这个系列后，能达成以下几点成就：  对深度学习优化器的进化史，有一个系统的了解； 对应不同的任务，知道应选用哪种优化器； 能够理解每种优化器参数的意义； 能够根据自己的需求，在PyTorch上做一些自定义的优化器的改动。  Gradient Descent1. 梯度下降的三种变体梯">
@@ -442,7 +442,7 @@
 <p><img src="momentum.png" width="80%" title="峡谷的示意图，假设左图箭头的右侧有个小土堆"></p>
 <p>此外，动量的存在还可以扩大可收敛的学习率范围，缓解挑战1的问题，并加速模型收敛的速度。</p>
 <p>当然，这里的解释只是为了帮助理解，并不严谨，感兴趣的同学可以看Gabriel的这篇<a href="https://distill.pub/2017/momentum/" target="_blank" rel="noopener">Why Momentum Really Works</a>，讲的很详细，还有有趣的可视化插件可以玩（可以对比一下有无Momentum模型下降的节奏）。2333。</p>
-<h3 id="2-Nesterov-accelerated-gradient-NAG"><a href="#2-Nesterov-accelerated-gradient-NAG" class="headerlink" title="2. Nesterov accelerated gradient (NAG)"></a>2. Nesterov accelerated gradient (NAG)</h3><p>细心的读者可能已经发现了上面的参数更新的一个很大的“bug”，实际上梯度则是根据$\theta$算出来的，然而参数是在$\theta-\gamma v_{t-1}$的基础上更新的，这跟我们SGD的“搁哪算，搁哪降”的原则就相违背了。因此，我们让模型先预见性地往前走完惯性导致的一步，再根据当前点计算真实的梯度，再更新。</p>
+<h3 id="2-Nesterov-accelerated-gradient-NAG"><a href="#2-Nesterov-accelerated-gradient-NAG" class="headerlink" title="2. Nesterov accelerated gradient (NAG)"></a>2. Nesterov accelerated gradient (NAG)</h3><p>细心的读者可能已经发现了上面的参数更新的一个很大的“bug”，实际上梯度则是根据$\theta$算出来的，然而参数是在$\theta-\gamma v_{t-1}​$的基础上更新的，这跟我们SGD的“搁哪算，搁哪降”的原则就相违背了。因此，Nesterov在1983年提出了NAG，让模型先预见性地往前走完惯性导致的一步，再根据当前点计算真实的梯度，再更新。</p>
 <p><img src="nesterov_update_vector.png" width="80%" title="蓝色为普通Momentum的更新轨迹，绿色为NAG最终的更新轨迹"><br>$$<br>\theta’ = \theta-\gamma v_{t-1} \\<br>v_t = \gamma v_{t-1}+\eta\triangledown_\theta J(\theta’) \\<br>\theta = \theta - v_t<br>$$</p>
 <p>Ilya Sutskever在2013年的博士论文<a href="https://www.cs.utoronto.ca/~ilya/pubs/ilya_sutskever_phd_thesis.pdf" target="_blank" rel="noopener">Training Recurrent Neural Networks</a> 中给了更多的细节。</p>
 <h3 id="3-PyTorch实现"><a href="#3-PyTorch实现" class="headerlink" title="3. PyTorch实现"></a>3. PyTorch实现</h3><p>PyTorch官方的实现：<a href="https://github.com/fyubang/pytorch_optimizers" target="_blank" rel="noopener">https://github.com/fyubang/pytorch_optimizers</a></p>
