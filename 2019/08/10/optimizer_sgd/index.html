@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Chatbot,User Simulator,Reinforcement Learning,">
+  <meta name="keywords" content="优化器,代码实现,">
 
 
 
@@ -79,23 +79,21 @@
 
 
 
-<meta name="description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
-<meta name="keywords" content="Chatbot,User Simulator,Reinforcement Learning">
+<meta name="description" content="瓦砾准备写一个关于优化器算法的系列，主要面向总是把优化器当做黑盒使用的，或是对优化器算法有些遗忘的读者。希望大家在看完这个系列后，能达成以下几点成就：  对深度学习优化器的进化史，有一个系统的了解； 对应不同的任务，知道应选用哪种优化器； 能够理解每种优化器参数的意义； 能够根据自己的需求，在PyTorch上做一些自定义的优化器的改动。  Gradient Descent1. 梯度下降的三种变体梯">
+<meta name="keywords" content="优化器,代码实现">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【论文笔记】A User Simulator for Task-Completion Dialogues">
-<meta property="og:url" content="http://fyubang.com/2019/01/16/user-simulator/index.html">
+<meta property="og:title" content="【优化器】优化器算法及PyTorch实现系列（一）：永不磨灭的SGD">
+<meta property="og:url" content="http://fyubang.com/2019/08/10/optimizer_sgd/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
-<meta property="og:description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
+<meta property="og:description" content="瓦砾准备写一个关于优化器算法的系列，主要面向总是把优化器当做黑盒使用的，或是对优化器算法有些遗忘的读者。希望大家在看完这个系列后，能达成以下几点成就：  对深度学习优化器的进化史，有一个系统的了解； 对应不同的任务，知道应选用哪种优化器； 能够理解每种优化器参数的意义； 能够根据自己的需求，在PyTorch上做一些自定义的优化器的改动。  Gradient Descent1. 梯度下降的三种变体梯">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/1.png">
-<meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/2.png">
-<meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/3.png">
-<meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/4.png">
-<meta property="og:updated_time" content="2019-05-21T07:52:41.058Z">
+<meta property="og:image" content="http://fyubang.com/2019/08/10/optimizer_sgd/momentum.png">
+<meta property="og:image" content="http://fyubang.com/2019/08/10/optimizer_sgd/nesterov_update_vector.png">
+<meta property="og:updated_time" content="2019-08-10T07:10:44.412Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【论文笔记】A User Simulator for Task-Completion Dialogues">
-<meta name="twitter:description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
-<meta name="twitter:image" content="http://fyubang.com/2019/01/16/user-simulator/1.png">
+<meta name="twitter:title" content="【优化器】优化器算法及PyTorch实现系列（一）：永不磨灭的SGD">
+<meta name="twitter:description" content="瓦砾准备写一个关于优化器算法的系列，主要面向总是把优化器当做黑盒使用的，或是对优化器算法有些遗忘的读者。希望大家在看完这个系列后，能达成以下几点成就：  对深度学习优化器的进化史，有一个系统的了解； 对应不同的任务，知道应选用哪种优化器； 能够理解每种优化器参数的意义； 能够根据自己的需求，在PyTorch上做一些自定义的优化器的改动。  Gradient Descent1. 梯度下降的三种变体梯">
+<meta name="twitter:image" content="http://fyubang.com/2019/08/10/optimizer_sgd/momentum.png">
 
 
 
@@ -125,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://fyubang.com/2019/01/16/user-simulator/">
+  <link rel="canonical" href="http://fyubang.com/2019/08/10/optimizer_sgd/">
 
 
 
 
 
-  <title>【论文笔记】A User Simulator for Task-Completion Dialogues | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>【优化器】优化器算法及PyTorch实现系列（一）：永不磨灭的SGD | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -300,7 +298,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fyubang.com/2019/01/16/user-simulator/">
+    <link itemprop="mainEntityOfPage" href="http://fyubang.com/2019/08/10/optimizer_sgd/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="AKA瓦砾">
@@ -317,7 +315,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">【论文笔记】A User Simulator for Task-Completion Dialogues</h1>
+          <h1 class="post-title" itemprop="name headline">【优化器】优化器算法及PyTorch实现系列（一）：永不磨灭的SGD</h1>
         
 
         <div class="post-meta">
@@ -329,8 +327,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-16T10:43:15+08:00">
-                2019-01-16
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-10T15:10:16+08:00">
+                2019-08-10
               </time>
             
 
@@ -352,8 +350,8 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/" itemprop="url" rel="index">
-                    <span itemprop="name">NLP</span>
+                  <a href="/categories/训练方法/" itemprop="url" rel="index">
+                    <span itemprop="name">训练方法</span>
                   </a>
                 </span>
 
@@ -363,19 +361,8 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/论文笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">论文笔记</span>
-                  </a>
-                </span>
-
-                
-                
-                  , 
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/论文笔记/Bot/" itemprop="url" rel="index">
-                    <span itemprop="name">Bot</span>
+                  <a href="/categories/训练方法/分布式训练/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式训练</span>
                   </a>
                 </span>
 
@@ -416,112 +403,67 @@
       
 
       
-        <h2 id="基本框架（包含对话系统）："><a href="#基本框架（包含对话系统）：" class="headerlink" title="基本框架（包含对话系统）："></a>基本框架（包含对话系统）：</h2><img src="/2019/01/16/user-simulator/1.png">
-<h2 id="Abstract："><a href="#Abstract：" class="headerlink" title="Abstract："></a>Abstract：</h2><p>做任务型bot的时候，强化学习（RL）很强，但是有一些困难：</p>
+        <p>瓦砾准备写一个关于优化器算法的系列，主要面向总是把优化器当做黑盒使用的，或是对优化器算法有些遗忘的读者。希望大家在看完这个系列后，能达成以下几点成就：</p>
 <ol>
-<li>需要和环境互动，已有的完整对话训练数据没用；</li>
-<li>每个不同的任务都需要各自领域的标注数据；</li>
-<li>收集人人对话或者人机对话需要领域知识。</li>
+<li>对深度学习优化器的进化史，有一个系统的了解；</li>
+<li>对应不同的任务，知道应选用哪种优化器；</li>
+<li>能够理解每种优化器参数的意义；</li>
+<li>能够根据自己的需求，在PyTorch上做一些自定义的优化器的改动。</li>
 </ol>
-<p>但是啊：</p>
-<p>====&gt;建造数据库又贵又花时间</p>
-<p>====&gt;只好模拟</p>
-<p>====&gt;user simulator诞生</p>
-<p>====&gt;Bot（agent）先用simulator去训练，搞定了simulator就可以上线，持续online learning</p>
-<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction:"></a>Introduction:</h2><p>对话系统一般如 Figure 1. 所示。Dialongue Policy (DP)是一个任务型bot的核心。</p>
-<p>一般来说传统的Dialogue Policy（DP）使用规则编程的，但有缺点：</p>
-<p>对于复杂系统，难以设计</p>
+<h2 id="Gradient-Descent"><a href="#Gradient-Descent" class="headerlink" title="Gradient Descent"></a>Gradient Descent</h2><h3 id="1-梯度下降的三种变体"><a href="#1-梯度下降的三种变体" class="headerlink" title="1. 梯度下降的三种变体"></a>1. 梯度下降的三种变体</h3><p>梯度下降有三种变体：</p>
+<ul>
+<li>批梯度下降 BGD (Batch gradient descent)</li>
+<li>随机梯度下降 SGD (Stochastic gradient descent)</li>
+<li>小批梯度下降 MBGD (Mini-batch gradient descent)</li>
+</ul>
+<h4 id="a-Batch-gradient-descent-BGD"><a href="#a-Batch-gradient-descent-BGD" class="headerlink" title="a. Batch gradient descent (BGD)"></a>a. Batch gradient descent (BGD)</h4><p>批梯度下降（Batch gradient descent，又称之为Vanilla gradient descent），顾名思义是用全部的数据样本计算平均loss之后，再得到梯度进行下降：<br>$$<br>\theta = \theta - \eta \cdot \triangledown_\theta J(\theta)<br>$$<br>其中$\theta$为模型参数，$\triangledown_\theta J(\theta)$为各个参数的梯度，$\eta​$为学习率。由于这样耗时太长，且由于内存的原因，对于较大数据量的几乎不可能实现，也不支持online-learning，所以实用价值不高。</p>
+<h4 id="b-Stochastic-gradient-descent-SGD"><a href="#b-Stochastic-gradient-descent-SGD" class="headerlink" title="b. Stochastic gradient descent (SGD)"></a>b. Stochastic gradient descent (SGD)</h4><p>随机梯度下降则是另一个极端，每个样本都会计算loss、梯度，然后更新：<br>$$<br>\theta = \theta - \eta \cdot \triangledown_\theta J(\theta; x^{i};y^{i})<br>$$<br>SGD的问题呢，是做了很多冗余的计算，且不会很快收敛，容易震荡，但是可以用来online-learning。</p>
+<h4 id="c-Mini-batch-gradient-descent-MBGD"><a href="#c-Mini-batch-gradient-descent-MBGD" class="headerlink" title="c. Mini-batch gradient descent (MBGD)"></a>c. Mini-batch gradient descent (MBGD)</h4><p>MBGD是BGD和SGD的这种，每次取m个样本，计算平均loss、梯度，然后更新：<br>$$<br>\theta = \theta - \eta \cdot \triangledown_\theta J(\theta; x^{i: i+m};y^{i:i+m})<br>$$<br>MBGD避开了前两种的缺点，并且：</p>
 <ol>
-<li>最优的policy也会变化，不好维护。<br>因此，一般用强化学习训练DP。</li>
+<li>减少参数的更新次数，使用更新更稳定；</li>
+<li>充分利用gpu的并行计算，提高计算效率。</li>
 </ol>
-<h3 id="为啥要user-simulator"><a href="#为啥要user-simulator" class="headerlink" title="为啥要user simulator ?"></a>为啥要user simulator ?</h3><ol>
-<li><p>Supervised Learning（SL）监督学习在任务型的bot里不行：</p>
+<p>一般情况，若无特殊说明，SGD优化器指的就是MBGD的方法。</p>
+<h3 id="2-挑战"><a href="#2-挑战" class="headerlink" title="2. 挑战"></a>2. 挑战</h3><p>梯度下降是所有深度学习优化器的基础。但是想要明白为什么需要优化SGD，首先我们得知道Vanilla SGD优化器面临的挑战：</p>
 <ol>
-<li>需要专家来标注大量数据；</li>
-<li>大量专业的领域知识需要大量的数据来训练；</li>
-<li>即使有大量训练数据，还是会有对话空间没有被搜索到。</li>
+<li>对于SGD来说，挑选一个学习率（固定）是很很困难的。选小了，收敛太慢；选大了，阻碍收敛甚至容易发散。</li>
+<li>如果我们想用Learning rate schedule的方式，随着epoch数去减小学习率（lr退火），也只能用一个事先定义好方式去annealing，不能根据当前batch数据的特点去动态的decay。</li>
+<li>所有的参数都用的是一个学习率，不能自适应地调节。</li>
+<li>最重要的一个问题是：由于SGD更新的参数仅由学习率和当前batch的梯度决定，模型很容易陷入次优点和鞍点。</li>
 </ol>
-</li>
-<li><p>相反的，RL很吊，不需要专家生成的数据，给一个奖励信号，agent就可以通过交互优化DP。</p>
-</li>
-</ol>
-<p>但是不幸的是：RL需要从环境来的很多sample，所以和真实用户从零开始训练不实际。</p>
-<p>====&gt; 所以需要User Simulators！</p>
-<p>一般的操作是：先在simulator上训练出一个比较好的效果，再部署到真实场景中，持续online learning。</p>
-<h3 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h3><p>很难判断user simulator好不好，没有Metric来判定，so没有标准方法，放手乱做。user simulation主要有这么几个类型：</p>
-<p>从粒度上分：</p>
+<p>下面我们看看后续的改进都是如何一步步优化我们这里提到的四点挑战的。</p>
+<h2 id="SGD优化器的几点优化"><a href="#SGD优化器的几点优化" class="headerlink" title="SGD优化器的几点优化"></a>SGD优化器的几点优化</h2><p>我们先看看在基于SGD的梯度更新上的两点改动：</p>
 <ol>
-<li>在对话行为（dialogue-act）上进行操作的；</li>
-<li>在对话文本（utterance）进行操作的</li>
+<li>Momentum</li>
+<li>Nesterov accelerated gradient</li>
 </ol>
-<p>从方法的角度讲：</p>
-<ol>
-<li>基于规则的（rule-based）</li>
-<li>基于模型的（model-based）</li>
+<h3 id="1-Momentum动量"><a href="#1-Momentum动量" class="headerlink" title="1. Momentum动量"></a>1. Momentum动量</h3><p>按吴恩达老师所说的，梯度下降（Gradient Descent）就好比下山，目标则是以最快的速度抵达山下。想象我们的SGD优化器“小明”一路披荆斩棘来到一个峡谷，左右两边极其陡峭，前面有个小土堆，后面是刚刚下山的路，此时根据模型计算的梯度方向，非左即右，“小明”就只能懵逼地左右来回的跑，怎么也无法跨过前面的小土堆了（也就是挑战4的次优点问题）。那么有什么办法让“小明”记住刚刚下山的方向，面向小土堆，跨过它继续下山呢？</p>
+<p>一个最简单的Intuition就是我们把“小明”搓成一个球，让他滚下山坡，这样他就保持了一定的惯性，可以顺利的滚过小土堆了。因此1964年，<a href="https://www.researchgate.net/publication/243648538_Some_methods_of_speeding_up_the_convergence_of_iteration_methods" target="_blank" rel="noopener">Polyak</a>提出了Momentum动量这个概念，公式如下：<br>$$<br>v_t = \gamma v_{t-1}+\eta\triangledown_\theta J(\theta) \\<br>\theta = \theta - v_t<br>$$<br>深度学习中，$\gamma$一般设置为0.9（或者0.99，更严谨的选择参考<a href="http://www.seas.ucla.edu/~vandenbe/236C/lectures/fgrad.pdf" target="_blank" rel="noopener">L. Vandenberghe的EE236C的课件</a>，这里不展开了）。其实就是在下降的时候不仅考虑当前batch计算的梯度，也考虑到之前实际下降的梯度，从而跨过局部最优。</p>
+<p><img src="momentum.png" width="80%" title="峡谷的示意图，假设左图箭头的右侧有个小土堆"></p>
+<p>此外，根据这篇论文的结论，动量的存在还可以扩大可收敛的学习率范围，缓解挑战1的问题；并加速模型收敛的速度。</p>
+<p>当然，这里的解释只是为了帮助理解，并不严谨，感兴趣的同学可以看Gabriel的这篇<a href="https://distill.pub/2017/momentum/" target="_blank" rel="noopener">Why Momentum Really Works</a>，讲的很详细，还有有趣的可视化插件可以玩（可以对比一下有无Momentum模型下降的节奏）。2333。</p>
+<h3 id="2-Nesterov-accelerated-gradient-NAG"><a href="#2-Nesterov-accelerated-gradient-NAG" class="headerlink" title="2. Nesterov accelerated gradient (NAG)"></a>2. Nesterov accelerated gradient (NAG)</h3><p>细心的读者可能已经发现了上面的参数更新的一个很大的“bug”，实际上梯度则是根据$\theta$算出来的，然而参数是在$\theta-\gamma v_{t-1}$的基础上更新的，这跟我们SGD的“搁哪算，搁哪降”的原则就相违背了。因此，我们让模型先预见性地往前走完惯性导致的一步，再根据当前点计算真实的梯度，再更新。</p>
+<p><img src="nesterov_update_vector.png" width="80%" title="蓝色为普通Momentum的更新轨迹，绿色为NAG最终的更新轨迹"><br>$$<br>\theta’ = \theta-\gamma v_{t-1} \\<br>v_t = \gamma v_{t-1}+\eta\triangledown_\theta J(\theta’) \\<br>\theta = \theta - v_t<br>$$</p>
+<p>Ilya Sutskever在2013年的博士论文<a href="https://www.cs.utoronto.ca/~ilya/pubs/ilya_sutskever_phd_thesis.pdf" target="_blank" rel="noopener">Training Recurrent Neural Networks</a> 中给了更多的细节。</p>
+<h3 id="3-PyTorch实现"><a href="#3-PyTorch实现" class="headerlink" title="3. PyTorch实现"></a>3. PyTorch实现</h3><p>PyTorch官方的实现：<a href="https://github.com/fyubang/pytorch_optimizers" target="_blank" rel="noopener">https://github.com/fyubang/pytorch_optimizers</a></p>
+<p><strong>核心代码</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> group[<span class="string">'params'</span>]:</span><br><span class="line">    d_p = p.grad.data</span><br><span class="line">    <span class="keyword">if</span> weight_decay != <span class="number">0</span>:</span><br><span class="line">        d_p.add_(weight_decay, p.data)</span><br><span class="line">    <span class="keyword">if</span> momentum != <span class="number">0</span>:</span><br><span class="line">        param_state = self.state[p]</span><br><span class="line">        <span class="keyword">if</span> <span class="string">'momentum_buffer'</span> <span class="keyword">not</span> <span class="keyword">in</span> param_state:</span><br><span class="line">            buf = param_state[<span class="string">'momentum_buffer'</span>] = torch.clone(d_p).detach()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            buf = param_state[<span class="string">'momentum_buffer'</span>]</span><br><span class="line">            buf.mul_(momentum).add_(<span class="number">1</span> - dampening, d_p)</span><br><span class="line">        <span class="keyword">if</span> nesterov:</span><br><span class="line">            d_p = d_p.add(momentum, buf)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            d_p = buf</span><br><span class="line">    p.data.add_(-group[<span class="string">'lr'</span>], d_p)</span><br></pre></td></tr></table></figure>
+<h4 id="a-Momentum"><a href="#a-Momentum" class="headerlink" title="a. Momentum"></a>a. Momentum</h4><p>这里要注意，PyTorch官方的Momentum实现在Sutskever的公式上做了一点优化：<br>$$<br>v_t = \gamma v_{t-1}+\triangledown_\theta J(\theta) \\<br>\theta = \theta - \eta v_t<br>$$<br>当学习率固定时，两种更新方法是等价的(<a href="https://github.com/pytorch/pytorch/issues/1099" target="_blank" rel="noopener">issue 1099</a>，读者可以令$v_0=0$自己推导一下，很简单)，但是如果学习率是会随着step衰减的话，PyTorch的实现的Momentum可以立即随之衰减，而原来的实现需要较长的时间才能衰减到正常的水平。</p>
+<h4 id="b-NAG"><a href="#b-NAG" class="headerlink" title="b. NAG"></a>b. NAG</h4><p>用数学公式表示NAG的思想是非常简单且严谨的，然而在计算框架上要如何实现呢？PyTorch的框架是自动求导的，也就意味着：我们在forward之前就必须把参数走完动量的那一步从而得到$\theta’$，并只维护这一个参数，那么更新公式变为：</p>
+<p>$$<br>\begin{align}<br>\text{一步迭代：}\\<br>\theta_{t-1}’ &amp;= \theta_{t-1}-\eta\gamma v_{t-1} \\<br>v_t &amp;= \gamma v_{t-1}+\triangledown_\theta J(\theta_{t-1}’) \\<br>\theta_t &amp;= \theta_{t-1} - \eta v_t \\<br>&amp;= \theta_{t-1}’ + \eta\gamma v_{t-1} - \eta v_t \\<br>\text{下一步迭代：}\\<br>\theta_t’ &amp;= \theta_t-\eta\gamma v_{t} \\<br>&amp;= \theta_{t-1}’ + \eta\gamma v_{t-1} - \eta v_t  - \eta\gamma v_{t} \\<br>&amp;= \theta_{t-1}’ - \eta \triangledown_\theta J(\theta_{t-1}’) -\eta \gamma v_t \\<br>v_{t+1} &amp;= \gamma v_{t}+\triangledown_\theta J(\theta_{t}’) \\<br>&amp; …<br>\end{align}<br>$$</p>
+<p>抹掉$\theta​$参数，就可以得到：</p>
+<p>$$<br>\begin{align}<br>v_t &amp;= \gamma v_{t-1}+\triangledown_\theta J(\theta_{t-1}’) \\<br>\theta_t’ &amp;= \theta_{t-1}’ - \eta (\triangledown_\theta J(\theta_{t-1}’) + \gamma v_t)<br>\end{align}<br>$$</p>
+<p>这样我们就能把PyTorch的代码和NAG的更新公式统一了。虽然最后得到的是“多跨了一步动量”的参数，但是由于到最后靠近极值点的时候动量已经很小了，所以有一点误差也并无大碍。</p>
+<p>我们现在已经能一定程度上缓解挑战1和挑战4的问题了，但是我们还是希望能针对不同参数用不同的更新幅度，该如何实现呢？</p>
+<p>下一章，我们介绍一些在SGD的变体：Adagrad、Adadelta、RMSprop等。</p>
+<h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference:"></a>Reference:</h3><ol>
+<li><a href="https://www.researchgate.net/publication/243648538_Some_methods_of_speeding_up_the_convergence_of_iteration_methods" target="_blank" rel="noopener">Polyak, B.T. (1964) Some methods of speeding up the convergence of iteration methods</a></li>
+<li><a href="http://mpawankumar.info/teaching/cdt-big-data/nesterov83.pdf" target="_blank" rel="noopener">Nesterov, Y. (1983) A Method for Solving a Convex Programming Problem with Convergence Rate O(1/K2)</a></li>
+<li><a href="https://www.cs.utoronto.ca/~ilya/pubs/ilya_sutskever_phd_thesis.pdf" target="_blank" rel="noopener">Sutskever, I. (2013) Training Recurrent neural Networks. PhD Thesis. </a></li>
+<li><a href="http://www.cs.toronto.edu/~hinton/absps/momentum.pdf" target="_blank" rel="noopener">Sutskever, I. (2013) On the importance of initialization and momentum in deep learning</a></li>
+<li><a href="http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf" target="_blank" rel="noopener">Hinton, G. (2014) Neural Networks for Machine Learning—Lecture 6a Overview of mini-batch gradient descent</a></li>
+<li><a href="http://ruder.io/optimizing-gradient-descent/index.html#fn4" target="_blank" rel="noopener">Ruder, S. (2018) An overview of gradient descent optimization algorithms</a></li>
 </ol>
-<p>以前的 bi-gram 模型 $P(a_u |a_m)$，基于上一个系统行为 $a_m$ 去预测下一个用户行为 $a_u$。这就很傻。(user有可能改goal，看的信息太少)</p>
-<p>后面两个办法来处理：</p>
-<ol>
-<li>看更长的对话历史</li>
-<li>把user goal 放到user state modeling中</li>
-</ol>
-<p>seq2seq端到端解决闲聊可以，任务型不太行。</p>
-<p>本文用的叫 agenda-based user simulation 的架构，类似栈的结构通过进栈出栈来 model 状态转移和用户行为生成。很方便，显性encode了对话历史和用户目标（user goal）。</p>
-<p>总结：文章 <strong>结合了rule-based和model-based</strong> 的方法:</p>
-<ol>
-<li>在dialog-act level，用了agenda-based (rule)的方法；</li>
-<li>在nlg部分，用了seq2seq (model)的方法。</li>
-</ol>
-<h2 id="Task-completion的对话系统（Dialogue-system）"><a href="#Task-completion的对话系统（Dialogue-system）" class="headerlink" title="Task-completion的对话系统（Dialogue system）"></a>Task-completion的对话系统（Dialogue system）</h2><p>任务型对话系统(以订票bot为例)，通过nl交互，去获取客户期望的信息，最终实现订票。以：</p>
-<ol>
-<li>是否订票成功</li>
-<li>是否电影满足要求</li>
-</ol>
-<p>为标准，输出一个二进制结果，success or failure，评估系统。</p>
-<p>数据：用Amazon Mechanical Turk（众包平台）收集的数据，内部标注，11个intent（i.e., inform，request，confirm-question，confirm-answer，etc），29个slot（i.e., movie-name，start-time，theater，numberofpeople，etc）。</p>
-<p>一共标注了280个对话，对话平均11轮。</p>
-<h2 id="User-Simulator"><a href="#User-Simulator" class="headerlink" title="User Simulator"></a>User Simulator</h2><h3 id="User-Goal"><a href="#User-Goal" class="headerlink" title="User Goal"></a>User Goal</h3><p>TC Bot的user simulator第一步是生成user goal。agent不知道user goal，但是要帮助user来完成他的goal。user goal的定义分两个部分：</p>
-<ol>
-<li>inform_slots: 包含了constraints（C）</li>
-<li>request_slots: unk（R）</li>
-</ol>
-<p>又可以分成：</p>
-<ol>
-<li>必须有的slots（required slots）</li>
-<li>选择有的slots（optional slots，i.e., ticket就是request slots 里的必须项）。</li>
-</ol>
-<p>Goal是在labeled dataset里生成的，两个机制：</p>
-<ol>
-<li>在第一个用户轮提取所有的slots。对于所有的slots，在所有的用户轮里提取第一次出现的。</li>
-<li>每次跑对话的时候，就先sample一个user goal。</li>
-</ol>
-<h3 id="User-Action"><a href="#User-Action" class="headerlink" title="User Action"></a>User Action</h3><p>第一轮的action sampling：要加一些限制（比如通常是request turn，至少一个inform slot，movie_name必须在，等等）。</p>
-<p>如果不用NLG，NLU的话，还要加入噪声来模拟NLG和NLU过程产生的噪音，去训练DM部分。</p>
-<h3 id="Dialogue-Status"><a href="#Dialogue-Status" class="headerlink" title="Dialogue Status"></a>Dialogue Status</h3><p>三个对化状态：</p>
-<ol>
-<li>no_outcome_yet</li>
-<li>success</li>
-<li>failure</li>
-</ol>
-<p>具体情况具体讨论。</p>
-<h3 id="NLU"><a href="#NLU" class="headerlink" title="NLU"></a>NLU</h3><p>IOB-format slots tags + Intent tags</p>
-<p>最后的hidden layer判断 intent。</p>
-<h3 id="NLG"><a href="#NLG" class="headerlink" title="NLG"></a>NLG</h3><p>基于Template的NLG：dialog-act 被found在模板中的，套模板句型。<br>基于Model的NLG：没发现的，用model生成。（这一点感觉很扯，都没见过，咋生成，数据量肯定不够啊。）</p>
-<h2 id="Usages"><a href="#Usages" class="headerlink" title="Usages"></a>Usages</h2><p>Task-completing Dialogue Setting：任务型Bot（订票），衡量 agent的Metrics为：1. success rate；2. average reward；3. average turns。<br>KB-InfoBot（简单点，agent和user都只有request和inform）：问答Bot（电影信息）</p>
-<h2 id="Discussion"><a href="#Discussion" class="headerlink" title="Discussion"></a>Discussion</h2><p>Rule-based的 user simulation 很safe，但是很耗时，因为要手动制定各种规则。两个优化方向：</p>
-<p>包含user goal的改变（已做）<br>实现Model-based 的simulator，优点是泛化性能好，缺点是1. 需要大量数据， 2. 万一有漏洞，RL agent 会抓住这个漏洞，假假的成功，你以为success了，其实都是RL agent抓住了loophole给你的假象。</p>
-<h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>（根据《Agenda-Based User Simulation for bootstrapping a POMDP Dialogue System》by J. Schatzmann）</p>
-<ol>
-<li>语义层的 User Simulation<br>人机对话可以看成是状态转移（state transition）和对话行为（Dialog）的序列：用户根据状态 S (或加上机器人的 $a_m$，第一轮可能没有$a_m$)，采取行动 $a_u$, 把状态转移到$S’$。收到agent行动 $a_m$，再根据 $S’$ ，再把状态转移到 $S’’$。<br>这个user行为可以被分解为三个模型：$P(a_u|S)$ 行为选择，$P(S’|a_u, S)$ 状态转移（用户行为），$P(S’’|a_m,S’)$ 状态转移（系统行为）。</li>
-<li>基于Goal和Agent的状态表示<br>用户状态（User State）由用户目标（Goal）及议程（Agenda）构成。</li>
-</ol>
-<img src="/2019/01/16/user-simulator/2.png">
-<p>Goal由Constraint（C）（比如要市中心的啤酒酒吧）和Request（R）（比如酒吧电话是多少）构成。</p>
-<p>Agenda是一个类似栈的结构，包含了在排队中的，用来引出目标中明确的信息的用户行为。在对话开始的时候，用数据库随机生成一个新的Goal。然后，从Goal里的内容来初始化Agenda，把Goal中的 C 都convert成 Inform动作，把Goal中的 R 都convert成 Request动作，再在最后加一个bye动作。有新的 $a_m​$ 的时候，新的user acts 会被压进栈，不需要的会被出栈。具体实现方法（框架和数据结构），后面分析miulab的simulator源码的时候会写。</p>
-<img src="/2019/01/16/user-simulator/3.png">
-<p>上图描述了Agenda随着$a_m$，$a_u$的状态转移过程（进栈和出栈）。</p>
-<img src="/2019/01/16/user-simulator/4.png">
-<p>上图描述了无NLU和NLG的训练。</p>
 
       
     </div>
@@ -539,11 +481,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Chatbot/" rel="tag"># Chatbot</a>
+            <a href="/tags/优化器/" rel="tag"># 优化器</a>
           
-            <a href="/tags/User-Simulator/" rel="tag"># User Simulator</a>
-          
-            <a href="/tags/Reinforcement-Learning/" rel="tag"># Reinforcement Learning</a>
+            <a href="/tags/代码实现/" rel="tag"># 代码实现</a>
           
         </div>
       
@@ -556,8 +496,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/01/11/first-post/" rel="next" title="前言">
-                <i class="fa fa-chevron-left"></i> 前言
+              <a href="/2019/08/03/signal/" rel="next" title="【论文笔记】寻找让机器心动的“信号”">
+                <i class="fa fa-chevron-left"></i> 【论文笔记】寻找让机器心动的“信号”
               </a>
             
           </div>
@@ -565,10 +505,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/01/27/transfomer/" rel="prev" title="【论文笔记】Attention is all you need">
-                【论文笔记】Attention is all you need <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -703,7 +639,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本框架（包含对话系统）："><span class="nav-number">1.</span> <span class="nav-text">基本框架（包含对话系统）：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract："><span class="nav-number">2.</span> <span class="nav-text">Abstract：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为啥要user-simulator"><span class="nav-number">3.1.</span> <span class="nav-text">为啥要user simulator ?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Related-Work"><span class="nav-number">3.2.</span> <span class="nav-text">Related Work</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Task-completion的对话系统（Dialogue-system）"><span class="nav-number">4.</span> <span class="nav-text">Task-completion的对话系统（Dialogue system）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#User-Simulator"><span class="nav-number">5.</span> <span class="nav-text">User Simulator</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#User-Goal"><span class="nav-number">5.1.</span> <span class="nav-text">User Goal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#User-Action"><span class="nav-number">5.2.</span> <span class="nav-text">User Action</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dialogue-Status"><span class="nav-number">5.3.</span> <span class="nav-text">Dialogue Status</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NLU"><span class="nav-number">5.4.</span> <span class="nav-text">NLU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NLG"><span class="nav-number">5.5.</span> <span class="nav-text">NLG</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Usages"><span class="nav-number">6.</span> <span class="nav-text">Usages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Discussion"><span class="nav-number">7.</span> <span class="nav-text">Discussion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结："><span class="nav-number">8.</span> <span class="nav-text">总结：</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Gradient-Descent"><span class="nav-number">1.</span> <span class="nav-text">Gradient Descent</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-梯度下降的三种变体"><span class="nav-number">1.1.</span> <span class="nav-text">1. 梯度下降的三种变体</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-Batch-gradient-descent-BGD"><span class="nav-number">1.1.1.</span> <span class="nav-text">a. Batch gradient descent (BGD)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-Stochastic-gradient-descent-SGD"><span class="nav-number">1.1.2.</span> <span class="nav-text">b. Stochastic gradient descent (SGD)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c-Mini-batch-gradient-descent-MBGD"><span class="nav-number">1.1.3.</span> <span class="nav-text">c. Mini-batch gradient descent (MBGD)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-挑战"><span class="nav-number">1.2.</span> <span class="nav-text">2. 挑战</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SGD优化器的几点优化"><span class="nav-number">2.</span> <span class="nav-text">SGD优化器的几点优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Momentum动量"><span class="nav-number">2.1.</span> <span class="nav-text">1. Momentum动量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Nesterov-accelerated-gradient-NAG"><span class="nav-number">2.2.</span> <span class="nav-text">2. Nesterov accelerated gradient (NAG)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-PyTorch实现"><span class="nav-number">2.3.</span> <span class="nav-text">3. PyTorch实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-Momentum"><span class="nav-number">2.3.1.</span> <span class="nav-text">a. Momentum</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-NAG"><span class="nav-number">2.3.2.</span> <span class="nav-text">b. NAG</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference"><span class="nav-number">2.4.</span> <span class="nav-text">Reference:</span></a></li></ol></li></ol></div>
             
 
           </div>
