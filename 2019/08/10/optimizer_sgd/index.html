@@ -82,16 +82,16 @@
 <meta name="description" content="瓦砾准备写一个关于优化器算法的系列，主要面向总是把优化器当做黑盒使用的，或是对优化器算法有些遗忘的读者。希望大家在看完这个系列后，能达成以下几点成就：  对深度学习优化器的进化史，有一个系统的了解； 对应不同的任务，知道应选用哪种优化器； 能够理解每种优化器参数的意义； 能够根据自己的需求，在PyTorch上做一些自定义的优化器的改动。  Gradient Descent1. 梯度下降的三种变体梯">
 <meta name="keywords" content="优化器,代码实现">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【优化器】优化器算法及PyTorch实现系列（一）：永不磨灭的SGD">
+<meta property="og:title" content="【优化器】优化器算法及PyTorch实现（一）：永不磨灭的SGD">
 <meta property="og:url" content="http://fyubang.com/2019/08/10/optimizer_sgd/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
 <meta property="og:description" content="瓦砾准备写一个关于优化器算法的系列，主要面向总是把优化器当做黑盒使用的，或是对优化器算法有些遗忘的读者。希望大家在看完这个系列后，能达成以下几点成就：  对深度学习优化器的进化史，有一个系统的了解； 对应不同的任务，知道应选用哪种优化器； 能够理解每种优化器参数的意义； 能够根据自己的需求，在PyTorch上做一些自定义的优化器的改动。  Gradient Descent1. 梯度下降的三种变体梯">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/08/10/optimizer_sgd/momentum.png">
 <meta property="og:image" content="http://fyubang.com/2019/08/10/optimizer_sgd/nesterov_update_vector.png">
-<meta property="og:updated_time" content="2019-08-10T08:30:42.190Z">
+<meta property="og:updated_time" content="2019-08-11T17:21:20.384Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【优化器】优化器算法及PyTorch实现系列（一）：永不磨灭的SGD">
+<meta name="twitter:title" content="【优化器】优化器算法及PyTorch实现（一）：永不磨灭的SGD">
 <meta name="twitter:description" content="瓦砾准备写一个关于优化器算法的系列，主要面向总是把优化器当做黑盒使用的，或是对优化器算法有些遗忘的读者。希望大家在看完这个系列后，能达成以下几点成就：  对深度学习优化器的进化史，有一个系统的了解； 对应不同的任务，知道应选用哪种优化器； 能够理解每种优化器参数的意义； 能够根据自己的需求，在PyTorch上做一些自定义的优化器的改动。  Gradient Descent1. 梯度下降的三种变体梯">
 <meta name="twitter:image" content="http://fyubang.com/2019/08/10/optimizer_sgd/momentum.png">
 
@@ -129,7 +129,7 @@
 
 
 
-  <title>【优化器】优化器算法及PyTorch实现系列（一）：永不磨灭的SGD | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>【优化器】优化器算法及PyTorch实现（一）：永不磨灭的SGD | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -315,7 +315,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">【优化器】优化器算法及PyTorch实现系列（一）：永不磨灭的SGD</h1>
+          <h1 class="post-title" itemprop="name headline">【优化器】优化器算法及PyTorch实现（一）：永不磨灭的SGD</h1>
         
 
         <div class="post-meta">
@@ -416,14 +416,18 @@
 <li>随机梯度下降 SGD (Stochastic gradient descent)</li>
 <li>小批梯度下降 MBGD (Mini-batch gradient descent)</li>
 </ul>
-<h4 id="a-Batch-gradient-descent-BGD"><a href="#a-Batch-gradient-descent-BGD" class="headerlink" title="a. Batch gradient descent (BGD)"></a>a. Batch gradient descent (BGD)</h4><p>批梯度下降（Batch gradient descent，又称之为Vanilla gradient descent），顾名思义是用全部的数据样本计算平均loss之后，再得到梯度进行下降：<br>$$<br>\theta = \theta - \eta \cdot \triangledown_\theta J(\theta)<br>$$<br>其中$\theta$为模型参数，$\triangledown_\theta J(\theta)$为各个参数的梯度，$\eta​$为学习率。由于这样耗时太长，且由于内存的原因，对于较大数据量的几乎不可能实现，也不支持online-learning，所以实用价值不高。</p>
-<h4 id="b-Stochastic-gradient-descent-SGD"><a href="#b-Stochastic-gradient-descent-SGD" class="headerlink" title="b. Stochastic gradient descent (SGD)"></a>b. Stochastic gradient descent (SGD)</h4><p>随机梯度下降则是另一个极端，每个样本都会计算loss、梯度，然后更新：<br>$$<br>\theta = \theta - \eta \cdot \triangledown_\theta J(\theta; x^{i};y^{i})<br>$$<br>SGD的问题呢，是做了很多冗余的计算，且不会很快收敛，容易震荡，但是可以用来online-learning。</p>
+<h4 id="a-Batch-gradient-descent-BGD"><a href="#a-Batch-gradient-descent-BGD" class="headerlink" title="a. Batch gradient descent (BGD)"></a>a. Batch gradient descent (BGD)</h4><p>批梯度下降（Batch gradient descent，又称之为Vanilla gradient descent），顾名思义是用全部的数据样本计算平均loss之后，再得到梯度进行下降：<br>$$<br>\theta = \theta - \eta \cdot \triangledown_\theta J(\theta)<br>$$<br>其中$\theta$为模型参数，$\triangledown_\theta J(\theta)$为各个参数的梯度，$\eta$为学习率。但是BGD有两个最大的问题：</p>
+<ol>
+<li>容易陷入局部最优点和鞍点。</li>
+<li>遍历整个数据集才走一步，这样太耗时，且由于内存的原因，对于较大数据量的几乎不可能实现。</li>
+</ol>
+<h4 id="b-Stochastic-gradient-descent-SGD"><a href="#b-Stochastic-gradient-descent-SGD" class="headerlink" title="b. Stochastic gradient descent (SGD)"></a>b. Stochastic gradient descent (SGD)</h4><p>随机梯度下降则是另一个极端，每个样本都会计算loss、梯度，然后更新：<br>$$<br>\theta = \theta - \eta \cdot \triangledown_\theta J(\theta; x^{i};y^{i})<br>$$<br>SGD完美解决了上面的两点问题，并且可以用来online-learning，但是，SGD做了很多冗余的计算，且不会很快收敛，容易震荡。</p>
 <h4 id="c-Mini-batch-gradient-descent-MBGD"><a href="#c-Mini-batch-gradient-descent-MBGD" class="headerlink" title="c. Mini-batch gradient descent (MBGD)"></a>c. Mini-batch gradient descent (MBGD)</h4><p>MBGD是BGD和SGD的这种，每次取m个样本，计算平均loss、梯度，然后更新：<br>$$<br>\theta = \theta - \eta \cdot \triangledown_\theta J(\theta; x^{i: i+m};y^{i:i+m})<br>$$<br>MBGD避开了前两种的缺点，并且：</p>
 <ol>
 <li>减少参数的更新次数，使用更新更稳定；</li>
 <li>充分利用gpu的并行计算，提高计算效率。</li>
 </ol>
-<p>一般情况，若无特殊说明，SGD优化器指的就是MBGD的方法。</p>
+<p>一般情况，若无特殊说明，SGD优化器指的就是MBGD的方法。（更细节的讲BGD和SGD的优劣的可以看 <a href="https://zhuanlan.zhihu.com/people/yuan-yang-20-33" target="_blank" rel="noopener">@袁洋</a> 大佬的这篇：<a href="https://zhuanlan.zhihu.com/p/27609238" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/27609238</a>，私以为讲的很好）</p>
 <h3 id="2-挑战"><a href="#2-挑战" class="headerlink" title="2. 挑战"></a>2. 挑战</h3><p>梯度下降是所有深度学习优化器的基础。但是想要明白为什么需要优化SGD，首先我们得知道Vanilla SGD优化器面临的挑战：</p>
 <ol>
 <li>对于SGD来说，挑选一个学习率（固定）是很很困难的。选小了，收敛太慢；选大了，阻碍收敛甚至容易发散。</li>
