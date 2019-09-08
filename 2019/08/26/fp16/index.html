@@ -79,23 +79,23 @@
 
 
 
-<meta name="description" content="你想享受双倍训练速度的快感吗？你想让你的 11G显存 的 2080Ti 秒变 20G 吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器–Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说">
+<meta name="description" content="你想获得双倍训练速度的快感吗？你想让你的显存空间瞬间翻倍吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器–Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说，直接先教你怎么用。 PyTo">
 <meta name="keywords" content="深度学习加速,混合精度训练">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【PyTorch】唯快不破：基于Apex的混合精度加速">
 <meta property="og:url" content="http://fyubang.com/2019/08/26/fp16/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
-<meta property="og:description" content="你想享受双倍训练速度的快感吗？你想让你的 11G显存 的 2080Ti 秒变 20G 吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器–Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说">
+<meta property="og:description" content="你想获得双倍训练速度的快感吗？你想让你的显存空间瞬间翻倍吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器–Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说，直接先教你怎么用。 PyTo">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/08/26/fp16/fp16.png">
 <meta property="og:image" content="http://fyubang.com/2019/08/26/fp16/fp16_example.png">
 <meta property="og:image" content="http://fyubang.com/2019/08/26/fp16/underflow.png">
 <meta property="og:image" content="http://fyubang.com/2019/08/26/fp16/rounding.png">
 <meta property="og:image" content="http://fyubang.com/2019/08/26/fp16/loss_scale.png">
-<meta property="og:updated_time" content="2019-08-26T13:34:04.269Z">
+<meta property="og:updated_time" content="2019-09-05T04:00:03.231Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【PyTorch】唯快不破：基于Apex的混合精度加速">
-<meta name="twitter:description" content="你想享受双倍训练速度的快感吗？你想让你的 11G显存 的 2080Ti 秒变 20G 吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器–Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说">
+<meta name="twitter:description" content="你想获得双倍训练速度的快感吗？你想让你的显存空间瞬间翻倍吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器–Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说，直接先教你怎么用。 PyTo">
 <meta name="twitter:image" content="http://fyubang.com/2019/08/26/fp16/fp16.png">
 
 
@@ -406,7 +406,7 @@
       
 
       
-        <p>你想享受双倍训练速度的快感吗？<br>你想让你的 11G显存 的 2080Ti 秒变 20G 吗？<br>如果我告诉你只需要三行代码即可实现，你信不？</p>
+        <p>你想获得双倍训练速度的快感吗？<br>你想让你的显存空间瞬间翻倍吗？<br>如果我告诉你只需要三行代码即可实现，你信不？</p>
 <p>在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器–Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的<strong>混合精度加速</strong>，训练时间直接缩小一半。</p>
 <p>话不多说，直接先教你怎么用。</p>
 <h2 id="PyTorch实现"><a href="#PyTorch实现" class="headerlink" title="PyTorch实现"></a>PyTorch实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> apex <span class="keyword">import</span> amp</span><br><span class="line">model, optimizer = amp.initialize(model, optimizer, opt_level=<span class="string">"O1"</span>) <span class="comment"># 这里是“欧一”，不是“零一”</span></span><br><span class="line"><span class="keyword">with</span> amp.scale_loss(loss, optimizer) <span class="keyword">as</span> scaled_loss:</span><br><span class="line">    scaled_loss.backward()</span><br></pre></td></tr></table></figure>
@@ -523,6 +523,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/09/08/lic-2019/" rel="prev" title="【参会笔记】2019语言与智能高峰论坛">
+                【参会笔记】2019语言与智能高峰论坛 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -601,7 +605,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
