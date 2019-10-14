@@ -91,7 +91,7 @@
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/2.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/3.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/16/user-simulator/4.png">
-<meta property="og:updated_time" content="2019-05-21T07:52:41.058Z">
+<meta property="og:updated_time" content="2019-10-12T09:08:50.017Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【论文笔记】A User Simulator for Task-Completion Dialogues">
 <meta name="twitter:description" content="基本框架（包含对话系统）： Abstract：做任务型bot的时候，强化学习（RL）很强，但是有一些困难：  需要和环境互动，已有的完整对话训练数据没用； 每个不同的任务都需要各自领域的标注数据； 收集人人对话或者人机对话需要领域知识。  但是啊： ====&amp;gt;建造数据库又贵又花时间 ====&amp;gt;只好模拟 ====&amp;gt;user simulator诞生 ====&amp;gt;Bot（agent">
@@ -352,18 +352,7 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/" itemprop="url" rel="index">
-                    <span itemprop="name">NLP</span>
-                  </a>
-                </span>
-
-                
-                
-                  , 
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/论文笔记/" itemprop="url" rel="index">
+                  <a href="/categories/论文笔记/" itemprop="url" rel="index">
                     <span itemprop="name">论文笔记</span>
                   </a>
                 </span>
@@ -374,7 +363,7 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/论文笔记/Bot/" itemprop="url" rel="index">
+                  <a href="/categories/论文笔记/Bot/" itemprop="url" rel="index">
                     <span itemprop="name">Bot</span>
                   </a>
                 </span>
@@ -517,7 +506,7 @@
 </ol>
 <img src="/2019/01/16/user-simulator/2.png">
 <p>Goal由Constraint（C）（比如要市中心的啤酒酒吧）和Request（R）（比如酒吧电话是多少）构成。</p>
-<p>Agenda是一个类似栈的结构，包含了在排队中的，用来引出目标中明确的信息的用户行为。在对话开始的时候，用数据库随机生成一个新的Goal。然后，从Goal里的内容来初始化Agenda，把Goal中的 C 都convert成 Inform动作，把Goal中的 R 都convert成 Request动作，再在最后加一个bye动作。有新的 $a_m​$ 的时候，新的user acts 会被压进栈，不需要的会被出栈。具体实现方法（框架和数据结构），后面分析miulab的simulator源码的时候会写。</p>
+<p>Agenda是一个类似栈的结构，包含了在排队中的，用来引出目标中明确的信息的用户行为。在对话开始的时候，用数据库随机生成一个新的Goal。然后，从Goal里的内容来初始化Agenda，把Goal中的 C 都convert成 Inform动作，把Goal中的 R 都convert成 Request动作，再在最后加一个bye动作。有新的 $a_m$ 的时候，新的user acts 会被压进栈，不需要的会被出栈。具体实现方法（框架和数据结构），后面分析miulab的simulator源码的时候会写。</p>
 <img src="/2019/01/16/user-simulator/3.png">
 <p>上图描述了Agenda随着$a_m$，$a_u$的状态转移过程（进栈和出栈）。</p>
 <img src="/2019/01/16/user-simulator/4.png">
@@ -638,6 +627,7 @@
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
               <p class="site-author-name" itemprop="name">AKA瓦砾</p>
+              <img class="site-author-image" itemprop="image" src="/images/header.png" alt="AKA瓦砾">
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
@@ -659,7 +649,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -670,7 +660,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

@@ -442,19 +442,29 @@
 <li>每一轮的训练迭代都需要所有卡都将数据同步完做一次Reduce才算结束，并行的卡很多的时候，木桶效应就会很严重，计算效率低。</li>
 <li>所有的GPU卡需要和Reducer进行数据、梯度和参数的通信，当模型较大或者数据较大的时候，通信开销很大。</li>
 </ol>
-<p>假设有N个GPU，通信一次完整的参数所需时间为K，那么使用PS架构，花费的通信成本为：<br>$$<br>T = 2(N-1)K<br>$$<br>所以我们亟需一种新的算法来提高深度学习模型训练的并行效率。</p>
+<p>假设有N个GPU，通信一次完整的参数所需时间为K，那么使用PS架构，花费的通信成本为：</p>
+<script type="math/tex; mode=display">
+T = 2(N-1)K</script><p>所以我们亟需一种新的算法来提高深度学习模型训练的并行效率。</p>
 <p>2017 年 Facebook 发布了《Accurate, large minibatch SGD: Training ImageNet in 1 hour 》验证了大数据并行的高效性，同年百度发表了《Bringing HPC techniques to deep learning 》，验证了全新的梯度同步和权值更新算法的可行性，并提出了一种利用带宽优化环解决通信问题的方法——Ring AllReduce。</p>
 <p><img src="ringallreduce.png" width="60%" title="Ring AllReduce算法架构"></p>
 <p>Parameter Service最大的问题就是通信成本和GPU的数量线性相关。而Ring AllReduce的通信成本与GPU数量无关。Ring AllReduce分为两个步骤：Scatter Reduce和All Gather。</p>
 <p>Scatter Reduce过程：首先，我们将参数分为N份，相邻的GPU传递不同的参数，在传递N-1次之后，可以得到每一份参数的累积（在不同的GPU上）。</p>
-<center><br><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="1000" height="650" src="scatter_reduce.gif"><br></iframe><br></center>
+<center>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="1000" height="650" src="scatter_reduce.gif">
+</iframe>
+</center>
 
 
 
 <p>All Gather：得到每一份参数的累积之后，再做一次传递，同步到所有的GPU上。</p>
-<center><br><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="1000" height="650" src="allgather.gif"><br></iframe><br></center>
+<center>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="1000" height="650" src="allgather.gif">
+</iframe>
+</center>
 
-<p>根据这两个过程，我们可以计算到All Reduce的通信成本为：<br>$$<br>T = 2(N-1)\frac{K}{N}<br>$$<br>可以看到通信成本T与GPU数量无关。</p>
+<p>根据这两个过程，我们可以计算到All Reduce的通信成本为：</p>
+<script type="math/tex; mode=display">
+T = 2(N-1)\frac{K}{N}</script><p>可以看到通信成本T与GPU数量无关。</p>
 <p>由于All Reduce算法在通信成本上的优势，现在几个框架基本上都实现了其对于的官方API，后面几篇，瓦砾会跟大家一起过一遍TF，Torch的分布式训练API具体是怎么用的，有哪些坑。</p>
 <h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><ol>
 <li><a href="https://www.infoq.cn/article/J4ry_9bsfbcNkv6dfuqC" target="_blank" rel="noopener">是时候放弃Tensorflow，拥抱Horovod了</a></li>
@@ -496,8 +506,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/01/ema/" rel="next" title="【优化技巧】指数移动平均（EMA）的原理及PyTorch实现">
-                <i class="fa fa-chevron-left"></i> 【优化技巧】指数移动平均（EMA）的原理及PyTorch实现
+              <a href="/2019/06/01/ema/" rel="next" title="【训练技巧】指数移动平均（EMA）的原理及PyTorch实现">
+                <i class="fa fa-chevron-left"></i> 【训练技巧】指数移动平均（EMA）的原理及PyTorch实现
               </a>
             
           </div>
@@ -578,6 +588,7 @@
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
               <p class="site-author-name" itemprop="name">AKA瓦砾</p>
+              <img class="site-author-image" itemprop="image" src="/images/header.png" alt="AKA瓦砾">
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
@@ -599,7 +610,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -610,7 +621,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

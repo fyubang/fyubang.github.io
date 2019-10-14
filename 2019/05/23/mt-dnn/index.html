@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="bert,多任务,迁移学习,">
+  <meta name="keywords" content="多任务,bert,迁移学习,">
 
 
 
@@ -80,7 +80,7 @@
 
 
 <meta name="description" content="想写这篇蛮久的，但由于之前一直忙着搞别的事情（好吧就是懒），一直拖着。刚好最近有用这个方面的需求，就又读了一遍论文和github上的一些实现。 大部分的博客都只是粗略翻译论文，然而光看论文，往往会忽略一些实现细节，所以笔者最近在尝试将论文笔记和源码解析结合起来，就从这篇MT-DNN开始吧。希望大家多多提意见。 Paper：Multi-Task Deep Neural Networks for Na">
-<meta name="keywords" content="bert,多任务,迁移学习">
+<meta name="keywords" content="多任务,bert,迁移学习">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【论文笔记】MT-DNN">
 <meta property="og:url" content="http://fyubang.com/2019/05/23/mt-dnn/index.html">
@@ -96,7 +96,7 @@
 <meta property="og:image" content="http://fyubang.com/2019/05/23/mt-dnn/result2.png">
 <meta property="og:image" content="http://fyubang.com/2019/05/23/mt-dnn/result3.png">
 <meta property="og:image" content="http://fyubang.com/2019/05/23/mt-dnn/batcher.py.png">
-<meta property="og:updated_time" content="2019-08-08T13:19:17.932Z">
+<meta property="og:updated_time" content="2019-10-12T09:09:05.109Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【论文笔记】MT-DNN">
 <meta name="twitter:description" content="想写这篇蛮久的，但由于之前一直忙着搞别的事情（好吧就是懒），一直拖着。刚好最近有用这个方面的需求，就又读了一遍论文和github上的一些实现。 大部分的博客都只是粗略翻译论文，然而光看论文，往往会忽略一些实现细节，所以笔者最近在尝试将论文笔记和源码解析结合起来，就从这篇MT-DNN开始吧。希望大家多多提意见。 Paper：Multi-Task Deep Neural Networks for Na">
@@ -357,18 +357,7 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/" itemprop="url" rel="index">
-                    <span itemprop="name">NLP</span>
-                  </a>
-                </span>
-
-                
-                
-                  , 
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/论文笔记/" itemprop="url" rel="index">
+                  <a href="/categories/论文笔记/" itemprop="url" rel="index">
                     <span itemprop="name">论文笔记</span>
                   </a>
                 </span>
@@ -379,7 +368,7 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/论文笔记/多任务/" itemprop="url" rel="index">
+                  <a href="/categories/论文笔记/多任务/" itemprop="url" rel="index">
                     <span itemprop="name">多任务</span>
                   </a>
                 </span>
@@ -464,16 +453,23 @@
 <li>SciTail（Science Question Answering Textual Entailment）：科学问题的推理，更难。</li>
 </ul>
 <p><img src="dataset.png" title="实验用到的数据的概述"></p>
-<h3 id="loss计算"><a href="#loss计算" class="headerlink" title="loss计算"></a>loss计算</h3><h4 id="1-单句分类"><a href="#1-单句分类" class="headerlink" title="1. 单句分类"></a>1. 单句分类</h4><p>交叉熵：<br>$$<br>P_r(c|X) = \text{softmax}(W^T_{SST}\cdot x)\\<br>L(\Theta) = -\sum_c{\mathbb{I}(X, c) \log (P_r(c|X)) }<br>$$</p>
-<h4 id="2-文本相似度"><a href="#2-文本相似度" class="headerlink" title="2. 文本相似度"></a>2. 文本相似度</h4><p>均方误差：<br>$$<br>\text{Sim}(X_1, X_2) = \text{sigmoid}(w^T_{STS}\cdot x)\\<br>L(\Theta) = (y-\text{Sim}(X_1, X_2))^2<br>$$</p>
-<h4 id="3-对句分类"><a href="#3-对句分类" class="headerlink" title="3. 对句分类"></a>3. 对句分类</h4><p>前面比较常见，这个对句分类作者处理的方式比较特殊，用了18年作者自己提出的一种叫 SAN（stochastic answer network）的输出层构建方式，推理过程有点繁琐，给大家贴个图。</p>
+<h3 id="loss计算"><a href="#loss计算" class="headerlink" title="loss计算"></a>loss计算</h3><h4 id="1-单句分类"><a href="#1-单句分类" class="headerlink" title="1. 单句分类"></a>1. 单句分类</h4><p>交叉熵：</p>
+<script type="math/tex; mode=display">
+P_r(c|X) = \text{softmax}(W^T_{SST}\cdot x)\\\\
+L(\Theta) = -\sum_c{\mathbb{I}(X, c) \log (P_r(c|X)) }</script><h4 id="2-文本相似度"><a href="#2-文本相似度" class="headerlink" title="2. 文本相似度"></a>2. 文本相似度</h4><p>均方误差：</p>
+<script type="math/tex; mode=display">
+\text{Sim}(X_1, X_2) = \text{sigmoid}(w^T_{STS}\cdot x)\\\\
+L(\Theta) = (y-\text{Sim}(X_1, X_2))^2</script><h4 id="3-对句分类"><a href="#3-对句分类" class="headerlink" title="3. 对句分类"></a>3. 对句分类</h4><p>前面比较常见，这个对句分类作者处理的方式比较特殊，用了18年作者自己提出的一种叫 SAN（stochastic answer network）的输出层构建方式，推理过程有点繁琐，给大家贴个图。</p>
 <p><img src="san.png" width="40%" title="SAN网络的推理"></p>
 <p>注意图中的$m$，$n$ 都是sequence length。</p>
 <p>总结起来就是，作者得到query和premise分别的token-wise的表达之后，在他们两个之间做了一个attention，然后开辟了一个新的状态维度做RNN，从而得到多次预测结果，再做平均（类似于人推理时，多次思考才能得到最终的判断）。作者在后面证明了 SAN 结构能带来0.1%~0.5%的提升。</p>
-<p>loss也是交叉熵：<br>$$<br>L(\Theta) = -\sum_c{\mathbb{I}(X, c) \log (P_r(c|X)) }<br>$$</p>
-<h4 id="4-相关性排序"><a href="#4-相关性排序" class="headerlink" title="4. 相关性排序"></a>4. 相关性排序</h4><p>作者的这个loss设计还是挺有意思的，不用简单的二分类来做这个任务，而是用learning2rank的范式，对于每个query $Q$ 采样 $N$ 个candidates，其中$A^+$是正确答案，其他的都是是错误答案。</p>
-<p>负对数似然：<br>$$<br>\text{Rel}(Q,A)=\text{sigmoid}(w^T_{QNLI} \cdot x)\\<br>L(\Theta)=-\frac{\text{exp}(\text{Rel}(Q,A^+))}{\sum_{A’\in{\mathcal{A}}}\text{exp}(Rel(Q,A’))}<br>$$</p>
-<h2 id="训练过程"><a href="#训练过程" class="headerlink" title="训练过程"></a>训练过程</h2><p><img src="pseudocode.png" width="40%" title="多任务训练过程的伪代码"></p>
+<p>loss也是交叉熵：</p>
+<script type="math/tex; mode=display">
+L(\Theta) = -\sum_c{\mathbb{I}(X, c) \log (P_r(c|X)) }</script><h4 id="4-相关性排序"><a href="#4-相关性排序" class="headerlink" title="4. 相关性排序"></a>4. 相关性排序</h4><p>作者的这个loss设计还是挺有意思的，不用简单的二分类来做这个任务，而是用learning2rank的范式，对于每个query $Q$ 采样 $N$ 个candidates，其中$A^+$是正确答案，其他的都是是错误答案。</p>
+<p>负对数似然：</p>
+<script type="math/tex; mode=display">
+\text{Rel}(Q,A)=\text{sigmoid}(w^T_{QNLI} \cdot x)\\\\
+L(\Theta)=-\frac{\text{exp}(\text{Rel}(Q,A^+))}{\sum_{A'\in{\mathcal{A}}}\text{exp}(Rel(Q,A'))}</script><h2 id="训练过程"><a href="#训练过程" class="headerlink" title="训练过程"></a>训练过程</h2><p><img src="pseudocode.png" width="40%" title="多任务训练过程的伪代码"></p>
 <p>训练过程就是把所有数据合并在一起，每个batch只有单一任务的数据，同时会带有一个task-type的标志，这样模型就知道该走哪一条loss计算的路径。</p>
 <p>论文里并没有提及对于单个任务，之后还要不要再单独Fine-tune一下，不过参考github的FAQ，再FT一下，结果会更好。</p>
 <p><img src="faq_ft.png" title="作者在Git上对于是否需要在多任务后单独fine-tune各个任务的解答"></p>
@@ -542,9 +538,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/bert/" rel="tag"># bert</a>
-          
             <a href="/tags/多任务/" rel="tag"># 多任务</a>
+          
+            <a href="/tags/bert/" rel="tag"># bert</a>
           
             <a href="/tags/迁移学习/" rel="tag"># 迁移学习</a>
           
@@ -569,8 +565,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/06/01/ema/" rel="prev" title="【优化技巧】指数移动平均（EMA）的原理及PyTorch实现">
-                【优化技巧】指数移动平均（EMA）的原理及PyTorch实现 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/06/01/ema/" rel="prev" title="【训练技巧】指数移动平均（EMA）的原理及PyTorch实现">
+                【训练技巧】指数移动平均（EMA）的原理及PyTorch实现 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -641,6 +637,7 @@
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
               <p class="site-author-name" itemprop="name">AKA瓦砾</p>
+              <img class="site-author-image" itemprop="image" src="/images/header.png" alt="AKA瓦砾">
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
@@ -662,7 +659,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -673,7 +670,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

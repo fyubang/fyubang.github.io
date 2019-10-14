@@ -79,23 +79,23 @@
 
 
 
-<meta name="description" content="你想获得双倍训练速度的快感吗？你想让你的显存空间瞬间翻倍吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器–Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说，直接先教你怎么用。 PyTo">
+<meta name="description" content="你想获得双倍训练速度的快感吗？你想让你的显存空间瞬间翻倍吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器—Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说，直接先教你怎么用。 PyTo">
 <meta name="keywords" content="深度学习加速,混合精度训练">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【PyTorch】唯快不破：基于Apex的混合精度加速">
 <meta property="og:url" content="http://fyubang.com/2019/08/26/fp16/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
-<meta property="og:description" content="你想获得双倍训练速度的快感吗？你想让你的显存空间瞬间翻倍吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器–Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说，直接先教你怎么用。 PyTo">
+<meta property="og:description" content="你想获得双倍训练速度的快感吗？你想让你的显存空间瞬间翻倍吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器—Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说，直接先教你怎么用。 PyTo">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/08/26/fp16/fp16.png">
 <meta property="og:image" content="http://fyubang.com/2019/08/26/fp16/fp16_example.png">
 <meta property="og:image" content="http://fyubang.com/2019/08/26/fp16/underflow.png">
 <meta property="og:image" content="http://fyubang.com/2019/08/26/fp16/rounding.png">
 <meta property="og:image" content="http://fyubang.com/2019/08/26/fp16/loss_scale.png">
-<meta property="og:updated_time" content="2019-09-05T04:00:03.231Z">
+<meta property="og:updated_time" content="2019-09-10T03:17:32.095Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【PyTorch】唯快不破：基于Apex的混合精度加速">
-<meta name="twitter:description" content="你想获得双倍训练速度的快感吗？你想让你的显存空间瞬间翻倍吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器–Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说，直接先教你怎么用。 PyTo">
+<meta name="twitter:description" content="你想获得双倍训练速度的快感吗？你想让你的显存空间瞬间翻倍吗？如果我告诉你只需要三行代码即可实现，你信不？ 在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器—Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的混合精度加速，训练时间直接缩小一半。 话不多说，直接先教你怎么用。 PyTo">
 <meta name="twitter:image" content="http://fyubang.com/2019/08/26/fp16/fp16.png">
 
 
@@ -407,7 +407,7 @@
 
       
         <p>你想获得双倍训练速度的快感吗？<br>你想让你的显存空间瞬间翻倍吗？<br>如果我告诉你只需要三行代码即可实现，你信不？</p>
-<p>在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器–Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的<strong>混合精度加速</strong>，训练时间直接缩小一半。</p>
+<p>在这篇博客里，瓦砾会详解一下混合精度计算（Mixed Precision），并介绍一款Nvidia开发的基于PyTorch的混合精度训练加速神器—Apex，最近Apex更新了API，可以用短短三行代码就能实现不同程度的<strong>混合精度加速</strong>，训练时间直接缩小一半。</p>
 <p>话不多说，直接先教你怎么用。</p>
 <h2 id="PyTorch实现"><a href="#PyTorch实现" class="headerlink" title="PyTorch实现"></a>PyTorch实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> apex <span class="keyword">import</span> amp</span><br><span class="line">model, optimizer = amp.initialize(model, optimizer, opt_level=<span class="string">"O1"</span>) <span class="comment"># 这里是“欧一”，不是“零一”</span></span><br><span class="line"><span class="keyword">with</span> amp.scale_loss(loss, optimizer) <span class="keyword">as</span> scaled_loss:</span><br><span class="line">    scaled_loss.backward()</span><br></pre></td></tr></table></figure>
 <p>对，就是这么简单，如果你不愿意花时间深入了解，读到这基本就可以直接使用起来了。</p>
@@ -415,7 +415,7 @@
 <h2 id="理论部分"><a href="#理论部分" class="headerlink" title="理论部分"></a>理论部分</h2><p>为了充分理解混合精度的原理，以及API的使用，先补充一点基础的理论知识。</p>
 <h3 id="1-什么是FP16？"><a href="#1-什么是FP16？" class="headerlink" title="1. 什么是FP16？"></a>1. 什么是FP16？</h3><p><strong>半精度浮点数</strong>是一种计算机使用的二进制浮点数数据类型，使用2字节（16位）存储。</p>
 <p><img src="fp16.png" width="90%" title="FP16和FP32表示的范围和精度对比"></p>
-<p>其中，<code>sign</code>位表示正负，<code>exponent</code>位表示指数（$2^{n-15+{1}(n=0)}$），<code>fraction</code>位表示的是分数（$\frac{m}{1024}​$）。其中当指数为零的时候，下图加号左边为0，其他情况为1。</p>
+<p>其中，<code>sign</code>位表示正负，<code>exponent</code>位表示指数（$2^{n-15+{1}(n=0)}$），<code>fraction</code>位表示的是分数（$\frac{m}{1024}$）。其中当指数为零的时候，下图加号左边为0，其他情况为1。</p>
 <p><img src="fp16_example.png" width="80%" title="FP16的表示范例"></p>
 <h3 id="2-为什么需要FP16？"><a href="#2-为什么需要FP16？" class="headerlink" title="2. 为什么需要FP16？"></a>2. 为什么需要FP16？</h3><p>在使用FP16之前，我想再赘述一下为什么我们使用FP16。</p>
 <ol>
@@ -442,7 +442,7 @@
 <li><p><strong>损失放大（Loss Scaling）</strong><br>即使用了混合精度训练，还是会存在无法收敛的情况，原因是激活梯度的值太小，造成了下溢出（Underflow）。损失放大的思路是：</p>
 <ul>
 <li>反向传播前，将损失变化（dLoss）手动增大$2^k$倍，因此反向传播时得到的中间变量（激活函数梯度）则不会溢出；</li>
-<li>反向传播后，将权重梯度缩$2^k​$倍，恢复正常值。</li>
+<li>反向传播后，将权重梯度缩$2^k$倍，恢复正常值。</li>
 </ul>
 </li>
 </ol>
@@ -480,6 +480,7 @@
 <li><a href="http://market.itcgb.com/Contents/Intel/OR_AI_BJ/images/Brian_DeepLearning_LowNumericalPrecision.pdf" target="_blank" rel="noopener">Intel的低精度表示用于深度学习训练与推断</a></li>
 <li><a href="https://docs.nvidia.com/deeplearning/sdk/mixed-precision-training/index.html" target="_blank" rel="noopener">Nvidia官方的混合精度训练文档</a></li>
 <li><a href="https://nvidia.github.io/apex/amp.html" target="_blank" rel="noopener">Apex官方使用文档</a></li>
+<li><a href="http://on-demand.gputechconf.com/gtc-taiwan/2018/pdf/5-1_Internal%20Speaker_Michael%20Carilli_PDF%20For%20Sharing.pdf" target="_blank" rel="noopener">Nvidia-Training Neural Networks with Mixed Precision</a></li>
 </ol>
 
       
@@ -595,6 +596,7 @@
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
               <p class="site-author-name" itemprop="name">AKA瓦砾</p>
+              <img class="site-author-image" itemprop="image" src="/images/header.png" alt="AKA瓦砾">
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
@@ -616,7 +618,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -627,7 +629,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

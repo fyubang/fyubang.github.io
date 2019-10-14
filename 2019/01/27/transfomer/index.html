@@ -91,7 +91,7 @@
 <meta property="og:image" content="http://fyubang.com/2019/01/27/transfomer/bahdanau.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/27/transfomer/sdp_mh_attention.png">
 <meta property="og:image" content="http://fyubang.com/2019/01/27/transfomer/cost.png">
-<meta property="og:updated_time" content="2019-05-21T09:26:50.057Z">
+<meta property="og:updated_time" content="2019-10-12T09:08:52.904Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【论文笔记】Attention is all you need">
 <meta name="twitter:description" content="今年的NLP界被BERT整的明明白白，其中的基本结构 Transformer 一定要了解一下。 Abstract：一般来说，重要的sequence transduction模型都是基于包含encoder，decoder的复杂的rnn和cnn的。最好的模型是通过一个attention机制来连接encoder，decoder。比较普通！我们提出一个只靠attention的。叫Transformer，跟">
@@ -352,18 +352,7 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/" itemprop="url" rel="index">
-                    <span itemprop="name">NLP</span>
-                  </a>
-                </span>
-
-                
-                
-                  , 
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/论文笔记/" itemprop="url" rel="index">
+                  <a href="/categories/论文笔记/" itemprop="url" rel="index">
                     <span itemprop="name">论文笔记</span>
                   </a>
                 </span>
@@ -374,7 +363,7 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/论文笔记/Attention/" itemprop="url" rel="index">
+                  <a href="/categories/论文笔记/Attention/" itemprop="url" rel="index">
                     <span itemprop="name">Attention</span>
                   </a>
                 </span>
@@ -445,25 +434,45 @@
 <h3 id="3-2-Attention"><a href="#3-2-Attention" class="headerlink" title="3.2 Attention"></a>3.2 Attention</h3><p>既然文章名字叫Attention is all you need，attention的结构当然是其中的重中之重，理解了Attention就几乎理解了文章的一大半。</p>
 <h4 id="3-2-1-Basic-Attention"><a href="#3-2-1-Basic-Attention" class="headerlink" title="3.2.1 Basic Attention"></a>3.2.1 Basic Attention</h4><p>首先，得知道啥是attention。14年Sutskever大神祭出seq2seq之后，紧跟着Bahdanau和Luong就发了两篇attention用在seq2seq的论文，名字也好记，一个叫Bahdanau attention，一个叫Luong attention。这里以Bahdanau Attention为例，讲一讲计算attention的基本套路。</p>
 <img src="/2019/01/27/transfomer/bahdanau.png">
-<p>其实，attention机制和普通seq2seq的不同就是，要计算出一个包含上下文信息的context vector作为decoder每个位置的输入。计算attention时，一般有Query(Q)，Key(K)，Value(V) 三个输入。在上面这张图上，Q就是 $(s_0, s_1, … s_m)$ ，K和V就是$(h_0, h_1, …, h_n)$。attention机制一般的套路就是，用Q和K先算出一个权重的向量，再用这个权重的向量去element-wise地乘上V，就能得到Context Vector：<br>$$<br>ConVec(Q, K, V) = softmax(score(Q, K))V<br>$$</p>
-<h4 id="3-2-2-Scaled-Dot-Product-Attention"><a href="#3-2-2-Scaled-Dot-Product-Attention" class="headerlink" title="3.2.2 Scaled Dot-Product Attention"></a>3.2.2 Scaled Dot-Product Attention</h4><p>明白了attention的套路，我们来看看论文里的attention是什么来头，先看看原文中这张无比清晰（但是看起来有点唬人）的图。</p>
+<p>其实，attention机制和普通seq2seq的不同就是，要计算出一个包含上下文信息的context vector作为decoder每个位置的输入。计算attention时，一般有Query(Q)，Key(K)，Value(V) 三个输入。在上面这张图上，Q就是 $(s_0, s_1, … s_m)$ ，K和V就是$(h_0, h_1, …, h_n)$。attention机制一般的套路就是，用Q和K先算出一个权重的向量，再用这个权重的向量去element-wise地乘上V，就能得到Context Vector：</p>
+<script type="math/tex; mode=display">
+ConVec(Q, K, V) = softmax(score(Q, K))V</script><h4 id="3-2-2-Scaled-Dot-Product-Attention"><a href="#3-2-2-Scaled-Dot-Product-Attention" class="headerlink" title="3.2.2 Scaled Dot-Product Attention"></a>3.2.2 Scaled Dot-Product Attention</h4><p>明白了attention的套路，我们来看看论文里的attention是什么来头，先看看原文中这张无比清晰（但是看起来有点唬人）的图。</p>
 <img src="/2019/01/27/transfomer/sdp_mh_attention.png">
 <p>这又是Scaled Dot-Product又是Multi-Head的，一开始着实让老瓦感到有点慌，后来仔细一看，其实挺简单。</p>
-<p>看过Luong那篇attention的文章的人都知道，score一般有三种算法：<br>$$<br>score(h_t, \overline{h}_s) =<br>\begin{cases}<br>h_t^{\top}\overline{h}_s &amp;dot \\<br>h_t^{\top}W_a\overline{h}_s &amp;general\\<br>v_a^{\top}tanh(W_a[h_t;\overline{h}_s]) &amp;concat<br>\end{cases}<br>$$<br>其实文章里用的就是第一种，因为性价比高（效果还不错速度快），但是有个缺点当Q，K的维度比较大的时候，容易进到softmax的饱和区，作者就scale了一下（除以$\sqrt{d_k}$），解决了这个问题，这个就是所谓的Scaled Dot-Product Attention。粗暴有效。<br>$$<br>Attention(Q, K, V) = softmax(\frac{QK^{\top}}{\sqrt{d_k}})V<br>$$<br>基本上就完事了。</p>
+<p>看过Luong那篇attention的文章的人都知道，score一般有三种算法：</p>
+<script type="math/tex; mode=display">
+score(h_t, \overline{h}_s) = 
+\begin{cases}
+h_t^{\top}\overline{h}_s &dot \\\\
+h_t^{\top}W_a\overline{h}_s &general\\\\
+v_a^{\top}tanh(W_a[h_t;\overline{h}_s]) &concat
+\end{cases}</script><p>其实文章里用的就是第一种，因为性价比高（效果还不错速度快），但是有个缺点当Q，K的维度比较大的时候，容易进到softmax的饱和区，作者就scale了一下（除以$\sqrt{d_k}$），解决了这个问题，这个就是所谓的Scaled Dot-Product Attention。粗暴有效。</p>
+<script type="math/tex; mode=display">
+Attention(Q, K, V) = softmax(\frac{QK^{\top}}{\sqrt{d_k}})V</script><p>基本上就完事了。</p>
 <p>老瓦在看论文的时候一直不明白mask（只有在Decoder的input用到了）到底是具体怎么操作的，其实作者在后面有解释，就是把所有的非法连接的score都设置成负无穷，这样的softmax之后得到的权重向量就是零了($e^{-\infty}$)。完事。</p>
 <h4 id="3-2-3-Multi-Head-Attention"><a href="#3-2-3-Multi-Head-Attention" class="headerlink" title="3.2.3 Multi-Head Attention"></a>3.2.3 Multi-Head Attention</h4><p>这下就讲到精髓了：多头注意力（不知道这样翻译会不会被打。。。）。可以这么理解，有好多人对attention权重的看法不太一样，所以我们就把这个任务给很多人一起做，最后取大家的共同意见，有点像CNN里好多个kernel的味道。</p>
-<p>文章表示，比起直接用$d_{model}$的Q, K, V来说，将Q, K, V用不同的h个线性投影得到的h个$d_v$的context vector，再concat起来，过一个线性层的结果更好，可以综合不同位置的不同表征子空间的信息。<br>$$<br>\text{Multihead}(Q, K, V) = \text{Concat}(\text{head}_1, \text{head}_2, …, \text{head}_h)W^O\\<br>\text{where head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)<br>$$<br>其中，$W_i^Q\in\mathbb{R}^{d_{model}\times d_k}$，$W_i^K\in\mathbb{R}^{d_{model}\times d_k}$，$W_i^V\in\mathbb{R}^{d_{model}\times d_v}$，然后$W^O\in\mathbb{R}^{hd_v\times d_{model}}$。</p>
-<p>在文章里，设置了h=8个平行注意层（也就是头（head）2333）。对于每个层的$d_k=d_v=d_{\text{model}}/h=64$。因为每个头都减少了dimension，所以整体的computational cost和single-head full dimension的注意力机制是差不多的。</p>
+<p>文章表示，比起直接用$d_{model}$的Q, K, V来说，将Q, K, V用不同的h个线性投影得到的h个$d_v$的context vector，再concat起来，过一个线性层的结果更好，可以综合不同位置的不同表征子空间的信息。</p>
+<script type="math/tex; mode=display">
+\text{Multihead}(Q, K, V) = \text{Concat}(\text{head}_1, \text{head}_2, ..., \text{head}_h)W^O\\\\
+\text{where head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)</script><p>其中，$W<em>i^Q\in\mathbb{R}^{d</em>{model}\times d<em>k}$，$W_i^K\in\mathbb{R}^{d</em>{model}\times d<em>k}$，$W_i^V\in\mathbb{R}^{d</em>{model}\times d<em>v}$，然后$W^O\in\mathbb{R}^{hd_v\times d</em>{model}}$。</p>
+<p>在文章里，设置了h=8个平行注意层（也就是头（head）2333）。对于每个层的$d<em>k=d_v=d</em>{\text{model}}/h=64$。因为每个头都减少了dimension，所以整体的computational cost和single-head full dimension的注意力机制是差不多的。</p>
 <h4 id="3-2-4-Applications-of-Attention-in-our-model"><a href="#3-2-4-Applications-of-Attention-in-our-model" class="headerlink" title="3.2.4 Applications of Attention in our model"></a>3.2.4 Applications of Attention in our model</h4><ul>
 <li>encoder-decoder attention: 模仿seq2seq模型的注意力机制</li>
 <li>encoder 的 self-attention layer</li>
 <li>decoder 的self-attention layer：和上面的区别就是加了masking</li>
 </ul>
-<h3 id="3-3-Position-wise-Feed-Forward-Networks"><a href="#3-3-Position-wise-Feed-Forward-Networks" class="headerlink" title="3.3 Position-wise Feed-Forward Networks"></a>3.3 Position-wise Feed-Forward Networks</h3><p>每个FFN包括两次线性变换，中间是ReLu的激活函数。<br>$$<br>\text{FFN} = \max(0, xW_1+b_1)W_2+b_2<br>$$<br>不同position的FFN是一样的，但是不同层是不同的。输入输出维度都是$d_{model}=512$，中间层的维度是$d_{ff}=2048$。</p>
-<h3 id="3-4-Embeddings-and-Softmax"><a href="#3-4-Embeddings-and-Softmax" class="headerlink" title="3.4 Embeddings and Softmax"></a>3.4 Embeddings and Softmax</h3><p>和其他seq transduction模型一样，也得用learned embeddings，learned 线性变换，softmax这些东西。两个embedding的权重是share的。embedding层，会把权重乘$\sqrt{d_{model}}​$。</p>
-<h3 id="3-5-Positional-Encoding"><a href="#3-5-Positional-Encoding" class="headerlink" title="3.5 Positional Encoding"></a>3.5 Positional Encoding</h3><p>因为模型没有rnn或者cnn，为了用到sequence的顺序，作者引入了positional encoding（$dim=d_{model}$，便于相加）来inject一些相对位置的信息。<br>$$<br>PE(pos, 2i) = sin(pos/10000^{2i/d_{model}})\\<br>PE(pos, 2i+1) = cos(pos/10000^{2i/d_{model}})<br>$$<br>作者测试用学习的方法来得到PE，最终发现效果差不多，所以最后用的是fixed的，而且sinusoidal的可以处理更长的sequence的情况。</p>
-<p>用sinusoidal函数的另一个好处是可以用前面位置的值线性表示后面的位置。<br>$$<br>\sin(\alpha+\beta) = \sin\alpha\cos\beta+\cos\alpha\sin\beta\\<br>\cos(\alpha+\beta) = \cos\alpha\cos\beta-\sin\alpha\sin\beta<br>$$</p>
-<h2 id="4-Why-Self-Attention"><a href="#4-Why-Self-Attention" class="headerlink" title="4. Why Self-Attention"></a>4. Why Self-Attention</h2><img src="/2019/01/27/transfomer/cost.png">
+<h3 id="3-3-Position-wise-Feed-Forward-Networks"><a href="#3-3-Position-wise-Feed-Forward-Networks" class="headerlink" title="3.3 Position-wise Feed-Forward Networks"></a>3.3 Position-wise Feed-Forward Networks</h3><p>每个FFN包括两次线性变换，中间是ReLu的激活函数。</p>
+<script type="math/tex; mode=display">
+\text{FFN} = \max(0, xW_1+b_1)W_2+b_2</script><p>不同position的FFN是一样的，但是不同层是不同的。输入输出维度都是$d<em>{model}=512$，中间层的维度是$d</em>{ff}=2048$。</p>
+<h3 id="3-4-Embeddings-and-Softmax"><a href="#3-4-Embeddings-and-Softmax" class="headerlink" title="3.4 Embeddings and Softmax"></a>3.4 Embeddings and Softmax</h3><p>和其他seq transduction模型一样，也得用learned embeddings，learned 线性变换，softmax这些东西。两个embedding的权重是share的。embedding层，会把权重乘$\sqrt{d_{model}}$。</p>
+<h3 id="3-5-Positional-Encoding"><a href="#3-5-Positional-Encoding" class="headerlink" title="3.5 Positional Encoding"></a>3.5 Positional Encoding</h3><p>因为模型没有rnn或者cnn，为了用到sequence的顺序，作者引入了positional encoding（$dim=d_{model}$，便于相加）来inject一些相对位置的信息。</p>
+<script type="math/tex; mode=display">
+PE(pos, 2i) = sin(pos/10000^{2i/d_{model}})\\\\
+PE(pos, 2i+1) = cos(pos/10000^{2i/d_{model}})</script><p>作者测试用学习的方法来得到PE，最终发现效果差不多，所以最后用的是fixed的，而且sinusoidal的可以处理更长的sequence的情况。</p>
+<p>用sinusoidal函数的另一个好处是可以用前面位置的值线性表示后面的位置。</p>
+<script type="math/tex; mode=display">
+\sin(\alpha+\beta) = \sin\alpha\cos\beta+\cos\alpha\sin\beta\\\\
+\cos(\alpha+\beta) = \cos\alpha\cos\beta-\sin\alpha\sin\beta</script><h2 id="4-Why-Self-Attention"><a href="#4-Why-Self-Attention" class="headerlink" title="4. Why Self-Attention"></a>4. Why Self-Attention</h2><img src="/2019/01/27/transfomer/cost.png">
 <p>之所以选择self-attention，主要因为三点：</p>
 <ul>
 <li>每层的computational complexity；</li>
@@ -596,6 +605,7 @@
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
               <p class="site-author-name" itemprop="name">AKA瓦砾</p>
+              <img class="site-author-image" itemprop="image" src="/images/header.png" alt="AKA瓦砾">
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
@@ -617,7 +627,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -628,7 +638,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

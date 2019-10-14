@@ -428,7 +428,7 @@
 <li>Effective batch size，不同的多卡工具对输入的batch size的操作不一样，要确定最后进模型的effective batch size才有意义。一般来说，多进程的batch size指的是每张卡的batch size。</li>
 <li>Learning rate scale，学习率要根据<a href="https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/distribute/README.md" target="_blank" rel="noopener">effective batch size</a>调整。</li>
 <li>All-Reduce由于是多进程的，数据流各自独立，为了防止同一个step多gpu的batch重叠，最好的的办法是在每个进程里根据local_rank设置shard的数据，保证各个gpu采样的数据不重叠。</li>
-<li>为了使用horovod，新建docker container时，要加–privileged，否则会<a href="https://github.com/horovod/horovod/issues/653" target="_blank" rel="noopener">疯狂报warning</a>，虽然没影响，但是看着难受。</li>
+<li>为了使用horovod，新建docker container时，要加—privileged，否则会<a href="https://github.com/horovod/horovod/issues/653" target="_blank" rel="noopener">疯狂报warning</a>，虽然没影响，但是看着难受。</li>
 <li>Pytorch的DP多卡要注意最后一个batch的batch size不能小于gpu的数量，否则会报错，最保险的做法是drop_last，扔掉最后的batch。</li>
 <li>并不是所有情况下All-Reduce都比PS好，比如当卡间通信用的是NVLink的时候，在gpu数量不多的情况下，数据传输的时间不是瓶颈，All-Reduce的提升就几乎没有了。</li>
 <li>DP和DDP有一个<a href="https://discuss.pytorch.org/t/training-performance-degrades-with-distributeddataparallel/47152" target="_blank" rel="noopener">区别</a>在于BatchNorm。</li>
@@ -557,6 +557,7 @@
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
               <p class="site-author-name" itemprop="name">AKA瓦砾</p>
+              <img class="site-author-image" itemprop="image" src="/images/header.png" alt="AKA瓦砾">
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
@@ -578,7 +579,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -589,7 +590,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
