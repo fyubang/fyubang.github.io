@@ -88,7 +88,7 @@
 <meta property="og:description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/06/01/ema/bias.png">
-<meta property="og:updated_time" content="2019-10-12T09:07:28.993Z">
+<meta property="og:updated_time" content="2019-10-15T02:33:54.286Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【训练技巧】指数移动平均（EMA）的原理及PyTorch实现">
 <meta name="twitter:description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
@@ -618,11 +618,51 @@ v_n &= \theta_1 -\sum_{i=1}^{n-1}(1-\alpha^{n-i})g_i
           
 
           
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/fyubang" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:fubang.zhao@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://zhuanlan.zhihu.com/c_174521629" target="_blank" title="知乎专栏">
+                      
+                        <i class="fa fa-fw fa-book"></i>知乎专栏</a>
+                  </span>
+                
+            </div>
+          
 
           
           
 
           
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kexue.fm/" title="科学空间" target="_blank">科学空间</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://shuang0420.com" title="徐阿衡" target="_blank">徐阿衡</a>
+                  </li>
+                
+              </ul>
+            </div>
           
 
           
