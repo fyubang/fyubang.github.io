@@ -79,23 +79,23 @@
 
 
 
-<meta name="description" content="公司约稿，专栏留存。  近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进">
+<meta name="description" content="本文首发于机器之心微信公众号，专栏留存。  近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语">
 <meta name="keywords" content="对抗训练,机器阅读理解,RoBERTa,知识蒸馏">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析">
 <meta property="og:url" content="http://fyubang.com/2019/11/06/coqa/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
-<meta property="og:description" content="公司约稿，专栏留存。  近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进">
+<meta property="og:description" content="本文首发于机器之心微信公众号，专栏留存。  近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/coqa.png">
 <meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/baseline.png">
 <meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/rtagging.png">
 <meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/res.png">
 <meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/ablation.png">
-<meta property="og:updated_time" content="2019-11-06T07:14:03.559Z">
+<meta property="og:updated_time" content="2019-11-06T07:22:28.177Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析">
-<meta name="twitter:description" content="公司约稿，专栏留存。  近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进">
+<meta name="twitter:description" content="本文首发于机器之心微信公众号，专栏留存。  近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语">
 <meta name="twitter:image" content="http://fyubang.com/2019/11/06/coqa/coqa.png">
 
 
@@ -406,7 +406,7 @@
       
 
       
-        <p>公司约稿，专栏留存。</p>
+        <p>本文首发于机器之心微信公众号，专栏留存。</p>
 <blockquote>
 <p>近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。</p>
 </blockquote>
@@ -433,7 +433,8 @@
 <p>知识蒸馏[7] 这个概念最早由Hinton在2015年提出。一开始，知识蒸馏通往往应用在模型压缩方面，利用训练好的复杂模型（teacher model）输出作为监督信号去训练另一个简单模型（student model），从而将teacher学习到的知识迁移到student。Tommaso [8]在18年提出，如果student和teacher的模型完全相同，蒸馏后则会对模型的表现有一定程度上的提升。</p>
 <p>在我们的训练过程中，我们先用RoBERTa + 对抗训练得到teacher model，再用知识蒸馏的方法得到student模型。训练student时，我们同时采用真实label和teacher的输出来计算损失。</p>
 <h2 id="后处理"><a href="#后处理" class="headerlink" title="后处理"></a>后处理</h2><p>在CoQA数据集中，有一小部分的问题是多选题，比如问题是“How Jack goes to school? Walk or ride? ”，而Context中的片段是“walked”。即使模型抽取到了“walked”，也并不能得分。因此，针对这类问题，我们做了一个简单的后处理。通过一定规则识别到多选题型的问题，然后抽取出问题中出现的选项，找到与我们模型抽取的Context片段语义相似度最高的选项，作为我们系统最终的回答。</p>
-<h2 id="结果分析与消融实验"><a href="#结果分析与消融实验" class="headerlink" title="结果分析与消融实验"></a>结果分析与消融实验</h2><p>最终，我们的单模型在CoQA Leaderboard上超越了微软团队2.6个百分点，并首次超过了人工评测的水平。值得一提的是，与微软和其他团队不同，我们在模型训练的过程，没有用任何CoQA以外的有监督的数据集，进行多任务训练或是数据增强。<br><img src="res.png" width="80%" title="验证集结果分析"></p>
+<h2 id="结果分析与消融实验"><a href="#结果分析与消融实验" class="headerlink" title="结果分析与消融实验"></a>结果分析与消融实验</h2><p>最终，我们的单模型在CoQA Leaderboard上超越了微软团队2.6个百分点，并首次超过了人工评测的水平。值得一提的是，与微软和其他团队不同，我们在模型训练的过程，没有用任何CoQA以外的有监督的数据集，进行多任务训练或是数据增强。</p>
+<p><img src="res.png" width="80%" title="验证集结果分析"></p>
 <p>为了验证各个技巧的作用，我们进行了消融实验。从实验结果中可以看出，依据标记和对抗训练带来的提升较大，知识蒸馏和后处理也能带来一定程度的提升。</p>
 <p><img src="ablation.png" width="50%" title="验证集消融实验"></p>
 <p>最终可以看到，利用对抗训练、知识蒸馏等方法，我们的单模型在RoBERTa Baseline的基础上提升了1.8个百分点。</p>
