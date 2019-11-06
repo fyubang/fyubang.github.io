@@ -79,13 +79,23 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="瓦特兰蒂斯">
-<meta property="og:url" content="http://fyubang.com/categories/优化/深度学习优化器/index.html">
+<meta name="description" content="近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进步最快的技术方向之一，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析">
+<meta property="og:url" content="http://fyubang.com/2019/11/06/coqa/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
+<meta property="og:description" content="近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进步最快的技术方向之一，">
 <meta property="og:locale" content="en">
+<meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/coqa.png">
+<meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/baseline.png">
+<meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/rtagging.png">
+<meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/res.png">
+<meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/ablation.png">
+<meta property="og:updated_time" content="2019-11-06T07:06:17.313Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="瓦特兰蒂斯">
+<meta name="twitter:title" content="【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析">
+<meta name="twitter:description" content="近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进步最快的技术方向之一，">
+<meta name="twitter:image" content="http://fyubang.com/2019/11/06/coqa/coqa.png">
 
 
 
@@ -115,13 +125,13 @@
 
 
 
-  <link rel="canonical" href="http://fyubang.com/categories/优化/深度学习优化器/">
+  <link rel="canonical" href="http://fyubang.com/2019/11/06/coqa/">
 
 
 
 
 
-  <title>Category: 深度学习优化器 | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析 | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -140,7 +150,7 @@
     
   
 
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left ">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -276,53 +286,177 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block category">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>深度学习优化器<small>Category</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fyubang.com/2019/11/06/coqa/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AKA瓦砾">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="瓦特兰蒂斯">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2019/08/10/optimizer_sgd/" itemprop="url">
-              
-                <span itemprop="name">【优化器】优化器算法及PyTorch实现（一）：永不磨灭的SGD</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-08-10T15:10:16+08:00" content="2019-08-10">
-          08-10
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-06T15:06:17+08:00">
+                2019-11-06
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。</p>
+</blockquote>
+<p><img src="coqa.png" width="60%" title="CoQA Leaderboard"></p>
+<p>一直以来，机器阅读理解都是自然语言处理界最受关注、进步最快的技术方向之一，主要有两大比赛较受瞩目，分别是注重一问一答的SQuAD[2]和多轮对话问答的CoQA[3]。相比于SQuAD，CoQA更注重模型在对话过程中回答关联问题的能力，答案形式自由，而且数据来自儿童故事、文学、初高中英语考试、新闻、维基百科、Reddit和科学等七个不同的领域，这些改进都极大地提高了挑战赛的难度，对模型的鲁棒性和泛化能力有着更高的要求。我们团队针对CoQA数据集的难点，通过对抗训练（Adversarial training）和知识蒸馏（Knowledge Distillation）等方法，有效地提高了模型的泛化能力，从而依靠单模型刷新了CoQA榜单的记录，并首次单模型超越人工评测指标。在这里分别从模型、训练方法、后处理等方面做一个简单的介绍。</p>
+<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><h3 id="Baseline：RoBERTa"><a href="#Baseline：RoBERTa" class="headerlink" title="Baseline：RoBERTa"></a>Baseline：RoBERTa</h3><p>我们的基线模型以Facebook开源的RoBERTa[4]预训练模型为基础，之所以选择RoBERTa，是因为其相较于BERT[5]在语言模型预训练的过程中用了更多领域的语料，更适合CoQA数据来自不同领域的特点。 </p>
+<p>在输入端，由于CoQA的数据集是对话式的，每个问题都依赖于历史对话，因此在训练过程中，我们将对话历史拼接到当前问题之前，问题和答案之间用分隔符分开，组成当前轮次的Query，然后将其与Context拼接，作为模型的输入。</p>
+<p>在输出端，CoQA数据集的答案有可能是自由文本、Yes、No和Unk。由于头部的自由文本的答案都能在Context中找到相近的片段，我们采取抽取+Yes/No/Unk分类的输出层结构。其中，对于抽取的部分，我们使用Pointer-Network的输出结构得到答案开始和结尾位置的logits；对于分类的部分，则用一个简单的全连接层得到Yes/No/Unk三分类的logits。</p>
+<p><img src="baseline.png" width="90%" title="Baseline 模型结构"></p>
+<p>在计算损失函数时，我们将预测答案开始和结尾位置的两个logits向量分别与Yes/No/Unk三分类的logits拼接，得到两个最终的logits向量，此时这两个logits对应的label依然是one-hot的，所以我们可以把这两个logits向量过softmax，然后用交叉熵计算开始和结尾的损失，取平均，得到基线模型的损失值。</p>
+<h3 id="依据标注辅助任务"><a href="#依据标注辅助任务" class="headerlink" title="依据标注辅助任务"></a>依据标注辅助任务</h3><p>在CoQA数据集中，每一个回答（除了unknown）都附带了一段Context中的原文片段作为逻辑依据。为了充分利用该信息，我们在Baseline模型的基础上，增加了一个依据标注的任务，同步进行多任务训练。对于Context的每一个token，我们会判断其是否在逻辑依据中（标成1或者0）。这部分的损失函数用二元交叉熵计算，按照一定比例累加到总的loss上。</p>
+<p><img src="rtagging.png" width="90%" title="依据标注任务"></p>
+<p>除此之外，我们发现，Yes/No类型答案的逻辑依据中，常常包含了肯定或否定的语义，可以用来辅助Yes/No/Unk的分类，所以我们在RoBERTa池化输出的基础上又利用注意力机制融合了逻辑依据的输出信息，以提高最后模型的表现。</p>
+<h2 id="训练方法"><a href="#训练方法" class="headerlink" title="训练方法"></a>训练方法</h2><p>除了模型上的修改，为了提高模型的泛化能力以应付CoQA数据集来源丰富、问题类型多样的特点，我们还采用了对抗训练和知识蒸馏等训练方法。</p>
+<h3 id="对抗训练"><a href="#对抗训练" class="headerlink" title="对抗训练"></a>对抗训练</h3><p>对抗训练[6]是一种能有效提高模型鲁棒性和泛化能力的训练手段，其基本原理是通过在原始输入上增加对抗扰动，得到对抗样本，再利用对抗样本进行训练，从而提高模型的表现。由于CoQA数据集对模型的泛化能力较高，我们在训练时，使用了对抗训练来提高模型的表现。</p>
+<p>由于自然语言文本是离散的，一般会把对抗扰动添加到嵌入层上。在我们的系统中，为了最大化对抗样本的扰动能力，我们利用梯度上升的方式生成对抗样本。为了避免扰动过大，我们将梯度做了归一化处理。</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+{g} &= -\bigtriangledown_ {\mathcal{L}}(y_i|{v}; {\hat{\theta}} ) \\
+{v}^* &= {v}+ \epsilon{g} / \|{g}\|_2
+\end{align*}</script><p>其中，v为嵌入向量。实际训练过程中，我们在训练完一个batch的原始输入数据时，保存当前batch对输入词向量的梯度，得到对抗样本后，再使用对抗样本进行对抗训练。</p>
+<p>除了对抗训练，我们还利用虚拟对抗训练做半监督训练。</p>
+<h3 id="知识蒸馏"><a href="#知识蒸馏" class="headerlink" title="知识蒸馏"></a>知识蒸馏</h3><p>与对抗训练类似，知识蒸馏也是一种常用的提高模型泛化能力的训练方法。</p>
+<p>知识蒸馏[7] 这个概念最早由Hinton在2015年提出。一开始，知识蒸馏通往往应用在模型压缩方面，利用训练好的复杂模型（teacher model）输出作为监督信号去训练另一个简单模型（student model），从而将teacher学习到的知识迁移到student。Tommaso [8]在18年提出，如果student和teacher的模型完全相同，蒸馏后则会对模型的表现有一定程度上的提升。</p>
+<p>在我们的训练过程中，我们先用RoBERTa + 对抗训练得到teacher model，再用知识蒸馏的方法得到student模型。训练student时，我们同时采用真实label和teacher的输出来计算损失。</p>
+<h2 id="后处理"><a href="#后处理" class="headerlink" title="后处理"></a>后处理</h2><p>在CoQA数据集中，有一小部分的问题是多选题，比如问题是“How Jack goes to school? Walk or ride? ”，而Context中的片段是“walked”。即使模型抽取到了“walked”，也并不能得分。因此，针对这类问题，我们做了一个简单的后处理。通过一定规则识别到多选题型的问题，然后抽取出问题中出现的选项，找到与我们模型抽取的Context片段语义相似度最高的选项，作为我们系统最终的回答。</p>
+<h2 id="结果分析与消融实验"><a href="#结果分析与消融实验" class="headerlink" title="结果分析与消融实验"></a>结果分析与消融实验</h2><p>最终，我们的单模型在CoQA Leaderboard上超越了微软团队2.6个百分点，并首次超过了人工评测的水平。值得一提的是，与微软和其他团队不同，我们在模型训练的过程，没有用任何CoQA以外的有监督的数据集，进行多任务训练或是数据增强。<br><img src="res.png" width="80%" title="验证集结果分析"></p>
+<p>为了验证各个技巧的作用，我们进行了消融实验。从实验结果中可以看出，依据标记和对抗训练带来的提升较大，知识蒸馏和后处理也能带来一定程度的提升。</p>
+<p><img src="ablation.png" width="50%" title="验证集消融实验"></p>
+<p>最终可以看到，利用对抗训练、知识蒸馏等方法，我们的单模型在RoBERTa Baseline的基础上提升了1.8个百分点。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次的CoQA挑战赛经历，是我们团队站在巨人肩膀上的一次眺望。在优化模型的过程中，我们发现由于预训练模型已经相当强大，以往一些屡试不爽的优化技巧在RoBERTa上却并不能奏效。这就需要我们在比赛的过程中，大胆地设想，仔细地实验，验证不同方法的有效性和稳定性，从而找到真正行之有效的解决方案。希望我们的这次分享也能给其他团队带来一些经验上的启发。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference:"></a>Reference:</h2><p>[1] CoQA Leaderboard. <a href="https://stanfordnlp.github.io/coqa/" target="_blank" rel="noopener">https://stanfordnlp.github.io/coqa/</a><br>[2] SQuAD: 100,000+ Questions for Machine Comprehension of Text. <a href="https://arxiv.org/abs/1606.05250" target="_blank" rel="noopener">https://arxiv.org/abs/1606.05250</a><br>[3] CoQA: A Conversational Question Answering Challenge. <a href="https://arxiv.org/abs/1808.07042" target="_blank" rel="noopener">https://arxiv.org/abs/1808.07042</a><br>[4] RoBERTa: A Robustly Optimized BERT Pretraining Approach. <a href="https://arxiv.org/abs/1907.11692" target="_blank" rel="noopener">https://arxiv.org/abs/1907.11692</a><br>[5] BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener">https://arxiv.org/abs/1810.04805</a><br>[6] Adversarial Training Methods for Semi-Supervised Text Classification. <a href="https://arxiv.org/abs/1605.07725" target="_blank" rel="noopener">https://arxiv.org/abs/1605.07725</a><br>[7] Distilling the Knowledge in a Neural Network. <a href="https://arxiv.org/abs/1503.02531" target="_blank" rel="noopener">https://arxiv.org/abs/1503.02531</a><br>[8] Born Again Neural Networks. <a href="https://arxiv.org/abs/1805.04770" target="_blank" rel="noopener">https://arxiv.org/abs/1805.04770</a></p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/08/lic-2019/" rel="next" title="【参会笔记】2019语言与智能高峰论坛">
+                <i class="fa fa-chevron-left"></i> 【参会笔记】2019语言与智能高峰论坛
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -330,6 +464,13 @@
 
 
           
+
+  
+    <div id="gitalk-container"></div>
+
+  
+
+
 
         </div>
         
@@ -350,8 +491,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -452,6 +602,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#模型"><span class="nav-number">1.</span> <span class="nav-text">模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Baseline：RoBERTa"><span class="nav-number">1.1.</span> <span class="nav-text">Baseline：RoBERTa</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#依据标注辅助任务"><span class="nav-number">1.2.</span> <span class="nav-text">依据标注辅助任务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练方法"><span class="nav-number">2.</span> <span class="nav-text">训练方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对抗训练"><span class="nav-number">2.1.</span> <span class="nav-text">对抗训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#知识蒸馏"><span class="nav-number">2.2.</span> <span class="nav-text">知识蒸馏</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后处理"><span class="nav-number">3.</span> <span class="nav-text">后处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果分析与消融实验"><span class="nav-number">4.</span> <span class="nav-text">结果分析与消融实验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference:</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -605,6 +771,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
@@ -645,6 +815,28 @@
 
 
 
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0efa076437b16d55154d',
+          clientSecret: 'b6441808c991871623e6e8666300230ab321a6c1',
+          repo: 'gitalk',
+          owner: 'fyubang',
+          admin: ['fyubang'],
+          id: location.pathname,
+          labels: ['Gitalk'],
+          perPage: 15,
+          pagerDirection: 'last',
+          createIssueManually: true,
+          distractionFreeMode: false
+        })
+        gitalk.render('gitalk-container')           
+       </script>
 
 
 
