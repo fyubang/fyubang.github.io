@@ -79,23 +79,23 @@
 
 
 
-<meta name="description" content="近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进步最快的技术方向之一，">
+<meta name="description" content="公司约稿，专栏留存。  近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进">
 <meta name="keywords" content="对抗训练,机器阅读理解,RoBERTa,知识蒸馏">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析">
 <meta property="og:url" content="http://fyubang.com/2019/11/06/coqa/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
-<meta property="og:description" content="近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进步最快的技术方向之一，">
+<meta property="og:description" content="公司约稿，专栏留存。  近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/coqa.png">
 <meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/baseline.png">
 <meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/rtagging.png">
 <meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/res.png">
 <meta property="og:image" content="http://fyubang.com/2019/11/06/coqa/ablation.png">
-<meta property="og:updated_time" content="2019-11-06T07:09:01.045Z">
+<meta property="og:updated_time" content="2019-11-06T07:14:03.559Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析">
-<meta name="twitter:description" content="近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进步最快的技术方向之一，">
+<meta name="twitter:description" content="公司约稿，专栏留存。  近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。   一直以来，机器阅读理解都是自然语言处理界最受关注、进">
 <meta name="twitter:image" content="http://fyubang.com/2019/11/06/coqa/coqa.png">
 
 
@@ -406,7 +406,8 @@
       
 
       
-        <blockquote>
+        <p>公司约稿，专栏留存。</p>
+<blockquote>
 <p>近日，在由斯坦福大学发起的对话式问答挑战赛 CoQA (Conversational Question Answering Challenge）中，追一科技AI Lab团队超越微软团队成为榜单第一[1]，刷新了之前微软等团队创造的CoQA纪录。值得注意的是，团队提交的技术方案中，单模型的各项指标表现首次全面超越人类。</p>
 </blockquote>
 <p><img src="coqa.png" width="60%" title="CoQA Leaderboard"></p>
@@ -437,6 +438,7 @@
 <p><img src="ablation.png" width="50%" title="验证集消融实验"></p>
 <p>最终可以看到，利用对抗训练、知识蒸馏等方法，我们的单模型在RoBERTa Baseline的基础上提升了1.8个百分点。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次的CoQA挑战赛经历，是我们团队站在巨人肩膀上的一次眺望。在优化模型的过程中，我们发现由于预训练模型已经相当强大，以往一些屡试不爽的优化技巧在RoBERTa上却并不能奏效。这就需要我们在比赛的过程中，大胆地设想，仔细地实验，验证不同方法的有效性和稳定性，从而找到真正行之有效的解决方案。希望我们的这次分享也能给其他团队带来一些经验上的启发。</p>
+<p>对方案细节感兴趣的同学可以看英文报告：<a href="https://arxiv.org/abs/1909.10772" target="_blank" rel="noopener">https://arxiv.org/abs/1909.10772</a></p>
 <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference:"></a>Reference:</h2><p>[1] CoQA Leaderboard. <a href="https://stanfordnlp.github.io/coqa/" target="_blank" rel="noopener">https://stanfordnlp.github.io/coqa/</a><br>[2] SQuAD: 100,000+ Questions for Machine Comprehension of Text. <a href="https://arxiv.org/abs/1606.05250" target="_blank" rel="noopener">https://arxiv.org/abs/1606.05250</a><br>[3] CoQA: A Conversational Question Answering Challenge. <a href="https://arxiv.org/abs/1808.07042" target="_blank" rel="noopener">https://arxiv.org/abs/1808.07042</a><br>[4] RoBERTa: A Robustly Optimized BERT Pretraining Approach. <a href="https://arxiv.org/abs/1907.11692" target="_blank" rel="noopener">https://arxiv.org/abs/1907.11692</a><br>[5] BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener">https://arxiv.org/abs/1810.04805</a><br>[6] Adversarial Training Methods for Semi-Supervised Text Classification. <a href="https://arxiv.org/abs/1605.07725" target="_blank" rel="noopener">https://arxiv.org/abs/1605.07725</a><br>[7] Distilling the Knowledge in a Neural Network. <a href="https://arxiv.org/abs/1503.02531" target="_blank" rel="noopener">https://arxiv.org/abs/1503.02531</a><br>[8] Born Again Neural Networks. <a href="https://arxiv.org/abs/1805.04770" target="_blank" rel="noopener">https://arxiv.org/abs/1805.04770</a></p>
 
       
