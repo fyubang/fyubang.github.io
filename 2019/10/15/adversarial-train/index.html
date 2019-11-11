@@ -79,23 +79,23 @@
 
 
 
-<meta name="description" content="最近，微软的FreeLB-Roberta [1] 靠着对抗训练 (Adversarial Training) 在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看这方面的内容，所以开一篇博客，讲一下。   提到“对抗”，相信大多数人的第一反应都是CV中">
+<meta name="description" content="本文分享一个“万物皆可盘”的NLP对抗训练实现，只需要四行代码即可调用。你值得拥有。  最近，微软的FreeLB-Roberta [1] 靠着对抗训练 (Adversarial Training) 在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看">
 <meta name="keywords" content="对抗训练,PyTorch">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【训练技巧】功守道：NLP中的对抗训练 + PyTorch实现">
 <meta property="og:url" content="http://fyubang.com/2019/10/15/adversarial-train/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
-<meta property="og:description" content="最近，微软的FreeLB-Roberta [1] 靠着对抗训练 (Adversarial Training) 在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看这方面的内容，所以开一篇博客，讲一下。   提到“对抗”，相信大多数人的第一反应都是CV中">
+<meta property="og:description" content="本文分享一个“万物皆可盘”的NLP对抗训练实现，只需要四行代码即可调用。你值得拥有。  最近，微软的FreeLB-Roberta [1] 靠着对抗训练 (Adversarial Training) 在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/glue.png">
 <meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/coqa.png">
 <meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/cate.png">
 <meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/adv_sample.png">
 <meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/pgd_loss.jpg">
-<meta property="og:updated_time" content="2019-11-11T06:51:11.488Z">
+<meta property="og:updated_time" content="2019-11-11T09:21:50.281Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【训练技巧】功守道：NLP中的对抗训练 + PyTorch实现">
-<meta name="twitter:description" content="最近，微软的FreeLB-Roberta [1] 靠着对抗训练 (Adversarial Training) 在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看这方面的内容，所以开一篇博客，讲一下。   提到“对抗”，相信大多数人的第一反应都是CV中">
+<meta name="twitter:description" content="本文分享一个“万物皆可盘”的NLP对抗训练实现，只需要四行代码即可调用。你值得拥有。  最近，微软的FreeLB-Roberta [1] 靠着对抗训练 (Adversarial Training) 在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看">
 <meta name="twitter:image" content="http://fyubang.com/2019/10/15/adversarial-train/glue.png">
 
 
@@ -406,7 +406,10 @@
       
 
       
-        <p>最近，微软的FreeLB-Roberta [1] 靠着<strong>对抗训练 (Adversarial Training) </strong>在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看这方面的内容，所以开一篇博客，讲一下。</p>
+        <blockquote>
+<p>本文分享一个“万物皆可盘”的NLP对抗训练实现，只需要四行代码即可调用。你值得拥有。</p>
+</blockquote>
+<p>最近，微软的FreeLB-Roberta [1] 靠着<strong>对抗训练 (Adversarial Training) </strong>在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看这方面的内容，所以开一篇博客，讲一下。</p>
 <p><img src="glue.png" title="GLUE Leaderboard"></p>
 <p><img src="coqa.png" width="50%" title="CoQA Leaderboard"></p>
 <p>提到“对抗”，相信大多数人的第一反应都是CV中的对抗生成网络 (GAN)，殊不知，其实对抗也可以作为一种<strong>防御机制</strong>，并且经过简单的修改，便能用在NLP任务上，提高模型的泛化能力。关键是，对抗训练可以写成一个插件的形式，用几行代码就可以在训练中自由地调用，<strong>简单有效，使用成本低</strong>。不过网上的大多数博客对于NLP中的对抗训练都介绍得比较零散且无代码实现，笔者在这篇博客中，对NLP任务中的对抗训练做了一个简单的综述，并提供了插件形式的PyTorch实现。</p>
