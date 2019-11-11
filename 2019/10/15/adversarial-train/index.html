@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="对抗训练,PyTorch,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近，微软的FreeLB-Roberta [1] 靠着对抗训练 (Adversarial Training) 在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看这方面的内容，所以开一篇博客，讲一下。   提到“对抗”，相信大多数人的第一反应都是CV中">
+<meta name="keywords" content="对抗训练,PyTorch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【训练技巧】功守道：NLP中的对抗训练 + PyTorch实现">
+<meta property="og:url" content="http://fyubang.com/2019/10/15/adversarial-train/index.html">
+<meta property="og:site_name" content="瓦特兰蒂斯">
+<meta property="og:description" content="最近，微软的FreeLB-Roberta [1] 靠着对抗训练 (Adversarial Training) 在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看这方面的内容，所以开一篇博客，讲一下。   提到“对抗”，相信大多数人的第一反应都是CV中">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/glue.png">
+<meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/coqa.png">
+<meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/cate.png">
+<meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/adv_sample.png">
+<meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/pgd_loss.jpg">
+<meta property="og:updated_time" content="2019-11-11T06:51:11.488Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【训练技巧】功守道：NLP中的对抗训练 + PyTorch实现">
+<meta name="twitter:description" content="最近，微软的FreeLB-Roberta [1] 靠着对抗训练 (Adversarial Training) 在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看这方面的内容，所以开一篇博客，讲一下。   提到“对抗”，相信大多数人的第一反应都是CV中">
+<meta name="twitter:image" content="http://fyubang.com/2019/10/15/adversarial-train/glue.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://fyubang.com/2019/10/15/adversarial-train/">
+
+
+
+
+
+  <title>【训练技巧】功守道：NLP中的对抗训练 + PyTorch实现 | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">瓦特兰蒂斯</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fyubang.com/2019/10/15/adversarial-train/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AKA瓦砾">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="瓦特兰蒂斯">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【训练技巧】功守道：NLP中的对抗训练 + PyTorch实现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-15T08:18:18+08:00">
+                2019-10-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/训练技巧/" itemprop="url" rel="index">
+                    <span itemprop="name">训练技巧</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/训练技巧/对抗训练/" itemprop="url" rel="index">
+                    <span itemprop="name">对抗训练</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近，微软的FreeLB-Roberta [1] 靠着<strong>对抗训练 (Adversarial Training) </strong>在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看这方面的内容，所以开一篇博客，讲一下。</p>
+<p><img src="glue.png" title="GLUE Leaderboard"></p>
+<p><img src="coqa.png" width="50%" title="CoQA Leaderboard"></p>
+<p>提到“对抗”，相信大多数人的第一反应都是CV中的对抗生成网络 (GAN)，殊不知，其实对抗也可以作为一种<strong>防御机制</strong>，并且经过简单的修改，便能用在NLP任务上，提高模型的泛化能力。关键是，对抗训练可以写成一个插件的形式，用几行代码就可以在训练中自由地调用，<strong>简单有效，使用成本低</strong>。不过网上的大多数博客对于NLP中的对抗训练都介绍得比较零散且无代码实现，笔者在这篇博客中，对NLP任务中的对抗训练做了一个简单的综述，并提供了插件形式的PyTorch实现。</p>
+<p>本文专注于NLP对抗训练的介绍，对对抗攻击基础感兴趣的读者，可以看这几篇博客及论文 [3] [4] [5]，这里就不赘述了。不想要理解理论细节的读者也可以直接看最后的代码实现。</p>
+<h2 id="对抗样本"><a href="#对抗样本" class="headerlink" title="对抗样本"></a>对抗样本</h2><p>我们常常会听到“对抗样本”、“对抗攻击”、“对抗训练”等等这些令人头秃的概念，为了让大家对“对抗”有个更清晰的认识，我们先把这些概念捋捋清楚。</p>
+<p><img src="cate.png" width="80%" title="Taxonomy of Adversarial"></p>
+<p>Szegedy在14年的ICLR中 [6] 提出了对抗样本这个概念。如上图，对抗样本可以用来攻击和防御，而<strong>对抗训练</strong>其实是“对抗”家族中<strong>防御</strong>的一种方式，其基本的原理呢，就是通过添加<strong>扰动</strong>构造一些对抗样本，放给模型去训练，<strong>以攻为守</strong>，提高模型在遇到对抗样本时的鲁棒性，同时一定程度也能提高模型的表现和泛化能力。</p>
+<p>那么，什么样的样本才是好的对抗样本呢？对抗样本一般需要具有两个特点：</p>
+<ol>
+<li>相对于原始输入，所添加的扰动是微小的；</li>
+<li>能使模型犯错。 </li>
+</ol>
+<p>下面是一个对抗样本的例子，决定就是你啦，胖达：</p>
+<p><img src="adv_sample.png" width="80%" title="一只胖达加了点扰动就被识别成了长臂猿"></p>
+<h2 id="对抗训练的基本概念"><a href="#对抗训练的基本概念" class="headerlink" title="对抗训练的基本概念"></a>对抗训练的基本概念</h2><p>GAN之父Ian Goodfellow在15年的ICLR中 [7] 第一次提出了对抗训练这个概念，简而言之，就是在原始输入样本 $x$ 上加一个扰动 $r_{adv}$ ，得到对抗样本后，用其进行训练。也就是说，问题可以被抽象成这么一个模型：</p>
+<script type="math/tex; mode=display">
+\min_{\theta}-\log P(y|x+r_{adv};\theta)</script><p>其中，$y$为gold label，$\theta$ 为模型参数。那扰动要如何计算呢？Goodfellow认为，<strong>神经网络由于其线性的特点，很容易受到线性扰动的攻击。</strong></p>
+<blockquote>
+<p>This linear behavior suggests that cheap, analytical perturbations of a linear model should also damage neural networks.</p>
+</blockquote>
+<p>于是，他提出了 Fast Gradient Sign Method (FGSM) ，来计算输入样本的扰动。扰动可以被定义为：</p>
+<script type="math/tex; mode=display">
+r_{adv} = \epsilon \cdot \text{sgn}(\triangledown_x L(\theta, x, y))</script><p>其中，$\text{sgn}$为符号函数，$L$为损失函数。Goodfellow发现，令$\epsilon=0.25$，用这个扰动能给一个单层分类器造成99.9%的错误率。看似这个扰动的发现有点拍脑门，但是仔细想想，其实这个扰动计算的思想可以理解为：将输入样本向着损失上升的方向再进一步，得到的对抗样本就能造成更大的损失，提高模型的错误率。回想我们上一节提到的对抗样本的两个要求，FGSM刚好可以完美地解决。</p>
+<p>在 [7] 中，Goodfellow还总结了对抗训练的两个作用：</p>
+<ol>
+<li>提高模型应对恶意对抗样本时的鲁棒性；</li>
+<li>作为一种regularization，减少overfitting，提高泛化能力。</li>
+</ol>
+<h2 id="Min-Max-公式"><a href="#Min-Max-公式" class="headerlink" title="Min-Max 公式"></a>Min-Max 公式</h2><p>在 [7] 中，对抗训练的理论部分被阐述得还是比较intuitive，Madry在2018年的ICLR中 [8]总结了之前的工作，并从优化的视角，将问题重新定义成了一个找鞍点的问题，也就是大名鼎鼎的Min-Max公式：</p>
+<script type="math/tex; mode=display">
+\min_\theta \mathbb{E}_{(x, y)\sim \mathcal{D}} [\max_{r_{adv} \in \mathcal{S}} L(\theta, x+r_{adv}, y)]</script><p>该公式分为两个部分，一个是内部损失函数的最大化，一个是外部经验风险的最小化。</p>
+<ol>
+<li>内部max是为了找到worst-case的扰动，也就是攻击，其中，$L$ 为损失函数，$\mathcal{S}$ 为扰动的范围空间。</li>
+<li>外部min是为了基于该攻击方式，找到最鲁棒的模型参数，也就是防御，其中$\mathcal{D}$是输入样本的分布。</li>
+</ol>
+<p>Madry认为，这个公式简单清晰地定义了对抗样本攻防“矛与盾”的两个问题：如何构造足够强的对抗样本？以及，如何使模型变得刀枪不入？剩下的，就是如何求解的问题了。</p>
+<h2 id="从-CV-到-NLP"><a href="#从-CV-到-NLP" class="headerlink" title="从 CV 到 NLP"></a>从 CV 到 NLP</h2><p>以上提到的一些工作都还是停留在CV领域的，那么问题来了，可否将对抗训练迁移到NLP上呢？答案是肯定的，但是，我们得考虑这么几个问题：</p>
+<p>首先，CV任务的输入是连续的RGB的值，而NLP问题中，输入是离散的单词序列，一般以one-hot vector的形式呈现，如果直接在raw text上进行扰动，那么扰动的大小和方向可能都没什么意义。Goodfellow在17年的ICLR中 [9] 提出了可以在连续的embedding上做扰动：</p>
+<blockquote>
+<p>Because the set of high-dimensional one-hot vectors does not admit inﬁnitesimal perturbation, we deﬁne the perturbation on continuous word embeddings instead of discrete word inputs.</p>
+</blockquote>
+<p>乍一思考，觉得这个解决方案似乎特别完美。然而，对比图像领域中直接在原始输入加扰动的做法，在embedding上加扰动会带来这么一个问题：这个被构造出来的“对抗样本”并不能map到某个单词，因此，反过来在inference的时候，对手也没有办法通过修改原始输入得到这样的对抗样本。我们在上面提到，对抗训练有两个作用，一是提高模型对恶意攻击的鲁棒性，二是提高模型的泛化能力。在CV任务，根据经验性的结论，对抗训练往往会使得模型在非对抗样本上的表现变差，然而神奇的是，在NLP任务中，模型的泛化能力反而变强了，如[1]中所述：</p>
+<blockquote>
+<p>While adversarial training boosts the robustness, it is widely accepted by computer vision researchers that it is at odds with generalization, with classiﬁcation accuracy on non-corrupted images dropping as much as 10% on CIFAR-10, and 15% on Imagenet (Madry et al., 2018; Xie et al., 2019). Surprisingly, people observe the opposite result for language models (Miyato et al., 2017; Cheng et al., 2019), showing that adversarial training can improve both generalization and robustness.</p>
+</blockquote>
+<p>因此，<strong>在NLP任务中，对抗训练的角色不再是为了防御基于梯度的恶意攻击，反而更多的是作为一种regularization，提高模型的泛化能力</strong>。</p>
+<p>有了这些“思想准备”，我们来看看NLP对抗训练的常用的几个方法和具体实现吧。</p>
+<h2 id="NLP中的两种对抗训练-PyTorch实现"><a href="#NLP中的两种对抗训练-PyTorch实现" class="headerlink" title="NLP中的两种对抗训练 + PyTorch实现"></a>NLP中的两种对抗训练 + PyTorch实现</h2><h3 id="Fast-Gradient-Method（FGM）"><a href="#Fast-Gradient-Method（FGM）" class="headerlink" title="Fast Gradient Method（FGM）"></a>Fast Gradient Method（FGM）</h3><p>上面我们提到，Goodfellow在15年的ICLR [7] 中提出了Fast Gradient Sign Method（FGSM），随后，在17年的ICLR [9]中，Goodfellow对FGSM中计算扰动的部分做了一点简单的修改。假设输入的文本序列的embedding vectors $[v_1, v_2, …, v_T]$为$x$，embedding的扰动为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+r_{adv} &= \epsilon \cdot g/||g||_2 \\\\
+g &= \triangledown_x L(\theta, x, y)
+\end{align}</script><p>实际上就是取消了符号函数，用二范式做了一个scale，需要注意的是：这里的norm计算的是，每个样本的输入序列中出现过的词组成的矩阵的梯度norm。原作者提供了一个TensorFlow的实现 [10]，在他的实现中，公式里的 $x$ 是embedding后的中间结果（batch_size, timesteps, hidden_dim），对其梯度 $g$ 的后面两维计算norm，得到的是一个(batch_size, 1, 1)的向量 $||g||_2$。为了实现插件式的调用，笔者将一个batch抽象成一个样本，一个batch统一用一个norm，由于本来norm也只是一个scale的作用，影响不大。笔者的实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FGM</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, model)</span>:</span></span><br><span class="line">        self.model = model</span><br><span class="line">        self.backup = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">attack</span><span class="params">(self, epsilon=<span class="number">1.</span>, emb_name=<span class="string">'emb.'</span>)</span>:</span></span><br><span class="line">        <span class="comment"># emb_name这个参数要换成你模型中embedding的参数名</span></span><br><span class="line">        <span class="keyword">for</span> name, param <span class="keyword">in</span> self.model.named_parameters():</span><br><span class="line">            <span class="keyword">if</span> param.requires_grad <span class="keyword">and</span> emb_name <span class="keyword">in</span> name:</span><br><span class="line">                self.backup[name] = param.data.clone()</span><br><span class="line">                norm = torch.norm(param.grad)</span><br><span class="line">                <span class="keyword">if</span> norm != <span class="number">0</span>:</span><br><span class="line">                    r_at = epsilon * param.grad / norm</span><br><span class="line">                    param.data.add_(r_at)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">restore</span><span class="params">(self, emb_name=<span class="string">'emb.'</span>)</span>:</span></span><br><span class="line">        <span class="comment"># emb_name这个参数要换成你模型中embedding的参数名</span></span><br><span class="line">        <span class="keyword">for</span> name, param <span class="keyword">in</span> self.model.named_parameters():</span><br><span class="line">            <span class="keyword">if</span> param.requires_grad <span class="keyword">and</span> emb_name <span class="keyword">in</span> name: </span><br><span class="line">                <span class="keyword">assert</span> name <span class="keyword">in</span> self.backup</span><br><span class="line">                param.data = self.backup[name]</span><br><span class="line">        self.backup = &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>需要使用对抗训练的时候，只需要添加五行代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化</span></span><br><span class="line">fgm = FGM(model)</span><br><span class="line"><span class="keyword">for</span> batch_input, batch_label <span class="keyword">in</span> data:</span><br><span class="line">    <span class="comment"># 正常训练</span></span><br><span class="line">    loss = model(batch_input, batch_label)</span><br><span class="line">    loss.backward() <span class="comment"># 反向传播，得到正常的grad</span></span><br><span class="line">    <span class="comment"># 对抗训练</span></span><br><span class="line">    fgm.attack() <span class="comment"># 在embedding上添加对抗扰动</span></span><br><span class="line">    loss_adv = model(batch_input, batch_label)</span><br><span class="line">    loss_adv.backward() <span class="comment"># 反向传播，并在正常的grad基础上，累加对抗训练的梯度</span></span><br><span class="line">    fgm.restore() <span class="comment"># 恢复embedding参数</span></span><br><span class="line">    <span class="comment"># 梯度下降，更新参数</span></span><br><span class="line">    optimizer.step()</span><br><span class="line">    model.zero_grad()</span><br></pre></td></tr></table></figure>
+<p>PyTorch为了节约内存，在backward的时候并不保存中间变量的梯度。因此，如果需要完全照搬原作的实现，需要用<code>register_hook</code>接口[11]将embedding后的中间变量的梯度保存成全局变量，norm后面两维，计算出扰动后，在对抗训练forward时传入扰动，累加到embedding后的中间变量上，得到新的loss，再进行梯度下降。这里不赘述了，感兴趣的读者可以自行实现。</p>
+<h3 id="Projected-Gradient-Descent（PGD）"><a href="#Projected-Gradient-Descent（PGD）" class="headerlink" title="Projected Gradient Descent（PGD）"></a>Projected Gradient Descent（PGD）</h3><p>内部max的过程，本质上是一个非凹的约束优化问题，FGM解决的思路其实就是梯度上升，<strong>那么FGM简单粗暴的“一步到位”，是不是有可能并不能走到约束内的最优点呢？</strong>当然是有可能的。于是，一个很intuitive的改进诞生了：Madry在18年的ICLR中[8]，提出了用Projected Gradient Descent（PGD）的方法，简单的说，就是<strong>“小步走，多走几步”</strong>，如果走出了扰动半径为$\epsilon$的空间，就映射回“球面”上，以保证扰动不要过大：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+x_{t+1} &= \Pi_{x+\mathcal{S}}(x_t+\alpha g(x_t)/||g(x_t)||_2) \\\\
+g(x_t) &= \triangledown_x L(\theta, x_t, y)
+\end{align}</script><p>其中$\mathcal{S}=\{r\in\mathbb{R}^d:||r||_2 \leq \epsilon\}$ 为扰动的约束空间，$\alpha$为小步的步长。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PGD</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, model)</span>:</span></span><br><span class="line">        self.model = model</span><br><span class="line">        self.emb_backup = &#123;&#125;</span><br><span class="line">        self.grad_backup = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">attack</span><span class="params">(self, epsilon=<span class="number">1.</span>, alpha=<span class="number">0.3</span>, emb_name=<span class="string">'emb.'</span>, is_first_attack=False)</span>:</span></span><br><span class="line">        <span class="comment"># emb_name这个参数要换成你模型中embedding的参数名</span></span><br><span class="line">        <span class="keyword">for</span> name, param <span class="keyword">in</span> self.model.named_parameters():</span><br><span class="line">            <span class="keyword">if</span> param.requires_grad <span class="keyword">and</span> emb_name <span class="keyword">in</span> name:</span><br><span class="line">                <span class="keyword">if</span> is_first_attack:</span><br><span class="line">                    self.emb_backup[name] = param.data.clone()</span><br><span class="line">                norm = torch.norm(param.grad)</span><br><span class="line">                <span class="keyword">if</span> norm != <span class="number">0</span>:</span><br><span class="line">                    r_at = alpha * param.grad / norm</span><br><span class="line">                    param.data.add_(r_at)</span><br><span class="line">                    param.data = self.project(name, param.data, epsilon)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">restore</span><span class="params">(self, emb_name=<span class="string">'emb.'</span>)</span>:</span></span><br><span class="line">        <span class="comment"># emb_name这个参数要换成你模型中embedding的参数名</span></span><br><span class="line">        <span class="keyword">for</span> name, param <span class="keyword">in</span> self.model.named_parameters():</span><br><span class="line">            <span class="keyword">if</span> param.requires_grad <span class="keyword">and</span> emb_name <span class="keyword">in</span> name: </span><br><span class="line">                <span class="keyword">assert</span> name <span class="keyword">in</span> self.emb_backup</span><br><span class="line">                param.data = self.emb_backup[name]</span><br><span class="line">        self.emb_backup = &#123;&#125;</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">project</span><span class="params">(self, param_name, param_data, epsilon)</span>:</span></span><br><span class="line">        r = param_data - self.emb_backup[param_name]</span><br><span class="line">        <span class="keyword">if</span> torch.norm(r) &gt; epsilon:</span><br><span class="line">            r = epsilon * r / torch.norm(r)</span><br><span class="line">        <span class="keyword">return</span> param_data + r</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">backup_grad</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> name, param <span class="keyword">in</span> self.model.named_parameters():</span><br><span class="line">            <span class="keyword">if</span> param.requires_grad:</span><br><span class="line">                self.grad_backup[name] = param.grad</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">restore_grad</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> name, param <span class="keyword">in</span> self.model.named_parameters():</span><br><span class="line">            <span class="keyword">if</span> param.requires_grad:</span><br><span class="line">                param.grad = self.grad_backup[name]</span><br></pre></td></tr></table></figure>
+<p>使用的时候，要麻烦一点：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">pgd = PGD(model)</span><br><span class="line">K = <span class="number">3</span></span><br><span class="line"><span class="keyword">for</span> batch_input, batch_label <span class="keyword">in</span> data:</span><br><span class="line">    <span class="comment"># 正常训练</span></span><br><span class="line">    loss = model(batch_input, batch_label)</span><br><span class="line">    loss.backward() <span class="comment"># 反向传播，得到正常的grad</span></span><br><span class="line">    pgd.backup_grad()</span><br><span class="line">    <span class="comment"># 对抗训练</span></span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> range(K):</span><br><span class="line">        pgd.attack(is_first_attack=(t==<span class="number">0</span>)) <span class="comment"># 在embedding上添加对抗扰动, first attack时备份param.data</span></span><br><span class="line">        <span class="keyword">if</span> t != K<span class="number">-1</span>:</span><br><span class="line">            model.zero_grad()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            pgd.restore_grad()</span><br><span class="line">        loss_adv = model(batch_input, batch_label)</span><br><span class="line">        loss_adv.backward() <span class="comment"># 反向传播，并在正常的grad基础上，累加对抗训练的梯度</span></span><br><span class="line">    pgd.restore() <span class="comment"># 恢复embedding参数</span></span><br><span class="line">    <span class="comment"># 梯度下降，更新参数</span></span><br><span class="line">    optimizer.step()</span><br><span class="line">    model.zero_grad()</span><br></pre></td></tr></table></figure>
+<p>在[8]中，作者将这一类通过一阶梯度得到的对抗样本称之为“一阶对抗”，在实验中，作者发现，经过PGD训练过的模型，对于所有的一阶对抗都能得到一个低且集中的损失值，如下图所示：</p>
+<p><img src="pgd_loss.jpg" width="100%" title="样本+随机扰动在两种模型下的loss值"></p>
+<p>我们可以看到，面对约束空间 $\mathcal{S}$ 内随机采样的十万个扰动，PGD模型能够得到一个<strong>非常低且集中的loss分布</strong>，因此，在论文中，作者称PGD为<strong>“一阶最强对抗”</strong>。也就是说，只要能搞定PGD对抗，别的一阶对抗就不在话下了。</p>
+<h2 id="实验对照"><a href="#实验对照" class="headerlink" title="实验对照"></a>实验对照</h2><p>为了说明对抗训练的作用，笔者选了四个GLUE中的任务进行了对照试验。实验代码是用的Huggingface的<code>transfomers/examples/run_glue.py</code> [12]，超参都是默认的，对抗训练用的也是相同的超参。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>Metrics</th>
+<th>BERT-Base</th>
+<th>FGM</th>
+<th>PGD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MRPC</td>
+<td>Accuracy</td>
+<td>83.6</td>
+<td><strong>86.8</strong></td>
+<td>85.8</td>
+</tr>
+<tr>
+<td>CoLA</td>
+<td>Matthew’s corr</td>
+<td>56.0</td>
+<td>56.0</td>
+<td><strong>56.8</strong></td>
+</tr>
+<tr>
+<td>STS-B</td>
+<td>Person/Spearman corr.</td>
+<td>89.3/88.8</td>
+<td>89.3/88.8</td>
+<td><strong>89.3/88.9</strong></td>
+</tr>
+<tr>
+<td>RTE</td>
+<td>Accuracy</td>
+<td>64.3</td>
+<td>65.0</td>
+<td><strong>68.2</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>我们可以看到，对抗训练还是有效的，在MRPC和RTE任务上<strong>甚至可以提高三四个百分点</strong>。不过，根据我们使用的经验来看，是否有效有时也取决于数据集。毕竟：</p>
+<blockquote>
+<p>缘，妙不可言~</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这篇博客梳理了NLP对抗训练发展的来龙去脉，介绍了对抗训练的数学定义，并对于两种经典的对抗训练方法，提供了插件式的实现，做了简单的实验对照。由于笔者接触对抗训练的时间也并不长，如果文中有理解偏差的地方，希望读者不吝指出。</p>
+<h2 id="一个彩蛋：Virtual-Adversarial-Training"><a href="#一个彩蛋：Virtual-Adversarial-Training" class="headerlink" title="一个彩蛋：Virtual Adversarial Training"></a>一个彩蛋：Virtual Adversarial Training</h2><p>除了监督训练，对抗训练还可以用在半监督任务中，尤其对于NLP任务来说，很多时候输入的无监督文本多的很，但是很难大规模地进行标注，那么就可以参考[13]中提到的Virtual Adversarial Training进行半监督训练。</p>
+<p>首先，我们抽取一个随机标准正态扰动（$d\sim \mathcal{N}(0, I)\in \mathbb{R}^d$），加到embedding上，并用KL散度计算梯度：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+g &= \triangledown_{x'}D_{KL}(p(\cdot|x;\theta)||p(\cdot|x';\theta)) \\\\
+x' &= x + \xi d
+\end{align}</script><p>然后，用得到的梯度，计算对抗扰动，并进行对抗训练：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+\min_\theta & D_{KL}(p(\cdot|x;\theta)||p(\cdot|x^*;\theta)) \\\\
+x^* &= x+\epsilon g/||g||_2
+\end{align}</script><p>实现方法跟FGM差不多，这里就不给出了。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[1]：FreeLB: Enhanced Adversarial Training for Language Understanding. <a href="https://arxiv.org/abs/1909.11764" target="_blank" rel="noopener">https://arxiv.org/abs/1909.11764</a><br>[2]：Technical report on Conversational Question Answering. <a href="https://arxiv.org/abs/1909.10772" target="_blank" rel="noopener">https://arxiv.org/abs/1909.10772</a><br>[3]：EYD与机器学习：对抗攻击基础知识（一）. <a href="https://zhuanlan.zhihu.com/p/37260275" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/37260275</a><br>[4]：Towards a Robust Deep Neural Network in Text Domain A Survey. <a href="https://arxiv.org/abs/1902.07285" target="_blank" rel="noopener">https://arxiv.org/abs/1902.07285</a><br>[5]：Adversarial Attacks on Deep Learning Models in Natural Language Processing: A Survey. <a href="https://arxiv.org/abs/1901.06796" target="_blank" rel="noopener">https://arxiv.org/abs/1901.06796</a><br>[6]：Intriguing properties of neural networks. <a href="https://arxiv.org/abs/1312.6199" target="_blank" rel="noopener">https://arxiv.org/abs/1312.6199</a><br>[7]：Explaining and Harnessing Adversarial Examples. <a href="https://arxiv.org/abs/1412.6572" target="_blank" rel="noopener">https://arxiv.org/abs/1412.6572</a><br>[8]：Towards Deep Learning Models Resistant to Adversarial Attacks. <a href="https://arxiv.org/abs/1706.06083" target="_blank" rel="noopener">https://arxiv.org/abs/1706.06083</a><br>[9]：Adversarial Training Methods for Semi-Supervised Text Classification. <a href="https://arxiv.org/abs/1605.07725" target="_blank" rel="noopener">https://arxiv.org/abs/1605.07725</a><br>[10]：Adversarial Text Classification原作实现. <a href="https://github.com/tensorflow/models/blob/e97e22dfcde0805379ffa25526a53835f887a860/research/adversarial_text/adversarial_losses.py" target="_blank" rel="noopener">https://github.com/tensorflow/models/blob/e97e22dfcde0805379ffa25526a53835f887a860/research/adversarial_text/adversarial_losses.py</a><br>[11]：register_hook api. <a href="https://www.cnblogs.com/SivilTaram/p/pytorch_intermediate_variable_gradient.html" target="_blank" rel="noopener">https://www.cnblogs.com/SivilTaram/p/pytorch_intermediate_variable_gradient.html</a><br>[12]：huggingface的transformers. <a href="https://github.com/huggingface/transformers/tree/master/examples" target="_blank" rel="noopener">https://github.com/huggingface/transformers/tree/master/examples</a><br>[13]：Distributional Smoothing with Virtual Adversarial Training. <a href="https://arxiv.org/abs/1507.00677" target="_blank" rel="noopener">https://arxiv.org/abs/1507.00677</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/对抗训练/" rel="tag"># 对抗训练</a>
+          
+            <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/08/lic-2019/" rel="next" title="【参会笔记】2019语言与智能高峰论坛">
+                <i class="fa fa-chevron-left"></i> 【参会笔记】2019语言与智能高峰论坛
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/06/coqa/" rel="prev" title="【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析">
+                【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div id="gitalk-container"></div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">AKA瓦砾</p>
+              <img class="site-author-image" itemprop="image" src="/images/header.png" alt="AKA瓦砾">
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/fyubang" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:fubang.zhao@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://zhuanlan.zhihu.com/c_174521629" target="_blank" title="知乎专栏">
+                      
+                        <i class="fa fa-fw fa-book"></i>知乎专栏</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kexue.fm/" title="科学空间" target="_blank">科学空间</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://shuang0420.com" title="徐阿衡" target="_blank">徐阿衡</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#对抗样本"><span class="nav-number">1.</span> <span class="nav-text">对抗样本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对抗训练的基本概念"><span class="nav-number">2.</span> <span class="nav-text">对抗训练的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Min-Max-公式"><span class="nav-number">3.</span> <span class="nav-text">Min-Max 公式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从-CV-到-NLP"><span class="nav-number">4.</span> <span class="nav-text">从 CV 到 NLP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NLP中的两种对抗训练-PyTorch实现"><span class="nav-number">5.</span> <span class="nav-text">NLP中的两种对抗训练 + PyTorch实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Fast-Gradient-Method（FGM）"><span class="nav-number">5.1.</span> <span class="nav-text">Fast Gradient Method（FGM）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Projected-Gradient-Descent（PGD）"><span class="nav-number">5.2.</span> <span class="nav-text">Projected Gradient Descent（PGD）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验对照"><span class="nav-number">6.</span> <span class="nav-text">实验对照</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一个彩蛋：Virtual-Adversarial-Training"><span class="nav-number">8.</span> <span class="nav-text">一个彩蛋：Virtual Adversarial Training</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">9.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AKA瓦砾</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0efa076437b16d55154d',
+          clientSecret: 'b6441808c991871623e6e8666300230ab321a6c1',
+          repo: 'gitalk',
+          owner: 'fyubang',
+          admin: ['fyubang'],
+          id: location.pathname,
+          labels: ['Gitalk'],
+          perPage: 15,
+          pagerDirection: 'last',
+          createIssueManually: true,
+          distractionFreeMode: false
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
