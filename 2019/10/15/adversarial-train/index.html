@@ -92,7 +92,7 @@
 <meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/cate.png">
 <meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/adv_sample.png">
 <meta property="og:image" content="http://fyubang.com/2019/10/15/adversarial-train/pgd_loss.jpg">
-<meta property="og:updated_time" content="2019-11-13T10:18:48.225Z">
+<meta property="og:updated_time" content="2019-12-04T06:09:26.233Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【训练技巧】功守道：NLP中的对抗训练 + PyTorch实现">
 <meta name="twitter:description" content="本文分享一个“万物皆可盘”的NLP对抗训练实现，只需要四行代码即可调用。你值得拥有。  最近，微软的FreeLB-Roberta [1] 靠着对抗训练 (Adversarial Training) 在GLUE榜上超越了Facebook原生的Roberta，追一科技也用到了这个方法仅凭单模型 [2] 就在CoQA榜单中超过了人类，似乎“对抗训练”一下子变成了NLP任务的一把利器。刚好笔者最近也在看">
@@ -489,7 +489,6 @@ g(x_t) &= \triangledown_x L(\theta, x_t, y)
 <th>BERT-Base</th>
 <th>FGM</th>
 <th>PGD</th>
-<th>alpha; epsilon;K</th>
 </tr>
 </thead>
 <tbody>
@@ -499,7 +498,6 @@ g(x_t) &= \triangledown_x L(\theta, x_t, y)
 <td>83.6</td>
 <td><strong>86.8</strong></td>
 <td>85.8</td>
-<td></td>
 </tr>
 <tr>
 <td>CoLA</td>
@@ -507,7 +505,6 @@ g(x_t) &= \triangledown_x L(\theta, x_t, y)
 <td>56.0</td>
 <td>56.0</td>
 <td><strong>56.8</strong></td>
-<td></td>
 </tr>
 <tr>
 <td>STS-B</td>
@@ -515,7 +512,6 @@ g(x_t) &= \triangledown_x L(\theta, x_t, y)
 <td>89.3/88.8</td>
 <td>89.3/88.8</td>
 <td><strong>89.3/88.9</strong></td>
-<td></td>
 </tr>
 <tr>
 <td>RTE</td>
