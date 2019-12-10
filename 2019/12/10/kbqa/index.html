@@ -89,7 +89,7 @@
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/12/10/kbqa/model.png">
 <meta property="og:image" content="http://fyubang.com/2019/12/10/kbqa/example.png">
-<meta property="og:updated_time" content="2019-12-10T06:12:34.965Z">
+<meta property="og:updated_time" content="2019-12-10T06:16:59.063Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【知识图谱】一个百科KBQA Demo">
 <meta name="twitter:description" content="从近些年的比赛和会议中，我们不难看出“知识图谱”这个概念越来越重要了。一直以来，笔者其实都有围绕知识图谱做一些相关的工作，包括三元组的问题生成、信息抽取等等。但是图谱领域最重要的KBQA（Knowledge Base Question Answering），笔者一直都没有动手做过，最近刚好有这么一个契机需要做百科的图谱问答。Github上面看了看，又没找到特别合适的端到端KBQA的开源代码，于是笔">
@@ -440,8 +440,8 @@
 <li>在<code>config.py</code>中配置超参；</li>
 <li>写<code>run.sh</code>，选择训练、验证还是测试模式。</li>
 </ol>
-<p>训练：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">export CUDA_VISIBLE_DEVICES=1</span><br><span class="line">python main.py \</span><br><span class="line">--do_train_and_eval \</span><br><span class="line">--model_dir experiments/debug \</span><br><span class="line">--nega_num 8 \</span><br><span class="line">--learning_rate 5e-5 \</span><br><span class="line">--batch_size 32 \</span><br><span class="line">--epoch_num 3</span><br></pre></td></tr></table></figure></p>
-<p>预测：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export CUDA_VISIBLE_DEVICES=1</span><br><span class="line">python main.py \</span><br><span class="line">--do_predict \</span><br><span class="line">--model_dir experiments/debug \</span><br></pre></td></tr></table></figure></p>
+<p>训练：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">export CUDA_VISIBLE_DEVICES=1</span><br><span class="line">python main.py \</span><br><span class="line">    --do_train_and_eval \</span><br><span class="line">    --model_dir experiments/debug \</span><br><span class="line">    --nega_num 8 \</span><br><span class="line">    --learning_rate 5e-5 \</span><br><span class="line">    --batch_size 32 \</span><br><span class="line">    --epoch_num 3</span><br></pre></td></tr></table></figure></p>
+<p>预测：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export CUDA_VISIBLE_DEVICES=1</span><br><span class="line">python main.py \</span><br><span class="line">    --do_predict \</span><br><span class="line">    --model_dir experiments/debug \</span><br></pre></td></tr></table></figure></p>
 <h2 id="Result"><a href="#Result" class="headerlink" title="Result"></a>Result</h2><div class="table-container">
 <table>
 <thead>
