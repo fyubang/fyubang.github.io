@@ -82,15 +82,15 @@
 <meta name="description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
 <meta name="keywords" content="torch,ema">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【训练技巧】指数移动平均（EMA）的原理及PyTorch实现">
+<meta property="og:title" content="【炼丹技巧】指数移动平均（EMA）的原理及PyTorch实现">
 <meta property="og:url" content="http://fyubang.com/2019/06/01/ema/index.html">
 <meta property="og:site_name" content="瓦特兰蒂斯">
 <meta property="og:description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://fyubang.com/2019/06/01/ema/bias.png">
-<meta property="og:updated_time" content="2019-10-15T02:33:54.286Z">
+<meta property="og:updated_time" content="2019-12-27T12:12:41.011Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【训练技巧】指数移动平均（EMA）的原理及PyTorch实现">
+<meta name="twitter:title" content="【炼丹技巧】指数移动平均（EMA）的原理及PyTorch实现">
 <meta name="twitter:description" content="在深度学习中，经常会使用EMA（指数移动平均）这个方法对模型的参数做平均，以求提高测试指标并增加模型鲁棒。 今天瓦砾准备介绍一下EMA以及它的Pytorch实现代码。 EMA的定义指数移动平均（Exponential Moving Average）也叫权重移动平均（Weighted Moving Average），是一种给予近期数据更高权重的平均方法。 假设我们有n个数据：$[\theta_1,">
 <meta name="twitter:image" content="http://fyubang.com/2019/06/01/ema/bias.png">
 
@@ -128,7 +128,7 @@
 
 
 
-  <title>【训练技巧】指数移动平均（EMA）的原理及PyTorch实现 | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>【炼丹技巧】指数移动平均（EMA）的原理及PyTorch实现 | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -314,7 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">【训练技巧】指数移动平均（EMA）的原理及PyTorch实现</h1>
+          <h1 class="post-title" itemprop="name headline">【炼丹技巧】指数移动平均（EMA）的原理及PyTorch实现</h1>
         
 
         <div class="post-meta">
@@ -349,8 +349,8 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/训练技巧/" itemprop="url" rel="index">
-                    <span itemprop="name">训练技巧</span>
+                  <a href="/categories/炼丹技巧/" itemprop="url" rel="index">
+                    <span itemprop="name">炼丹技巧</span>
                   </a>
                 </span>
 
@@ -360,7 +360,7 @@
                 
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/训练技巧/指数移动平均/" itemprop="url" rel="index">
+                  <a href="/categories/炼丹技巧/指数移动平均/" itemprop="url" rel="index">
                     <span itemprop="name">指数移动平均</span>
                   </a>
                 </span>
@@ -408,7 +408,7 @@
 <p>假设我们有n个数据：$[\theta_1, \theta_2, …, \theta_n]$</p>
 <ul>
 <li>普通的平均数：$\overline{v}=\frac{1}{n}\sum_{i=1}^n \theta_i$</li>
-<li>EMA：$v<em>t = \alpha\cdot v</em>{t-1} + (1-\alpha)\cdot \theta_t$，其中，$ v_t$表示前$t$条的平均值 ($v_0=0$)，$\alpha$ 是加权权重值 (一般设为0.9-0.999)。</li>
+<li>EMA：$v_t = \alpha\cdot v_{t-1} + (1-\alpha)\cdot \theta_t$，其中，$ v_t$表示前$t$条的平均值 ($v_0=0$)，$\alpha$ 是加权权重值 (一般设为0.9-0.999)。</li>
 </ul>
 <p>Andrew Ng在<a href="http://mooc.study.163.com/learn/2001281003?tid=2001391036#/learn/content?type=detail&amp;id=2001702121&amp;cid=2001694301" target="_blank" rel="noopener">Course 2 Improving Deep Neural Networks</a>中讲到，EMA可以<strong>近似</strong>看成过去$1/(1-\alpha)$个时刻$v$值的平均。</p>
 <p>普通的过去$n$时刻的平均是这样的：</p>
@@ -596,7 +596,7 @@ v_n &= \theta_1 -\sum_{i=1}^{n-1}(1-\alpha^{n-i})g_i
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -607,7 +607,7 @@ v_n &= \theta_1 -\sum_{i=1}^{n-1}(1-\alpha^{n-i})g_i
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

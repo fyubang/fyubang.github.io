@@ -454,8 +454,8 @@ Attention(Q, K, V) = softmax(\frac{QK^{\top}}{\sqrt{d_k}})V</script><p>基本上
 <p>文章表示，比起直接用$d_{model}$的Q, K, V来说，将Q, K, V用不同的h个线性投影得到的h个$d_v$的context vector，再concat起来，过一个线性层的结果更好，可以综合不同位置的不同表征子空间的信息。</p>
 <script type="math/tex; mode=display">
 \text{Multihead}(Q, K, V) = \text{Concat}(\text{head}_1, \text{head}_2, ..., \text{head}_h)W^O\\\\
-\text{where head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)</script><p>其中，$W<em>i^Q\in\mathbb{R}^{d</em>{model}\times d<em>k}$，$W_i^K\in\mathbb{R}^{d</em>{model}\times d<em>k}$，$W_i^V\in\mathbb{R}^{d</em>{model}\times d<em>v}$，然后$W^O\in\mathbb{R}^{hd_v\times d</em>{model}}$。</p>
-<p>在文章里，设置了h=8个平行注意层（也就是头（head）2333）。对于每个层的$d<em>k=d_v=d</em>{\text{model}}/h=64$。因为每个头都减少了dimension，所以整体的computational cost和single-head full dimension的注意力机制是差不多的。</p>
+\text{where head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)</script><p>其中，$W_i^Q\in\mathbb{R}^{d_{model}\times d_k}$，$W_i^K\in\mathbb{R}^{d_{model}\times d_k}$，$W_i^V\in\mathbb{R}^{d_{model}\times d_v}$，然后$W^O\in\mathbb{R}^{hd_v\times d_{model}}$。</p>
+<p>在文章里，设置了h=8个平行注意层（也就是头（head）2333）。对于每个层的$d_k=d_v=d_{\text{model}}/h=64$。因为每个头都减少了dimension，所以整体的computational cost和single-head full dimension的注意力机制是差不多的。</p>
 <h4 id="3-2-4-Applications-of-Attention-in-our-model"><a href="#3-2-4-Applications-of-Attention-in-our-model" class="headerlink" title="3.2.4 Applications of Attention in our model"></a>3.2.4 Applications of Attention in our model</h4><ul>
 <li>encoder-decoder attention: 模仿seq2seq模型的注意力机制</li>
 <li>encoder 的 self-attention layer</li>
@@ -463,7 +463,7 @@ Attention(Q, K, V) = softmax(\frac{QK^{\top}}{\sqrt{d_k}})V</script><p>基本上
 </ul>
 <h3 id="3-3-Position-wise-Feed-Forward-Networks"><a href="#3-3-Position-wise-Feed-Forward-Networks" class="headerlink" title="3.3 Position-wise Feed-Forward Networks"></a>3.3 Position-wise Feed-Forward Networks</h3><p>每个FFN包括两次线性变换，中间是ReLu的激活函数。</p>
 <script type="math/tex; mode=display">
-\text{FFN} = \max(0, xW_1+b_1)W_2+b_2</script><p>不同position的FFN是一样的，但是不同层是不同的。输入输出维度都是$d<em>{model}=512$，中间层的维度是$d</em>{ff}=2048$。</p>
+\text{FFN} = \max(0, xW_1+b_1)W_2+b_2</script><p>不同position的FFN是一样的，但是不同层是不同的。输入输出维度都是$d_{model}=512$，中间层的维度是$d_{ff}=2048$。</p>
 <h3 id="3-4-Embeddings-and-Softmax"><a href="#3-4-Embeddings-and-Softmax" class="headerlink" title="3.4 Embeddings and Softmax"></a>3.4 Embeddings and Softmax</h3><p>和其他seq transduction模型一样，也得用learned embeddings，learned 线性变换，softmax这些东西。两个embedding的权重是share的。embedding层，会把权重乘$\sqrt{d_{model}}$。</p>
 <h3 id="3-5-Positional-Encoding"><a href="#3-5-Positional-Encoding" class="headerlink" title="3.5 Positional Encoding"></a>3.5 Positional Encoding</h3><p>因为模型没有rnn或者cnn，为了用到sequence的顺序，作者引入了positional encoding（$dim=d_{model}$，便于相加）来inject一些相对位置的信息。</p>
 <script type="math/tex; mode=display">
@@ -627,7 +627,7 @@ PE(pos, 2i+1) = cos(pos/10000^{2i/d_{model}})</script><p>作者测试用学习�
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -638,7 +638,7 @@ PE(pos, 2i+1) = cos(pos/10000^{2i/d_{model}})</script><p>作者测试用学习�
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
