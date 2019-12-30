@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="知识图谱,Entity Linking,Entity Disambiguation,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这个世界充斥着无数的结构化数据（wiki）和非结构化数据（web），然而，如何将两者有效地集成仍然是个非常困难的问题。  本文介绍实体链接 (Entity Linking) 这一技术方向，会先从最基础的概念讲起，然后对EL中的三个主要模块做一个清晰的梳理。在此基础上，选取三篇比较有代表性的论文，详述其中的核心方法和思想。 EL入门1. 任务定义实体链接，就是把文本中的mention链接到KG里的">
+<meta name="keywords" content="知识图谱,Entity Linking,Entity Disambiguation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【知识图谱】实体链接：一份“由浅入深”的综述">
+<meta property="og:url" content="http://fyubang.com/2019/12/30/entity-linking/index.html">
+<meta property="og:site_name" content="瓦特兰蒂斯">
+<meta property="og:description" content="这个世界充斥着无数的结构化数据（wiki）和非结构化数据（web），然而，如何将两者有效地集成仍然是个非常困难的问题。  本文介绍实体链接 (Entity Linking) 这一技术方向，会先从最基础的概念讲起，然后对EL中的三个主要模块做一个清晰的梳理。在此基础上，选取三篇比较有代表性的论文，详述其中的核心方法和思想。 EL入门1. 任务定义实体链接，就是把文本中的mention链接到KG里的">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://fyubang.com/2019/12/30/entity-linking/el.png">
+<meta property="og:image" content="http://fyubang.com/2019/12/30/entity-linking/taxonomy.png">
+<meta property="og:image" content="http://fyubang.com/2019/12/30/entity-linking/attention.png">
+<meta property="og:image" content="http://fyubang.com/2019/12/30/entity-linking/norm.png">
+<meta property="og:image" content="http://fyubang.com/2019/12/30/entity-linking/classifier.png">
+<meta property="og:updated_time" content="2019-12-30T10:50:59.197Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【知识图谱】实体链接：一份“由浅入深”的综述">
+<meta name="twitter:description" content="这个世界充斥着无数的结构化数据（wiki）和非结构化数据（web），然而，如何将两者有效地集成仍然是个非常困难的问题。  本文介绍实体链接 (Entity Linking) 这一技术方向，会先从最基础的概念讲起，然后对EL中的三个主要模块做一个清晰的梳理。在此基础上，选取三篇比较有代表性的论文，详述其中的核心方法和思想。 EL入门1. 任务定义实体链接，就是把文本中的mention链接到KG里的">
+<meta name="twitter:image" content="http://fyubang.com/2019/12/30/entity-linking/el.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://fyubang.com/2019/12/30/entity-linking/">
+
+
+
+
+
+  <title>【知识图谱】实体链接：一份“由浅入深”的综述 | 瓦特兰蒂斯</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">瓦特兰蒂斯</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fyubang.com/2019/12/30/entity-linking/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AKA瓦砾">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="瓦特兰蒂斯">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【知识图谱】实体链接：一份“由浅入深”的综述</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-30T18:48:35+08:00">
+                2019-12-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/知识图谱/" itemprop="url" rel="index">
+                    <span itemprop="name">知识图谱</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/知识图谱/Entity-Linking/" itemprop="url" rel="index">
+                    <span itemprop="name">Entity Linking</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>这个世界充斥着无数的结构化数据（wiki）和非结构化数据（web），然而，如何将两者有效地集成仍然是个非常困难的问题。</p>
+</blockquote>
+<p>本文介绍实体链接 (Entity Linking) 这一技术方向，会先从最基础的概念讲起，然后对EL中的三个主要模块做一个清晰的梳理。在此基础上，选取三篇比较有代表性的论文，详述其中的核心方法和思想。</p>
+<h3 id="EL入门"><a href="#EL入门" class="headerlink" title="EL入门"></a>EL入门</h3><h4 id="1-任务定义"><a href="#1-任务定义" class="headerlink" title="1. 任务定义"></a>1. 任务定义</h4><p><strong>实体链接，就是把文本中的mention链接到KG里的entity的任务。</strong>如下图所示[1]：</p>
+<p><img src="el.png" width="80%" title="An Example of Entity Linking"></p>
+<p>有些读者可能对知识图谱的概念不甚了解，这边先解释一下图谱里常用的一些概念。</p>
+<ul>
+<li><strong>Knowledge Graph (知识图谱)</strong>：一种语义网络，旨在描述客观世界的概念实体及其之间的关系，有时也称为Knowledge Base (知识库)。<ul>
+<li>图谱由三元组构成：<code>&lt;实体1，关系，实体2&gt;</code> 或者 <code>&lt;实体，属性，属性值&gt;</code>；</li>
+<li>例如：&lt;姚明，plays-in，NBA&gt;、&lt;姚明，身高，2.29m&gt;；</li>
+<li>常见的KB有：Wikidata、DBpedia、YOGO。</li>
+</ul>
+</li>
+<li><strong>Entity (实体)</strong>：实体是知识图谱的基本单元，也是文本中承载信息的重要语言单位。</li>
+<li><strong>Mention (提及)</strong>：自然文本中表达实体的语言片段。</li>
+</ul>
+<p>回过头再看，上面的这个图中，“乔丹”、“美国”、“NBA”这些蓝色的片段都是mention，其箭头所指的“块块”就是它们在图谱里对应的entity。</p>
+<h4 id="2-几个应用"><a href="#2-几个应用" class="headerlink" title="2. 几个应用"></a>2. 几个应用</h4><p>EL有什么用呢？一般有KB的地方就离不开EL。以下是EL的几个应用[2]：</p>
+<ol>
+<li><strong>Question Answering</strong>：EL是KBQA的刚需，linking到实体之后才能查询图数据库；</li>
+<li><strong>Content Analysis</strong>：舆情分析、内容推荐、阅读增强；</li>
+<li><strong>Information Retrieval</strong>：基于语义实体的搜索引擎，google搜索一些实体，右侧会出现wikipedia页面；</li>
+<li><strong>Knowledge Base population</strong>：扩充知识库，更新实体和关系。</li>
+</ol>
+<h4 id="3-Taxonomy"><a href="#3-Taxonomy" class="headerlink" title="3. Taxonomy"></a>3. Taxonomy</h4><p><img src="taxonomy.png" width="80%" title="Taxonomy of Entity Linking"></p>
+<p>大体来说，EL的工作可以分为两类[3]：</p>
+<ul>
+<li><strong>End-to-End</strong>：先从文本中提取到实体mention (即NER)，对应到候选实体，然后将提取到的entities消除歧义，映射到给定的KB中。</li>
+<li><strong>Linking-Only</strong>：与第一种方法对比，跳过了第一步。该方法直接将text和mention作为输入，找到候选实体并消除歧义，映射到给定的KB中。</li>
+</ul>
+<p>由于端到端的工作比较少，且NER也没太多可讲的。本文着重介绍Linking-Only的相关技术方向和工作。</p>
+<h3 id="EL的三大模块"><a href="#EL的三大模块" class="headerlink" title="EL的三大模块"></a>EL的三大模块</h3><p>EL的工作非常有挑战性，主要有两个原因：</p>
+<ol>
+<li><strong>Mention Variations</strong>：同一实体有不同的mention。（&lt;科比&gt;：小飞侠、黑曼巴、科铁、蜗壳、老科。）</li>
+<li><strong>Entity Ambiguity</strong>：同一mention对应不同的实体。（“苹果”：中关村苹果不错；山西苹果不错。）</li>
+</ol>
+<p>针对上述两个问题，一般会用Candidate Entity Generation (CEG) 和Entity Disambiguation (ED) 两个模块[2]来分别解决：</p>
+<ol>
+<li><strong>Candidate Entity Generation</strong>：从mention出发，找到KB中所有可能的实体，组成候选实体集 (candidate entities)；</li>
+<li><strong>Entity Disambiguation</strong>：从candidate entities中，选择最可能的实体作为预测实体。</li>
+</ol>
+<p>下面我们来讲讲这两个模块里都有些啥东西。<strong>其中，CEG的方法都比较朴素，没什么可讲的，笔者会把重点放在ED上。</strong></p>
+<h4 id="1-Candidate-Entity-Generation-CEG"><a href="#1-Candidate-Entity-Generation-CEG" class="headerlink" title="1. Candidate Entity Generation (CEG)"></a>1. Candidate Entity Generation (CEG)</h4><ul>
+<li>最重要的方法：Name Dictionary ( <code>{mention: entity}</code> )<ul>
+<li>哪些别名：首字母缩写、模糊匹配、昵称、拼写错误等。</li>
+<li>构建方法：<ul>
+<li>Wikipedia（Redirect pages, Disambiguation pages, Hyperlinks）；</li>
+<li>基于搜索引擎：调google api，搜mention。若前m个有wiki entity，建立map；</li>
+<li>Heuristic Methods；</li>
+<li>人工标注、用户日志。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>CEG这部分，最主流也最有效的方法就是Name Dictionary，<strong>说白了就是配别名</strong>。虽然CEG很朴素，但作为EL任务中的第一道门槛，其重要性不言而喻。对于每一个entity，紧凑而充分地配置别名，才能保证生成的candidate entites没有遗漏掉ground truth entity。</p>
+<p>具体的，要配置哪些别名，要用什么构建方法，往往取决于EL的使用场景。比如做百科问答或是通用文本的阅读增强，就很依赖于<strong>wikipedia和搜索引擎</strong>；但如果是某个具体的行业领域，就需要通过一些<strong>启发式的方法、用户日志、网页爬取，甚至人工标注的方法</strong>来构建Name Dictionary。</p>
+<h4 id="2-Entity-Disambiguation-ED-手动划重点"><a href="#2-Entity-Disambiguation-ED-手动划重点" class="headerlink" title="2. Entity Disambiguation (ED) (手动划重点)"></a>2. Entity Disambiguation (ED) (手动划重点)</h4><ul>
+<li>Features<ul>
+<li>Context-Independent Features：<ul>
+<li>LinkCount：#(m-&gt;e)，知识库中某个提及m指向实体e的次数；</li>
+<li>Entity Attributes：Popularity、Type；</li>
+</ul>
+</li>
+<li>Context-Dependent Features：<ul>
+<li>Textual Context：BOW, Concept Vector</li>
+<li>Coherence Between Entities：WLM、PMI、Jaccard Distance</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>实体消歧时，不同场景的特征选取是非常重要的。总的来说，实体消歧的特征分为，context独立和context不独立的。</p>
+<p>特征里，独立的有：mention到实体的LinkCount、实体自身的一些属性（比如热度、类型等等）。其中，<strong>LinkCount作为一个先验知识，在消歧时，往往很有用</strong>，比如当我们在问“姚明有多高？”时，大概率都是在问&lt;篮球运动员姚明&gt;，而不是其他不为人知的“姚明”。虽然context中完全没有包含篮球运动员这一信息，但大多数情况下，根据“姚明”到&lt;篮球运动员姚明&gt;的LinkCount最高，选其作为实体进行查询，都会是一个不错的答案。</p>
+<p>不独立的有：文本的context、实体间的coherence (一致性)。这部分，可深入挖掘的东西比较多，文本context可以用一些深度学习的方法去深度理解文本的语义，从而实现消歧；实体间的一致性更加有趣，由于文本包含的所有的mention都没有确定，所以<strong>全局地进行entities的消歧实际上是一个NP-hard的问题</strong>。因此，如何更加快速有效地利用一致性特征，是一个非常有趣的方向。</p>
+<p>基于这些常用的特征，消歧的方法可以大致分为以下几种：</p>
+<ul>
+<li>Methods<ul>
+<li><strong>Learning to Rank Methods</strong>：Point-wise、Pair-wise、List-wise。由于ED任务ground truth只有一个实体，一般都是用point-wise来做。输入是文本的context、mention、某个entity的一些attributes，输出mention指向该entity的置信度，以此rank，选出最可信的entity；</li>
+<li><strong>Probabilistic Methods</strong>：Incorporate heterogeneous knowledge into a probabilistic model。结合不同信息，得到条件概率$P(e|m, c)$，其中 c 是输入文本，e 为实体， m 是mention。比如用归一化的LinkCount信息，作为先验概率$P(e|m)$；</li>
+<li><strong>Graph-Based Approaches</strong>：maximize coherene between entities。利用图特征 (entity embedding、relation)，在消歧时，考虑全局消歧后实体的一致性；</li>
+</ul>
+</li>
+</ul>
+<p>一般来说，现在的ED工作都会综合以上的方法来设计，后面我们会具体介绍几篇近期的论文，大家可以对照这三类方法看看。</p>
+<h4 id="3-还有个小问题：Unlinkable-Mention-Prediction"><a href="#3-还有个小问题：Unlinkable-Mention-Prediction" class="headerlink" title="3. 还有个小问题：Unlinkable Mention Prediction"></a>3. 还有个小问题：Unlinkable Mention Prediction</h4><p>除了上面的两大模块，还有一个小问题，就是如何拒识掉未知实体，毕竟你不可能建立一个能穷举万物的KB。这就涉及到Unlinkable Mention Prediction，不是很复杂，一般就三种做法：</p>
+<ul>
+<li><strong>NIL Threshold</strong>：通过一个置信度的阈值来卡一下；</li>
+<li><strong>Binary Classification</strong>：训练一个二分类的模型，判断Top-rankeded Entity是否真的是文中的mention想要表达的实体；</li>
+<li><strong>Rank with NIL</strong>：在rank的时候，在候选实体中加入NIL Entity。</li>
+</ul>
+<p>一般就阈值卡一下就好了，不是太大的问题。但如果具体的场景是做KB Population且实体还不是很全的时候，就需要重点关注一下了。</p>
+<h3 id="EL的近期工作"><a href="#EL的近期工作" class="headerlink" title="EL的近期工作"></a>EL的近期工作</h3><p>为了让读者能更清楚地了解EL，笔者在这里选取了三篇近两年出的，比较有代表性的工作[4] [5] [6]，给大家具体讲讲：</p>
+<ol>
+<li>Deep Joint Entity Disambiguation with Local Neural Attention. (Ganea and Hofmann, 2017, EMNLP)</li>
+<li>Improving entity linking by modeling latent relations between mentions. (Le et al., 2018, ACL)</li>
+<li>DeepType: multilingual entity linking by neural type system evolution. (Raiman et al., 2018, AAAI)</li>
+</ol>
+<h4 id="1-Deep-Joint-Entity-Disambiguation-with-Local-Neural-Attention"><a href="#1-Deep-Joint-Entity-Disambiguation-with-Local-Neural-Attention" class="headerlink" title="1. Deep Joint Entity Disambiguation with Local Neural Attention"></a>1. Deep Joint Entity Disambiguation with Local Neural Attention</h4><p>早期的EL工作都非常依赖manually-designed的特征，这篇文章是EL领域第一篇不依赖特征工程，用深度学习来学习基础特征的工作。主要的创新点和关键部件有三个：</p>
+<ul>
+<li><strong>Entity Embeddings</strong>：用到了知识库里实体的embedding；</li>
+<li><strong>Context Attention</strong>：用attention机制来获得context的表征；</li>
+<li><strong>Collective Disambiguation</strong>：考虑实体间的coherence，联合消歧。</li>
+</ul>
+<p>给定文本$D$，其中有一堆mention  $(m_1, m_2, … , m_n)$ 。$m_i$ 对应的实体为$e_i$，对应的context为$c_i$，对应的候选实体集为$C_i = (e_{i1}, …, e_{il_i})$。文章提出了两种模型：Local model、Global model。local只考虑mention的context；global还需要考虑实体间的一致性，联合消歧。</p>
+<p><strong>Local model</strong>：令$\Psi(e_i, c_i)$为local score function，local model要解决的问题即：</p>
+<script type="math/tex; mode=display">
+e^*_i = \underset{e_i \in C_i}{\text{argmax}}\;\Psi(e_i, c_i)</script><p><strong>Global model</strong>：除了context，还考虑实体间的coherence (为了简化，只考虑两元一致性）。令$\Phi(e_i, e_j, D)$为实体之间的pair-wise coherence score function，$E = (e_1, …., e_n)$，全局搜索：</p>
+<script type="math/tex; mode=display">
+E^* = \underset{E \in C_{1}\times...\times C_n}{\text{argmax}}\sum_{i=1}^n\Psi(e_i, c_i) + \sum_{i\neq j}\Phi(e_i, e_j, D)</script><p>Local and pair-wise score function 的计算方法如下：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+\Psi(e_i, c_i) &= \mathbf{e}_i^T \mathbf{B} f(c_i) \\
+\Phi(e_i, e_j, D) &= \frac{1}{n-1}\mathbf{e}_i^T \mathbf{R} \mathbf{e}_j
+\end{align*}</script><p>其中，$\mathbf{e}_i, \mathbf{e}_j \in \mathbb{R}^d$ 是实体$e_i, e_j$的embedding，$\mathbf{B}, \mathbf{R} \in \mathbb{R}^{d \times d}$ 是对角矩阵。$f(c_i)\in \mathbb{R}^d$是在上下文 $c_i$上取attention后的表征，具体的attention计算如下图所示：</p>
+<p><img src="attention.png" width="80%" title="Local model里的attention机制"></p>
+<p>这里是用candidate entity embeddings做key，context word embeddings做value，得到score matrix之后，按列取max，如果某个word的score较高表示这个word至少和一个entity相关度高。为了去除stop words的影响，作者只取了top R的score，剩下的置为负无穷。</p>
+<p>得到score后，还会结合m到e的LinkCount先验概率，计算出最终各个实体的概率。该工作在AIDA数据集上取得了SOTA ( local: 88.8、global: 92.22 )。</p>
+<h4 id="2-Improving-entity-linking-by-modeling-latent-relations-between-mentions"><a href="#2-Improving-entity-linking-by-modeling-latent-relations-between-mentions" class="headerlink" title="2. Improving entity linking by modeling latent relations between mentions"></a>2. Improving entity linking by modeling latent relations between mentions</h4><p>上一篇论文开创性地在EL中引入entity embedding作为信息，很自然的，我们会思考一个问题，KB中还有别的可利用的信息吗？参考本文一开始的那张图片，“乔丹”、“美国”、“Nike”这些实体之间还有着“公民”、“赞助商”等关系信息，显然，若加以利用，一定能成大器。</p>
+<p>于是Le et al.在Ganea and Hofmann工作的基础上，增加了隐关系信息。假定图谱中有K个关系，令 $(m_i, m_j)$之间为关系k的置信度为$\alpha_{ijk}$，上文中的pair-wise coherence score function可以写成：</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+\Phi(e_i, e_j, D) &= \sum_{k=1}^K\alpha_{ijk}\mathbf{e}_i^T \mathbf{R}_k \mathbf{e}_j  \\
+\alpha_{ijk} = \frac{1}{Z_{ijk}}& \text{exp}(\frac{f^T(m_i, c_i) \mathbf{D}_k f(m_j, c_j)}{\sqrt{d}})
+\end{align*}</script><p>其中，$\mathbf{R}_k, \mathbf{D}_k \in \mathbb{R}^d$都是用来表示关系k的对角矩阵 (类似于关系k的embedding)，$Z_{ijk}$为归一化因子，$f(m_i, c_i)$ 为将$(m_i, c_i)$映射到$\mathbb{R}^d$的函数。这样一来，我们就隐式地添加了关系k，丰富了计算全局实体一致性时所参考的信息。</p>
+<p>看起来很fancy！但是有一个问题，这个归一化因子我们要咋算呢？作者提供了两种思路：</p>
+<ol>
+<li><strong>Rel-norm</strong>：Relation-wise normalization。就是以关系k维度来norm；</li>
+<li><strong>Ment-norm</strong>：Mention-wise Normalization。就是以实体j维度来norm。</li>
+</ol>
+<p><img src="norm.png" width="50%" title="两种norm方式的示意图"></p>
+<p>看一下上面这张图，就很清晰了。该工作在AIDA数据集上得到了新的SOTA (global: 93.07)。</p>
+<h4 id="3-DeepType-multilingual-entity-linking-by-neural-type-system-evolution"><a href="#3-DeepType-multilingual-entity-linking-by-neural-type-system-evolution" class="headerlink" title="3. DeepType: multilingual entity linking by neural type system evolution"></a>3. DeepType: multilingual entity linking by neural type system evolution</h4><p>前两篇论文都是在联合消歧的这个角度，做了一定的工作。DeepType这篇文章则另辟蹊径，从优化知识库的type系统来做。文章很重要的一个观点是：当我们能预测出实体mention的type，消歧这个任务就做的差不多了。EL系统主要分成三个模块：</p>
+<ol>
+<li><strong>Type System</strong>：一组正交的type轴和一个type标注函数；<ul>
+<li>type轴：一组互斥的type集合 $\mathcal{A}$ (e.g. $\text{IsHuman} \cap \text{IsPlant} = \{\}$)</li>
+<li>type标注函数：$\{t_1, …, t_k\} = \text{TypeLabeler}(e, \mathcal{A})$</li>
+<li>举个例子，假定一个包含两个轴 {IsA, Topic} 的 type 系统，&lt;追一科技&gt;对应的就是 {公司，人工智能}</li>
+</ul>
+</li>
+<li><strong>Type Classifier</strong>：给定mention和text，输出mention对应实体的type；</li>
+<li><strong>Entity Prediction Model</strong>：给定mention、text和候选实体，预测概率最高的实体。（文中直接用的LinkCount）</li>
+</ol>
+<p>很显然，这三个模块的核心点在于Type System的构建。由于Entity Prediction Model是直接用的LinkCount，实际上整个EL系统就只有两组参数，一组是Type System的离散参数$\mathcal{A}$，一组是Type Classifier的连续参数$\theta$。给定text及其所含的mention $M=\{(m_0, e_0^{GT}, \mathcal{E}_{m_0}), …, (m_n, e_n^{GT}, \mathcal{E}_{m_n})\}$ ，其中$e_i^{GT}$为ground truth的实体，$\mathcal{E}_{m_i}$为候选实体集，令$S_{model}(\mathcal{A}, \theta)$为EL系统的消歧准确率，则我们的问题可以定义为：</p>
+<script type="math/tex; mode=display">
+\max_{\mathcal{A}}\max_{\theta} S_{model}(\mathcal{A}, \theta)=\frac{\sum_{(m,e^{GT},\mathcal{E}_m)\in M}\mathbb{I}_{e^{GT}}(e^*)}{|M|}</script><p>其中$e^*=\underset{e \in \mathcal{A}}{\text{argmax}} \;\text{EntityScore}(e,m,D,\mathcal{A},\theta)$，这个entity score可以看成是给定m后，EL系统给出的置信度，后面会给具体公式。</p>
+<p>同步优化两组参数很耗时，因此文章分成Type System和Type Classfier两个部分独立优化。</p>
+<h5 id="a-Discrete-Optimization-of-Type-System："><a href="#a-Discrete-Optimization-of-Type-System：" class="headerlink" title="a. Discrete Optimization of Type System："></a>a. Discrete Optimization of Type System：</h5><p>为了避免同时训练Type System和Type Classifier，我们得先固定classifier，然后优化Proxy Objective $J(\mathcal{A})\sim S_{model}(\mathcal{A}, \theta)$，这里我们假设两个classifier model的极端：</p>
+<ol>
+<li>Oracle (极端优秀)：假设Type Classifier开了天眼，不管$\mathcal{A}$咋变，都能预测对mention的type，然后从该type对应的候选实体集的子集中选LinkCount最高的，令$P(e|m)=\frac{\text{LinkCount}(m,e)}{\sum_{j\in \mathcal{E}_m}\text{LinkCount}(m,j)}$；<script type="math/tex; mode=display">
+Oracle(m)={\text{argmax}}_{e \in \mathcal{E}_{m,type(e^{GT})}}P(e|m) \\
+S_{oracle} = \frac{\sum_{(m,e^{GT},\mathcal{E}_m)\in M}\mathbb{I}_{e^{GT}}(Oracle(m))}{|M|}</script></li>
+<li>Greedy (极端蠢)：不预测type，直接从候选实体集中选linkcount最高的。</li>
+</ol>
+<script type="math/tex; mode=display">
+Greedy(m)={\text{argmax}}_{e \in \mathcal{E}_{m}}P(e|m) \\
+S_{greedy} = \frac{\sum_{(m,e^{GT},\mathcal{E}_m)\in M}\mathbb{I}_{e^{GT}}(Greedy(m))}{|M|}</script><p>最简单的思路直接$J(\mathcal{A}) = S_{oracle}$其实就完事了，但是我们要考虑到真正的classifier并没有开天眼，假设classifier的Learnability（学习能力）是 $l(\mathcal{A})$，那么更合理的目标函数应该是：</p>
+<script type="math/tex; mode=display">
+J(\mathcal{A}) = (S_{oracle} - S_{greedy})\cdot l(\mathcal{A}) +S_{greedy} - \lambda|\mathcal{A}|</script><p>但是<strong>怎么才能不依赖$\mathcal{A}$ 去计算学习能力呢</strong>，如果是用softmax多分类，那就糟了，每换一次$\mathcal{A}$，就得重新训练一个classifier。因此作者巧妙的用二元分类器代替了多分类，令$l(\mathcal{A})=\sum_{t\in \mathcal{A}}AUC(t)/|\mathcal{A}|$，这样就只需要最开始计算一次就好了，如下图所示：</p>
+<p><img src="classifier.png" width="60%" title="a为训练type系统时的classifier，b为后面真正用的classifier"></p>
+<h5 id="b-Type-Classifier"><a href="#b-Type-Classifier" class="headerlink" title="b. Type Classifier"></a>b. Type Classifier</h5><p>就按照上图b优化就是了，没什么可说的。</p>
+<h5 id="c-Inference"><a href="#c-Inference" class="headerlink" title="c. Inference"></a>c. Inference</h5><p>在训练完Type System和Type Classifier之后，我们就可以计算我们上面说的EntityScore了：</p>
+<script type="math/tex; mode=display">
+s_{e,m,D,\mathcal{A},\theta} = P(e|m)\cdot (1-\beta+\beta(\prod_{i=1}^k(1-\alpha_i+\alpha_i P(t_i|m,D))))</script><p>其中$\mathcal{A}=(t_1, …, t_k)$ 是k个type组成type轴，$\alpha,\beta \in (0,1)$是smoothing系数。最终在AIDA数据集上取得了新的SOTA（94.88）。</p>
+<h4 id="4-三篇论文效果对比和思考"><a href="#4-三篇论文效果对比和思考" class="headerlink" title="4. 三篇论文效果对比和思考"></a>4. 三篇论文效果对比和思考</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>Micro-Precision (AIDA CoNLL-YAGO Dataset)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Raiman et al. (2018)</td>
+<td>94.88/ ?</td>
+</tr>
+<tr>
+<td>Le et al. (2018)</td>
+<td>88.8/93.07</td>
+</tr>
+<tr>
+<td>Ganea and Hofmann (2017)</td>
+<td>88.8/92.22</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>前两篇都是联合消歧的，而DeepType其实是个Local模型。这么看来，如果考虑联合消歧的话，应该还会有提升。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Entity Linking其实算是个很复杂的技术领域，因为优化过程中，不仅要考虑text的文本信息、KB的信息、消歧后的一致性，还需要根据具体的业务场景采用不同的方案，同时也不能为了效果去暴力搜索NP-hard的离散优化问题。在具体实施的过程中不可能面面俱到，需要一定程度的trade-off。总结起来，四大特征：<strong>LinkCount、Context、Attributes、Coherence</strong>。方法千千万，大家灵活运用。</p>
+<h3 id="Appendices"><a href="#Appendices" class="headerlink" title="Appendices"></a>Appendices</h3><ul>
+<li>数据集：<ul>
+<li>Knowledge Base：Wikipedia, YAGO, DBpedia, Freebase；</li>
+<li>EL监督数据：<ul>
+<li>中文：<a href="https://www.biendata.com/competition/ccks_2019_el/data/" target="_blank" rel="noopener">CCKS</a></li>
+<li>英文：<a href="https://catalog.ldc.upenn.edu/LDC2019T02" target="_blank" rel="noopener">TAC KBP 2010 EL</a>、<a href="https://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/aida/downloads/" target="_blank" rel="noopener">AIDA CoNLL-YAGO</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>一个不错的多因子消歧总结：<a href="https://cloud.tencent.com/developer/article/1491361" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1491361</a></li>
+<li>ccks实体链接第一名方案：<a href="https://github.com/panchunguang/ccks_baidu_entity_link" target="_blank" rel="noopener">https://github.com/panchunguang/ccks_baidu_entity_link</a></li>
+<li>DeepType原作博客 (有一些可玩的插件)：<a href="https://openai.com/blog/discovering-types-for-entity-disambiguation/" target="_blank" rel="noopener">https://openai.com/blog/discovering-types-for-entity-disambiguation/</a></li>
+</ul>
+<h3 id="References"><a href="#References" class="headerlink" title="References"></a>References</h3><ol>
+<li>韩先培，实体链接：从文本到概念：<a href="https://docs.huihoo.com/infoq/baidu-salon51-entity-links.pdf" target="_blank" rel="noopener">https://docs.huihoo.com/infoq/baidu-salon51-entity-links.pdf</a></li>
+<li>Wei Shen, Jiawei Han: Entity Linking with a Knowledge Base: Issues, Techniques, and Solutions. <a href="http://dbgroup.cs.tsinghua.edu.cn/wangjy/papers/TKDE14-entitylinking.pdf" target="_blank" rel="noopener">http://dbgroup.cs.tsinghua.edu.cn/wangjy/papers/TKDE14-entitylinking.pdf</a></li>
+<li>Sebastian Ruder: NLP Progress of Entity Linking. <a href="https://github.com/sebastianruder/NLP-progress/blob/master/english/entity_linking.md" target="_blank" rel="noopener">https://github.com/sebastianruder/NLP-progress/blob/master/english/entity_linking.md</a></li>
+<li>Ganea and Hofmann, 2017, EMNLP: Joint Entity Disambiguation with Local Neural Attention. <a href="https://arxiv.org/abs/1704.04920Deep" target="_blank" rel="noopener">https://arxiv.org/abs/1704.04920Deep</a> </li>
+<li>Le et al., 2018, ACL: Improving entity linking by modeling latent relations between mentions. <a href="https://arxiv.org/abs/1804.10637" target="_blank" rel="noopener">https://arxiv.org/abs/1804.10637</a></li>
+<li>Raiman et al., 2018, AAAI: DeepType: multilingual entity linking by neural type system evolution. <a href="https://arxiv.org/abs/1802.01021" target="_blank" rel="noopener">https://arxiv.org/abs/1802.01021</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/知识图谱/" rel="tag"># 知识图谱</a>
+          
+            <a href="/tags/Entity-Linking/" rel="tag"># Entity Linking</a>
+          
+            <a href="/tags/Entity-Disambiguation/" rel="tag"># Entity Disambiguation</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/06/coqa/" rel="next" title="【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析">
+                <i class="fa fa-chevron-left"></i> 【比赛分享】刷新CoQA榜单纪录：基于对抗训练和知识蒸馏的机器阅读理解方案解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div id="gitalk-container"></div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">AKA瓦砾</p>
+              <img class="site-author-image" itemprop="image" src="/images/header.png" alt="AKA瓦砾">
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/fyubang" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:fubang.zhao@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://zhuanlan.zhihu.com/c_174521629" target="_blank" title="知乎专栏">
+                      
+                        <i class="fa fa-fw fa-book"></i>知乎专栏</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kexue.fm/" title="科学空间" target="_blank">科学空间</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://shuang0420.com" title="徐阿衡" target="_blank">徐阿衡</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#EL入门"><span class="nav-number">1.</span> <span class="nav-text">EL入门</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-任务定义"><span class="nav-number">1.1.</span> <span class="nav-text">1. 任务定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-几个应用"><span class="nav-number">1.2.</span> <span class="nav-text">2. 几个应用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Taxonomy"><span class="nav-number">1.3.</span> <span class="nav-text">3. Taxonomy</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EL的三大模块"><span class="nav-number">2.</span> <span class="nav-text">EL的三大模块</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Candidate-Entity-Generation-CEG"><span class="nav-number">2.1.</span> <span class="nav-text">1. Candidate Entity Generation (CEG)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Entity-Disambiguation-ED-手动划重点"><span class="nav-number">2.2.</span> <span class="nav-text">2. Entity Disambiguation (ED) (手动划重点)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-还有个小问题：Unlinkable-Mention-Prediction"><span class="nav-number">2.3.</span> <span class="nav-text">3. 还有个小问题：Unlinkable Mention Prediction</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EL的近期工作"><span class="nav-number">3.</span> <span class="nav-text">EL的近期工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Deep-Joint-Entity-Disambiguation-with-Local-Neural-Attention"><span class="nav-number">3.1.</span> <span class="nav-text">1. Deep Joint Entity Disambiguation with Local Neural Attention</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Improving-entity-linking-by-modeling-latent-relations-between-mentions"><span class="nav-number">3.2.</span> <span class="nav-text">2. Improving entity linking by modeling latent relations between mentions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-DeepType-multilingual-entity-linking-by-neural-type-system-evolution"><span class="nav-number">3.3.</span> <span class="nav-text">3. DeepType: multilingual entity linking by neural type system evolution</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#a-Discrete-Optimization-of-Type-System："><span class="nav-number">3.3.1.</span> <span class="nav-text">a. Discrete Optimization of Type System：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#b-Type-Classifier"><span class="nav-number">3.3.2.</span> <span class="nav-text">b. Type Classifier</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#c-Inference"><span class="nav-number">3.3.3.</span> <span class="nav-text">c. Inference</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-三篇论文效果对比和思考"><span class="nav-number">3.4.</span> <span class="nav-text">4. 三篇论文效果对比和思考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Appendices"><span class="nav-number">5.</span> <span class="nav-text">Appendices</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#References"><span class="nav-number">6.</span> <span class="nav-text">References</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AKA瓦砾</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '0efa076437b16d55154d',
+          clientSecret: 'b6441808c991871623e6e8666300230ab321a6c1',
+          repo: 'gitalk',
+          owner: 'fyubang',
+          admin: ['fyubang'],
+          id: location.pathname,
+          labels: ['Gitalk'],
+          perPage: 15,
+          pagerDirection: 'last',
+          createIssueManually: true,
+          distractionFreeMode: false
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
